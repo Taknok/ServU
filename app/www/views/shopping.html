@@ -1,0 +1,16 @@
+<ion-view view-title="Shopping" ng-controller="ShoppingCtrl" cache-view="false">
+  <ion-header-bar class="bar-stable">
+    <h1 class="title">Courses</h1>
+    <div class="buttons">
+      <button class="button button-icon ion-plus" ng-click="addItem()"></button>
+	  <button class="button button-icon ion-refresh" ng-click="refreshItem()"></button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <ion-list>
+      <ion-item ng-repeat="item in items">
+        {{item.name}}
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

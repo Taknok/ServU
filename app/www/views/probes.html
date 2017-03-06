@@ -1,0 +1,91 @@
+<ion-view view-title="Probes" ng-controller="ProbesCtrl">
+	<ion-header-bar class="bar-stable">
+		<h1 class="title">Probes</h1>
+		<div class="buttons">
+			<button class="button button-icon ion-refresh" ng-click="refreshProbes()"></button>
+		</div>
+	</ion-header-bar>
+	
+	<ion-content>
+	<p>
+		<img ng-show="imgURI !== undefined" ng-src="{{imgURI}}">
+		<img ng-show="imgURI === undefined" ng-src="http://placehold.it/300x300">
+		<button class="button icon-left ion-camera" ng-click="takePicture()">{{'takePicture' | translate}}</button>
+	</p>
+	
+	<p>Network : <br/>
+        states : {{network.states}}<br/>
+	<br/>
+	</p>
+	
+	<p>Bluetooh : <br/>
+        isEnable : {{bluetooth.enable}}<br/>
+		isConnected : {{bluetooth.connected}}<br/>
+	<br/>
+	</p>
+	
+	<p>GPS :<br/>
+        lat : {{localisation.coords.latitude}}<br/>
+		long : {{localisation.coords.longitude}}<br/>
+		alt : {{localisation.coords.altitude}}<br/>
+		accuracy : {{localisation.coords.accuracy}}<br/>
+		heading : {{localisation.coords.heading}}<br/>
+		speed : {{localisation.coords.speed}}<br/>
+		timestamp : {{localisation.timestamp}}<br/>
+	 </p>
+	
+	<p>Battery : <br/>
+        % : {{battery.level}}<br/>
+		plugged : {{battery.isPlugged}}<br/>
+    <br/>
+	</p>
+	
+	<p>Accelerometer : <br/>
+        x : {{accelerometer.x}}<br/>
+		y : {{accelerometer.y}}<br/>
+		z : {{accelerometer.z}}<br/>
+		timestamp : {{accelerometer.timestamp}}<br/>
+    <br/>
+	
+	<p>Orientation : <br/>
+        magneticHeading : {{orientation.magneticHeading}}<br/>
+		trueHeading : {{orientation.trueHeading}}<br/>
+		accuracy : {{orientation.headingAccuracy}}<br/>
+		timestamp : {{orientation.timestamp}}<br/>
+    <br/>
+	
+	<p>Others : <br/>
+        proximity : {{proximity}}<br/>
+		ambient_temp : {{ambient_temp}}<br/>
+		light : {{light}}<br/>
+		pressure : {{pressure}}<br/>
+		humidity : {{humidity}}<br/>
+		temperature : {{temperature}}<br/>
+		screen_orientation : {{screen_orientation}}<br/>
+    <br/>
+	
+	<p>Device : <br/>
+        cordova : {{device.cordova}}<br/>
+		isVirtual : {{device.isVirtual}}<br/>
+		manufacturer : {{device.manufacturer}}<br/>
+		model : {{device.model}}<br/>
+		platform : {{device.platform}}<br/>
+		serial : {{device.serial}}<br/>
+		uuid : {{device.uuid}}<br/>
+		version : {{device.version}}<br/>
+    <br/>
+	
+	<p>Globalization : <br/>
+        language : {{globalization.language}}<br/>
+		localName : {{globalization.localName}}<br/>
+    <br/>
+	
+	<br/>
+	<br/>
+	<br/>
+	</p>
+	
+	  
+  
+  
+</ion-view>

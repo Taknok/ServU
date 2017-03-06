@@ -1,0 +1,15 @@
+
+<ion-content  scroll="false">
+	<ion-slide-box slide-tabs-scrollable="false"  show-pager="false" ion-slide-tabs class="test">
+		<ion-slide ion-slide-tab-label="{{'probes' | translate}}">
+			<ion-pane ng-include="'views/probes.html'"></ion-pane>
+		</ion-slide>
+		<ion-slide ion-slide-tab-label="{{'weather' | translate}}">
+			<ion-pane ng-include="'views/weather.html'"></ion-pane>
+		</ion-slide>
+		<ion-slide ion-slide-tab-label="{{'shop' | translate}}">
+			<ion-pane ng-include="'views/shopping.html'"></ion-pane>
+		</ion-slide>
+
+	</ion-slide-box>
+</ion-content>
