@@ -45,6 +45,26 @@ parameters:
 
 paths:
   /users:
+    get:
+      description: Returns all the users
+      parameters:
+        - name: firstname
+          in: query
+          required: false
+          type: string
+        - name: lastname
+          in: query
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/user"
+        "404":
+          description: User not found
     post:
       description: Add a new user
       parameters:
@@ -57,13 +77,51 @@ paths:
       responses:
         "201":
           description: User added
-          schema:
-            $ref: "#/definitions/user"
         "400":
           description: Wrong format
         "409":
           description: Another user has the same username
           
+  /users/{username}:
+    get:
+      description: Returns a user
+      parameters:
+      - $ref: "#/parameters/username"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/user"
+        "404":
+          description: User not found
+    put:
+      description: Update a user
+      parameters:
+        - $ref: "#/parameters/username"
+        - name: user
+          in: body
+          description: User's informations
+          required: true
+          schema:
+              $ref: "#/definitions/user_post"
+      responses:
+        "204":
+          description: Sucess
+        "400":
+          description: Wrong format
+        "404":
+          description: User not found
+        "409":
+          description: Another user has the same pseudo
+    delete:
+      description: Delete a user
+      parameters:
+        - $ref: "#/parameters/username"
+      responses:
+        "204":
+          description: Success
+        "404":
+          description: User not found
   /users/{username}/devices:
     get:
       description: Returns all devices attached to the user
@@ -77,7 +135,7 @@ paths:
             items:
               $ref: "#/definitions/device"
         "404":
-          description: User not found
+          description: This user does not exist or has no devices
     post:
       description: Add a device
       parameters:
@@ -89,7 +147,7 @@ paths:
           $ref: "#/definitions/device"
         required: true
       responses:
-        "204":
+        "201":
           description: Sucess
         "400":
           description: Wrong format
@@ -108,9 +166,7 @@ paths:
           schema:
             $ref: "#/definitions/device"
         "404":
-          description: User not found
-        "405":
-          description: Device not found
+          description: User or device not found
     put:
       description: Modify informations about the device
       parameters:
@@ -126,9 +182,7 @@ paths:
         "204":
           description: Success
         "404":
-          description: User not found
-        "405":
-          description: Device not found
+          description: User or device not found
     delete:
       description: Delete a device
       parameters:
@@ -138,9 +192,7 @@ paths:
         "204":
           description: Success
         "404":
-          description: User not found
-        "405":
-          description: Device not found
+          description: User or device not found
     
   /users/{username}/devices/{uuid}/probes:
     get:
@@ -156,9 +208,7 @@ paths:
             items:
               $ref: "#/definitions/probe"
         "404":
-          description: User not found
-        "405":
-          description: Device not found
+          description: User or device not found
 
   /users/{username}/devices/{uuid}/probes/{name}:
     get:
@@ -177,9 +227,7 @@ paths:
           schema:
             $ref: "#/definitions/probe"
         "404":
-          description: User not found
-        "405":
-          description: Device not found
+          description: Probe not found
     put:
       description: Update the informations of the probe for this device
       parameters:
@@ -202,13 +250,123 @@ paths:
         "400":
           description: Wrong data format for that probe
         "404":
-          description: User not found
-        "405":
-          description: Device not found
+          description: Probe not found
 
-
+  /users/{username}/devices/{uuid}/actions:
+    get:
+      description: Get the list of actions for this device
+      parameters:
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/uuid"
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/action_get"
+        "404":
+          description: User or device not found
+    post:
+      description: Add a new action to do for this device
+      parameters:
+      - $ref: "#/parameters/username"
+      - $ref: "#/parameters/uuid"
+      - name: action
+        in: body
+        description: Action's details
+        required: true
+        schema:
+          $ref: "#/definitions/action_post"
+      responses:
+        "201":
+          description: Action added
+        "400":
+          description: Wrong format
+        "404":
+          description: User or device not found
+          
+  /users/{username}/devices/{uuid}/actions/{action-id}:
+    get:
+      description: Get the informations about this action
+      parameters:
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/uuid"
+        - name: action-id
+          description: Id of the action
+          in: path
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/action_get"
+        "404":
+          description: Action not found
+    delete:
+      description: Delete this action
+      parameters:
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/uuid"
+        - name: action-id
+          description: Id of the action
+          in: path
+          type: string
+          required: true
+      responses:
+        "204":
+          description: Success
+        "404":
+          description: Action not found
+              
+  /users/{username}/devices/{uuid}/actions/{action-id}/status:
+    get:
+      description: Return the status of this action
+      parameters:
+      - $ref: "#/parameters/username"
+      - $ref: "#/parameters/uuid"
+      - name: action-id
+        in: path
+        type: string
+        description: Id of the action
+        required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/action_status"
+        "404":
+          description: Action not found
+    put:
+      description: Update the status of this action
+      parameters:
+      - $ref: "#/parameters/username"
+      - $ref: "#/parameters/uuid"
+      - name: action-id
+        in: path
+        type: string
+        description: Id of the action
+        required: true
+      - name: status
+        in: body
+        description: Action's status
+        required: true
+        schema:
+          $ref: "#/definitions/action_status"
+      responses:
+        "204":
+          description: Success
+        "400":
+          description: Wrong format
+        "404":
+          description: Action not found
+        
 
 # complex objects have schema definitions
+
 definitions:
   user:
     type: object
@@ -217,7 +375,6 @@ definitions:
       - firstname
       - lastname
       - email
-      - password
     properties:
       username:
         type: string
@@ -227,9 +384,6 @@ definitions:
         type: string
       email:
         type: string
-      password:
-        type: string
-        format: password
         
   user_post:
     type: object
@@ -255,6 +409,8 @@ definitions:
   device:
     type: object
     properties:
+      name:
+        type: string
       manufacturer: 
         type: string
       model: 
@@ -265,7 +421,7 @@ definitions:
         type: string
       serial:
         type: string
-      uudi:
+      uuid:
         type: string
         
   probe:
@@ -280,3 +436,25 @@ definitions:
         type: boolean
       data:
         type: object
+  action_get:
+    type: object
+    properties:
+      id:
+        type: string
+      creation-date:
+        type: string
+        format: date
+      type:
+        type: string
+      parameters:
+        type: object
+  action_post:
+    type: object
+    properties:
+      type:
+        type: string
+      parameters:
+        type: object
+  action_status:
+    type: string
+    enum: ["pending","in progress","done"]
