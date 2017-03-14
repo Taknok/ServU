@@ -1,0 +1,282 @@
+swagger: "2.0"
+info:
+  version: 0.0.1
+  title: ServU
+# during dev, should point to your local machine
+host: localhost:8080
+# basePath prefixes all resource paths 
+basePath: /api
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+  #ajouter xml si on a le temps
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+  #idem xml
+
+
+
+
+parameters:
+  username:
+    name: username
+    description: "Name of the user"
+    in: path
+    type: string
+    required: true
+    
+  uuid:
+    name: uuid
+    description: "uuid of the device"
+    in: path
+    type: string
+    required: true
+
+
+
+
+
+
+paths:
+  /users:
+    post:
+      description: Add a new user
+      parameters:
+        - name: user
+          in: body
+          description: User's informations
+          required: true
+          schema:
+            $ref: "#/definitions/user_post"
+      responses:
+        "201":
+          description: User added
+          schema:
+            $ref: "#/definitions/user"
+        "400":
+          description: Wrong format
+        "409":
+          description: Another user has the same username
+          
+  /users/{username}/devices:
+    get:
+      description: Returns all devices attached to the user
+      parameters:
+        - $ref: "#/parameters/username"
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/device"
+        "404":
+          description: User not found
+    post:
+      description: Add a device
+      parameters:
+      - $ref: "#/parameters/username"
+      - name: device
+        description: "Device to add"
+        in: body
+        schema:
+          $ref: "#/definitions/device"
+        required: true
+      responses:
+        "204":
+          description: Sucess
+        "400":
+          description: Wrong format
+        "404":
+          description: User not found
+    
+  /users/{username}/devices/{uuid}:
+    get:
+      description: Returns informations about the device
+      parameters:
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/uuid"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/device"
+        "404":
+          description: User not found
+        "405":
+          description: Device not found
+    put:
+      description: Modify informations about the device
+      parameters:
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/uuid"
+        - name : device
+          description: Devices's informations to update
+          in: body
+          schema:
+            $ref: "#/definitions/device"
+          required: true
+      responses:
+        "204":
+          description: Success
+        "404":
+          description: User not found
+        "405":
+          description: Device not found
+    delete:
+      description: Delete a device
+      parameters:
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/uuid"
+      responses:
+        "204":
+          description: Success
+        "404":
+          description: User not found
+        "405":
+          description: Device not found
+    
+  /users/{username}/devices/{uuid}/probes:
+    get:
+      description: Get the list of probes for this device
+      parameters:
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/uuid"
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/probe"
+        "404":
+          description: User not found
+        "405":
+          description: Device not found
+
+  /users/{username}/devices/{uuid}/probes/{name}:
+    get:
+      description: Get the informations of the probe for this device
+      parameters:
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/uuid"
+        - name: name
+          description: Name of the probe wanted
+          in: path
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/probe"
+        "404":
+          description: User not found
+        "405":
+          description: Device not found
+    put:
+      description: Update the informations of the probe for this device
+      parameters:
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/uuid"
+        - name: name
+          description: Name of the probe wanted
+          in: path
+          type: string
+          required: true
+        - name: probe
+          description: Update informations for the probe
+          in: body
+          schema:
+            $ref: "#/definitions/probe"
+          required: true
+      responses:
+        "204":
+          description: Success
+        "400":
+          description: Wrong data format for that probe
+        "404":
+          description: User not found
+        "405":
+          description: Device not found
+
+
+
+# complex objects have schema definitions
+definitions:
+  user:
+    type: object
+    required:
+      - username
+      - firstname
+      - lastname
+      - email
+      - password
+    properties:
+      username:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+        format: password
+        
+  user_post:
+    type: object
+    required:
+      - username
+      - firstname
+      - lastname
+      - email
+      - password
+    properties:
+      username:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+        format: password
+        
+  device:
+    type: object
+    properties:
+      manufacturer: 
+        type: string
+      model: 
+        type: string
+      platform:
+        type: string
+      version:
+        type: string
+      serial:
+        type: string
+      uudi:
+        type: string
+        
+  probe:
+    type: object
+    required:
+      - name
+      - active
+    properties:
+      name:
+        type: string
+      active:
+        type: boolean
+      data:
+        type: object
