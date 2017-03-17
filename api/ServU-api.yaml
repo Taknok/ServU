@@ -293,26 +293,6 @@ paths:
         "404":
           description: Action not found
               
-  /users/{username}/devices/{uuid}/actions/{action-id}/status:
-    get:
-      description: Return the status of this action
-      parameters:
-      - $ref: "#/parameters/username"
-      - $ref: "#/parameters/uuid"
-      - name: action-id
-        in: path
-        type: string
-        description: Id of the action
-        required: true
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/status"
-        "404":
-          description: Action not found
-        
-
 
 
 # ####################
