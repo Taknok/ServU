@@ -55,7 +55,7 @@ function getAll(req, res, next) {
 function getOne(req, res, next) {
 	var username = req.swagger.params.username.value; //req.swagger contains the path parameters
 	var user = db.find(username);
-	if(movie) {
+	if(user) {
 		res.json(user);
 	}else {
 		res.status(204).send();
