@@ -1,4 +1,4 @@
-<ion-view view-title="Probes" ng-controller="ProbesCtrl">
+<ion-view view-title="Probes" ng-controller="ProbesCtrl" cache-view="false">
 	<ion-header-bar class="bar-stable">
 		<h1 class="title">Probes</h1>
 		<div class="buttons">
@@ -6,7 +6,109 @@
 		</div>
 	</ion-header-bar>
 	
-	<ion-content>
+	<ion-content scroll-watch>
+	
+	<ul class="list">
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-wifi"></i>{{"Network" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-bluetooth"></i>{{"Bluetooh" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-navigate"></i>{{"GPS" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-battery-charging"></i>{{"Battery" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-arrow-move"></i>{{"Accelerometer" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-compass"></i>{{"Orientation" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-radio-waves"></i>{{"Proximity" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-contrast"></i>{{"Light" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-monitor"></i>{{"Screnn Orientation" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-lightbulb"></i>{{"FlashLight" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-document"></i>{{"Sim Cards" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+	</ul>
 	<p>
 		<img ng-show="imgURI !== undefined" ng-src="{{imgURI}}">
 		<img ng-show="imgURI === undefined" ng-src="http://placehold.it/300x300">
@@ -62,6 +164,8 @@
 		humidity : {{humidity}}<br/>
 		temperature : {{temperature}}<br/>
 		screen_orientation : {{screen_orientation}}<br/>
+		flashlight.available : {{flashlight.available}}<br/>
+		flashlight.isActivated : {{flashlight.isActivated}}<br/>
     <br/>
 	
 	<p>Device : <br/>
@@ -80,11 +184,28 @@
 		localName : {{globalization.localName}}<br/>
     <br/>
 	
+	<p>Sim Cards : <br/>
+        nbCards : {{sim.nbCards}}<br/>
+		subscriberId : {{sim.subscriberId}}<br/>
+		<ion-list>
+		  <ion-item ng-repeat="card in sim.cards">
+			simSlotIndex : {{card.simSlotIndex}}<br/>
+			carrierName : {{card.carrierName}}<br/>
+			countryCode : {{card.countryCode}}<br/>
+			deviceId : {{card.deviceId}}<br/>
+			displayName : {{card.displayName}}<br/>
+			isDataRoaming : {{card.isDataRoaming}}<br/>
+			isNetworkRoaming : {{card.isNetworkRoaming}}<br/>
+			simSerialNumber : {{card.simSerialNumber}}<br/>
+		  </ion-item>
+		</ion-list>
+    <br/>
+	
 	<br/>
 	<br/>
 	<br/>
 	</p>
-	
+	</ion-content>
 	  
   
   

@@ -18,9 +18,36 @@
     "cordova-plugin-whitelist",
     "cordova-plugin-statusbar",
     "cordova-plugin-console",
-    "cordova-plugin-device",
     "cordova-plugin-splashscreen",
-    "ionic-plugin-keyboard"
+    "ionic-plugin-keyboard",
+    "cordova-plugin-camera",
+    "cordova-plugin-compat",
+    "cordova-plugin-geolocation",
+    "cordova-plugin-battery-status",
+    "cordova-plugin-device-motion",
+    "cordova-plugin-device-orientation",
+    "cordova-plugin-globalization",
+    "cordova-plugin-network-information",
+    "cordova-plugin-bluetooth-serial",
+    {
+      "locator": "https://github.com/fabiorogeriosj/cordova-plugin-sensors.git",
+      "id": "com.fabiorogeriosj.sensors"
+    },
+    "cordova-plugin-device",
+    "cordova-plugin-screen-orientation",
+    "cordova-plugin-sim",
+    "cordova-plugin-flashlight",
+    "cordova-plugin-vibration",
+    "org.apache.cordova.plugin.RingtonePicker",
+    "cordova-plugin-media",
+    "cordova-plugin-file",
+    "cordova-plugin-autostart"
   ],
-  "cordovaPlatforms": []
+  "cordovaPlatforms": [
+    {
+      "platform": "android",
+      "version": "",
+      "locator": "android"
+    }
+  ]
 }

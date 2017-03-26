@@ -1,4 +1,6 @@
-var slidingTabsDirective = angular.module("ionic").directive('ionSlideTabs', ['$timeout', '$compile', '$interval', '$ionicSlideBoxDelegate', '$ionicScrollDelegate', '$ionicGesture', function($timeout, $compile, $interval, $ionicSlideBoxDelegate, $ionicScrollDelegate, $ionicGesture) {
+angular.module("ionic")
+
+.directive('ionSlideTabs', ['$timeout', '$compile', '$interval', '$ionicSlideBoxDelegate', '$ionicScrollDelegate', '$ionicGesture', 'getTabIndex', function($timeout, $compile, $interval, $ionicSlideBoxDelegate, $ionicScrollDelegate, $ionicGesture, getTabIndex) {
     return {
         require: "^ionSlideBox",
         restrict: 'A',
@@ -147,7 +149,7 @@ var slidingTabsDirective = angular.module("ionic").directive('ionSlideTabs', ['$
                 }
 
                 var targetSlideIndex = ionicSlideBoxDelegate.currentIndex();
-
+				getTabIndex.setTab(targetSlideIndex);
                 var targetTab = angular.element(slideTabs[targetSlideIndex]);
                 var targetLeftOffset = targetTab.prop("offsetLeft");
                 var targetWidth = targetTab[0].offsetWidth;
@@ -282,13 +284,40 @@ var slidingTabsDirective = angular.module("ionic").directive('ionSlideTabs', ['$
             }
         }]
     };
-}]);
+}])
 
-slidingTabsDirective.directive('ionSlideTabLabel', [ function() {
+.directive('ionSlideTabLabel', [ function() {
     return {
         require: "^ionSlideTabs",
         link: function ($scope, $element, $attrs, $parent) {
             $parent.addTab($attrs.ionSlideTabLabel);
         }
     }
-}]);
+}])
+
+;
+
+angular.module("ServU").directive('scrollWatch', function($rootScope, $ionicScrollDelegate) {
+  return function(scope, elem, attr) {
+    var start = 0;
+    var threshold = 150;
+    
+    elem.bind('scroll', function(e) {
+
+		var valScroll = e.target.scrollTop;
+		
+		if(valScroll - start > threshold) {
+			$rootScope.slideHeader = true;
+		} else {
+			$rootScope.slideHeader = false;
+		}
+		if ($rootScope.slideHeaderPrevious >= valScroll - start) {
+			$rootScope.slideHeader = false;
+		}
+		$rootScope.slideHeaderPrevious = valScroll - start;
+		$rootScope.$apply();
+		});
+	};
+})
+
+;

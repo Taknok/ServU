@@ -9,10 +9,10 @@ angular.module('ServU', ['ionic', 'ngCordova', 'pascalprecht.translate'])
 
 .config(function($stateProvider, $urlRouterProvider, $translateProvider) {
   $stateProvider
-  .state('weather', {
-    url: '/weather',
-    templateUrl: 'views/weather.html',
-    controller: 'WeatherCtrl'
+  .state('home', {
+    url: '/home',
+    templateUrl: 'views/home.html',
+    controller: 'homeCtrl'
   })
   
   .state('main', {
@@ -26,6 +26,7 @@ angular.module('ServU', ['ionic', 'ngCordova', 'pascalprecht.translate'])
 	  templateUrl: 'views/probes.html',
 	  controller: 'ProbesCtrl'
   });
+  
   $urlRouterProvider.otherwise('/main');
   
   $translateProvider.useSanitizeValueStrategy('escape'); // gestion des caractères d’échappement

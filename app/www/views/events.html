@@ -1,0 +1,26 @@
+<ion-view view-title="Events" ng-controller="EventsCtrl" cache-view="false">
+  <ion-header-bar class="bar-stable">
+    <h1 class="title">Events</h1>
+    <div class="buttons">
+      <button class="button button-icon ion-plus" ng-click="addItem()"></button>
+	  <button class="button button-icon ion-refresh" ng-click="refreshItem()"></button>
+    </div>
+  </ion-header-bar>
+  <ion-content scroll-watch>
+  
+  <!-- /* Useless for the moment, no api config, see forecast website directly here */ -->
+  
+	<div ng-repeat="item in items">
+		<div class="card">
+			<div class="item item-divider item-button-right">
+				<span class="event-title">{{"Name" | translate}} :</span><span class="event-name"> [event.name]</span>
+				<button class="button button-small button-outline button-positive">Edit</button>
+			</div>
+			<div class="item item-text-wrap">
+				<span class="event-if">{{"If" | translate}}</span><span class="event-condition"> {{item.name}} </span><span class="event-then">then</span><span class="event-action"> [action]</span></br>
+				<span class="event-title-parameters">{{"Parameters" | translate}} :</span><span class="event-parameters"> [action parameters]</span>
+			</div>
+		</div>
+	</div>
+  </ion-content>
+</ion-view>

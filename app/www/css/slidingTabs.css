@@ -29,7 +29,7 @@ ion-slide:nth-child(2n) {
 }
 
 .slidingTabs ul {
-    background-color: #387ef5;
+    background-color: rgba(56,126,245,1);
     height: 48px;
 }
 
