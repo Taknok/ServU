@@ -1,4 +1,9 @@
 'use strict';
+var MongoClient = require('mongodb').MongoClient
+  , assert = require('assert');
+
+// Connection URL
+var url = 'mongodb://127.0.0.1:27017/paul';
 /*
  'use strict' is not required but helpful for turning syntactical errors into true errors in the program flow
  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
@@ -10,7 +15,7 @@
 
   It is a good idea to list the modules that your application depends on in the package.json in the project root
  */
- 
+
 var db = require("../../config/db")();
 
 var util = require('util');
@@ -54,12 +59,26 @@ function getAll(req, res, next) {
 //GET /movie/{id} operationId
 function getOne(req, res, next) {
 	var username = req.swagger.params.username.value; //req.swagger contains the path parameters
-	var user = db.find(username);
-	if(movie) {
-		res.json(user);
-	}else {
-		res.status(204).send();
-	}       
+
+  MongoClient.connect(url,  function(err, db1) {
+    assert.equal(null, err);
+    console.log("Connected correctly to server");
+
+    db1.collection("users").find().toArray(function (error, user) {
+      if (error) throw error;
+      console.log(user[0]);
+      if(user) {
+    		res.json(user[0]);
+    	}else {
+    		res.status(204).send();
+    	}
+
+    });
+
+
+
+  });
+
 }
 //PUT /movie/{id} operationId
 function update(req, res, next) {

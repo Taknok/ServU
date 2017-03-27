@@ -8,8 +8,18 @@
   "license": "",
   "main": "app.js",
   "dependencies": {
-    "express": "^4.12.3",
-    "swagger-express-mw": "^0.1.0"
+    "swagger-express-mw": "^0.1.0",
+    "body-parser": "~1.16.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.0",
+    "ejs": "~2.5.5",
+    "express": "~4.14.1",
+    "mongodb": "^2.2.25",
+    "morgan": "~1.7.0",
+    "serve-favicon": "~2.3.2",
+    "connect": "^3.2.0",
+    "js-yaml": "^3.3.0",
+    "swagger-tools": "0.10.1"
   },
   "devDependencies": {
     "should": "^7.1.0",
