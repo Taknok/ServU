@@ -1,7 +1,11 @@
 'use strict';
 
 var SwaggerExpress = require('swagger-express-mw');
-var app = require('express')();
+var express = require('express')
+  , http = require('http')
+  , app = express()
+  , server = http.createServer(app)
+
 module.exports = app; // for testing
 
 var config = {
@@ -15,7 +19,11 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   swaggerExpress.register(app);
 
   var port = process.env.PORT || 8080;
-  app.listen(port);
+  server.listen(8000,'127.0.0.1',function(){
+    server.close(function(){
+      server.listen(8001,'192.168.22.151')
+    })
+  })
 
   // if (swaggerExpress.runner.swagger.paths['/api']) {
   //   console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');

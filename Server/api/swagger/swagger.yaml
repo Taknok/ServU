@@ -320,6 +320,7 @@ paths:
         "404":
           description: uuid not found
     put:
+      operationId: putProbes
       description: "Update the status of the probes"
       parameters:
         - $ref: "#/parameters/uuid"

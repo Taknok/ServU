@@ -11,7 +11,8 @@ var util = require('util');
 
 
 module.exports = {
-	postProbes
+	postProbes,
+  putProbes
 }
 
 
@@ -37,9 +38,15 @@ module.exports = {
           MongoClient.connect(url,  function(err, db1) {
             assert.equal(null, err);
             console.log("Connected correctly to server");
-            db1.collection("phone").findOne({"uuid" : req.swagger.params.uuid.value},function(err, phone){
-              if (error) throw error;
-              
+            db1.collection("phone").findOne({"uuid" : req.swagger.params.uuid.value,},function(err, phone){
+              if (err) throw err;
+              console.log(phone);
+              //  var id = req.swagger.params.uuid.value; //req.swagger contains the path parameters
+              //  if(db.update({"uuid" : }, req.body)){
+              //      res.json({success: 1, description: "Movie updated!"});
+              //  }else{
+              //      res.status(204).send();
+              //  }
             });
           });
 
