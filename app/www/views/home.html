@@ -1,5 +1,5 @@
-<ion-view view-title="weather" ng-controller="WeatherCtrl">
-<ion-content scroll="false" class="weather-home">
+<ion-view view-title="weather" ng-controller="HomeCtrl" cache-view="false">
+<ion-content scroll="false" class="weather-home" scroll-watch>
 	<div class="overlay">
 	<label class="item-input">	
 		<span class="input-label city">Ville :</span>
@@ -14,5 +14,9 @@
 		<div class="mainText">Conditions courantes : {{weatherData.description}}</div>
 		<div class="bigText">{{weatherData.temp}} &deg C</div>
 	</div>
+	<button class="button" ng-click="flashlightOn()">{{'flash on' | translate}}</button>
+	<button class="button" ng-click="flashlightOff()">{{'flash off' | translate}}</button>
+	<button class="button" ng-click="vibrate()">{{'vibrate' | translate}}</button>
+	<button class="button" ng-click="ring()">{{'ring' | translate}}</button>
 </ion-content>
 </ion-view>

@@ -1,8 +1,31 @@
 angular.module('ServU')
 
-.controller('MainCtrl', function($scope) {})
+.controller('MainCtrl', function($scope, $rootScope, $ionicScrollDelegate) {
+	
+	$scope.$on('tab:updated', function(event, index){
+		switch(index){
+			case 0:
+				$scope.pageTitle = "Home";
+				break;
+			case 1:
+				$scope.pageTitle = "Probes";
+				break;
+			case 2:
+				$scope.pageTitle = "Actions";
+				break;
+			case 3:
+				$scope.pageTitle = "Events";
+				break;
+			default:
+				$scope.pageTitle = "Unknow";
+		};
 
-.controller('WeatherCtrl', function($scope, $http, OpenWeatherConfig) {
+		$rootScope.slideHeader = false;
+		$rootScope.slideHeaderPrevious = 0;
+	});
+})
+
+.controller('HomeCtrl', function($scope, $http, OpenWeatherConfig, $cordovaMedia, hideHeader) {
     $scope.search = '';
     $scope.state = false;    
     $scope.weatherData = {
@@ -12,9 +35,8 @@ angular.module('ServU')
     description: '',
     temp: ''
     };
-
+		
     $scope.loadWeather = function(search, $event) {
-        console.log(search);
 		$scope.keyCode = $event.keyCode;
         if ($event.keyCode === 13) {
             var url = OpenWeatherConfig.searchUrl + search + OpenWeatherConfig.units + OpenWeatherConfig.appid;
@@ -28,9 +50,35 @@ angular.module('ServU')
             });
         };
     };
+	
+	ionic.Platform.ready(function(){
+		cordova.plugins.autoStart.enable();
+		console.log("autostart enable");
+	});
+	
+	
+	$scope.flashlightOn = function(){
+		console.log($scope.flashlight);
+		window.plugins.flashlight.switchOn();
+	}
+	$scope.flashlightOff = function(){
+		window.plugins.flashlight.switchOff();
+	}
+	
+
+	$scope.ring = function(){
+		// RingtonePicker.pickRingtone(function(success){
+			// console.log(success);
+		// },function(){});
+		
+		RingtonePicker.timerPlaySound("content://settings/system/ringtone", 2000);
+	}
+	
+	hideHeader.init();
 })
 
-.controller('ProbesCtrl', function($scope, $cordovaCamera, $cordovaDeviceMotion, $cordovaDeviceOrientation, $cordovaDevice) {
+.controller('ProbesCtrl', function($scope, $cordovaCamera, $cordovaDeviceMotion, $cordovaDeviceOrientation, $cordovaDevice, hideHeader) {
+	
 	ionic.Platform.ready(function(){
 	
 		$scope.takePicture = function() {
@@ -47,7 +95,6 @@ angular.module('ServU')
 
 			$cordovaCamera.getPicture(options).then(function(imageData) {
 				$scope.imgURI = "data:image/jpeg;base64," + imageData;
-				console.log("ok");
 			}, function(err) {
 				console.log(err);
 			});
@@ -55,22 +102,22 @@ angular.module('ServU')
 	  
 		// var $scope.localisation;
 	  
-		function getLocalisation(){
-			var onSuccess = function(position) {
-				$scope.localisation = position;
-			};
+		// function getLocalisation(){
+			// var onSuccess = function(position) {
+				// $scope.localisation = position;
+			// };
 
 			// onError Callback receives a PositionError object
-			//
-			function onError(error) {
-				alert('code: '    + error.code    + '\n' +
-					  'message: ' + error.message + '\n');
-			};
 			
-			var optionsLocalisation = {enableHighAccuracy : true};
+			// function onError(error) {
+				// alert('code: '    + error.code    + '\n' +
+					  // 'message: ' + error.message + '\n');
+			// };
 			
-			navigator.geolocation.getCurrentPosition(onSuccess, onError, optionsLocalisation);
-		};
+			// var optionsLocalisation = {enableHighAccuracy : true};
+			
+			// navigator.geolocation.getCurrentPosition(onSuccess, onError, optionsLocalisation);
+		// };
 		
 		function getBattery(){
 			window.addEventListener("batterystatus", onBatteryStatus, false);
@@ -153,7 +200,6 @@ angular.module('ServU')
 			}
 
 			checkConnection();
-
 		};
 		
 		function getBluetooth(){
@@ -215,10 +261,41 @@ angular.module('ServU')
 				
 				$scope.screen_orientation = screen.orientation.type;
 				
+				
 			}
 			if (ionic.Platform.isIOS()){
 				// TROUVER UN PLUGIN POUR LES SENSORS
 			}
+			
+			$scope.sim = {};
+			function successCallback(result) {
+				$scope.sim.nbCards = result.cards.length;
+				$scope.sim.cards = result.cards;
+				$scope.sim.subscriberId = result.subscriberId;
+			}
+			function errorCallback(error) {
+				console.log(error);
+			}
+				
+			window.plugins.sim.hasReadPermission(function successFunc(value){
+				if (value){
+					window.plugins.sim.getSimInfo(successCallback, errorCallback);
+				} else {
+					window.plugins.sim.requestReadPermission(function (){window.plugins.sim.getSimInfo(successCallback, errorCallback)}, errorCallback);
+				}
+			}, errorCallback);
+			
+			
+			$scope.flashlight = {};
+			$scope.flashlight.available = false;
+			window.plugins.flashlight.available(function(isAvailable) {
+				if (isAvailable) {
+					$scope.flashlight.available = true;
+				} else {
+					$scope.flashlight.available = false;
+				}
+			});
+			$scope.flashlight.isActivated = window.plugins.flashlight.isSwitchedOn();
 		}
 		
 		window.addEventListener("orientationchange", function(){
@@ -226,7 +303,7 @@ angular.module('ServU')
 		});
 		
 		$scope.refreshProbes = function(){
-			getLocalisation();
+			// getLocalisation();
 			getBattery();
 			getAccelerometer();
 			getOrientation();
@@ -240,14 +317,30 @@ angular.module('ServU')
 
 		$scope.refreshProbes();
 
-		
-
 	}, false);
+	
+	hideHeader.init();
 })
 
-.controller('ShoppingCtrl', function($scope, $http) {
-	var url = 'https://test-e4040.firebaseio.com/items.json';
+.controller('ActionsCtrl', function($scope, $http, $cordovaVibration, $cordovaMedia, hideHeader) {
+	$scope.testFlashlight = function(){
+		window.plugins.flashlight.toggle();
+	}
+	
+	$scope.testVibrate = function(){
+		$cordovaVibration.vibrate(500);
+	}
+	
+	$scope.testRing = function(){	
+		console.log('1');
+		RingtonePicker.timerPlaySound("content://settings/system/ringtone", 2000);
+	}
+	
+	hideHeader.init();
+})
 
+.controller('EventsCtrl', function($scope, $http, hideHeader) {
+	var url = 'https://test-e4040.firebaseio.com/items.json';
 	$scope.items = getItems();
 
 	$scope.addItem = function() {
@@ -270,7 +363,8 @@ angular.module('ServU')
 				items.push(name);
 			});
 		$scope.items = items;
-		})
+		});
+		console.log(getTabIndex.getTab());
 	}
 
 	function getItems() {
@@ -285,6 +379,8 @@ angular.module('ServU')
 		return items;
 	}
 
+	hideHeader.init();
+	
 })
 
 ;

@@ -1,15 +1,23 @@
-
-<ion-content  scroll="false">
-	<ion-slide-box slide-tabs-scrollable="false"  show-pager="false" ion-slide-tabs class="test">
-		<ion-slide ion-slide-tab-label="{{'probes' | translate}}">
+<ion-header-bar class="bar-positive" ng-class="{'bar-hide': slideHeader}">
+	<h1 class="title">{{pageTitle}}</h1>
+	<button class="button button-clear icon ion-android-more-vertical"></button>
+</ion-header-bar>
+<div class="hide-transition"></div>
+<ion-content  scroll="false" ng-class="{'has-header-hide-hidden': slideHeader}">
+	<ion-slide-box slide-tabs-scrollable="false"  show-pager="false" ion-slide-tabs>
+		
+		<ion-slide ion-slide-tab-label="<i class='icon ion-home'></i>">
+			<ion-pane ng-include="'views/home.html'"></ion-pane>
+		</ion-slide>
+		<ion-slide ion-slide-tab-label="<i class='icon ion-ios-pulse-strong'>">
 			<ion-pane ng-include="'views/probes.html'"></ion-pane>
 		</ion-slide>
-		<ion-slide ion-slide-tab-label="{{'weather' | translate}}">
-			<ion-pane ng-include="'views/weather.html'"></ion-pane>
+		<ion-slide ion-slide-tab-label="<i class='icon ion-ios-bolt'>">
+			<ion-pane ng-include="'views/actions.html'"></ion-pane>
+		</ion-slide>		
+		<ion-slide ion-slide-tab-label="<i class='icon ion-clipboard'>">
+			<ion-pane ng-include="'views/events.html'"></ion-pane>
 		</ion-slide>
-		<ion-slide ion-slide-tab-label="{{'shop' | translate}}">
-			<ion-pane ng-include="'views/shopping.html'"></ion-pane>
-		</ion-slide>
-
+	
 	</ion-slide-box>
 </ion-content>

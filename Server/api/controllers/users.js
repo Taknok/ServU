@@ -59,6 +59,7 @@ function getAll(req, res, next) {
 //GET /movie/{id} operationId
 function getOne(req, res, next) {
 	var username = req.swagger.params.username.value; //req.swagger contains the path parameters
+<<<<<<< HEAD:Server/api/controllers/users.js
 
   MongoClient.connect(url,  function(err, db1) {
     assert.equal(null, err);
@@ -79,6 +80,14 @@ function getOne(req, res, next) {
 
   });
 
+=======
+	var user = db.find(username);
+	if(user) {
+		res.json(user);
+	}else {
+		res.status(204).send();
+	}       
+>>>>>>> origin/dev:test/api/controllers/users.js
 }
 //PUT /movie/{id} operationId
 function update(req, res, next) {

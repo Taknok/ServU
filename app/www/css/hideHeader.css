@@ -1,0 +1,20 @@
+.hide-transition {
+	background-color: rgba(56,126,245,1);
+	height: 50px
+}
+
+.bar-hide {
+    top: -50px;
+	transition: top 0.5s ease;
+}
+
+.has-header-hide-hidden {
+    top: 0px;
+	transition: top 0.5s ease;
+}
+
+body.bar-header-slide-away {
+    .bar-header {
+        top: -50;
+    }
+}
