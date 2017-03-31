@@ -1,6 +1,76 @@
 angular.module('ServU')
 
-.controller('MainCtrl', function($scope, $rootScope, $ionicScrollDelegate) {
+.controller('MainCtrl', function($scope, $http, $rootScope, $ionicScrollDelegate, $interval, ServUConfig, phoneInfo, actionFacto) {
+	
+	
+	function doAction(action){
+		var params = action.data;
+		switch(action.action){
+			case "flashlight":
+			
+				break;
+			case "vibrate":
+				actionFacto.vibrate(params.time);
+				action.status = "done";
+				//action.timestamp =
+				break;
+			case "ring":
+				actionFacto.vibrate(params.time);
+				action.status = "done";
+				break;
+			default:
+				console.log("unknow action " + action.name);
+		}
+	}
+	
+	function upSendAction(action){
+		
+		var url = ServUConfig.searchUrl + "/phone/" + phoneInfo.getUuid() + "/actions_user";
+		var data = [{
+			"actionId" : action.actionId,
+			"status" : action.status
+		}]
+		$http.put(url, data);
+	}
+	
+	function tmp(){
+		var url = ServUConfig.searchUrl + "/phone/f5a093a93f755479/actions_user";
+		var data = [{
+			"actionId" : 1,
+			"status" : "done"
+		}]
+		console.log(url);
+		$http.put(url, data, {});
+		
+	}
+	
+	function getActions() {
+		var items = [];
+		var url = ServUConfig.searchUrl + "/phone/" + phoneInfo.getUuid() + "/actions_user";
+		$http.get(url).success(function(actions) {
+			for(var i = 0; i < actions.length; i++){
+				var action = actions[i];
+				if (action.status === "pending"){
+					doAction(action);
+					console.log(action);
+					upSendAction(action);
+				}
+			}
+		});
+	}
+	
+	$scope.up = function(){
+		getActions();
+	}
+	
+	$interval(function(){
+		if (phoneInfo.getUuid() != 0){
+			getActions();
+		}
+	}, 5 * 1000);
+	
+	
+	
 	
 	$scope.$on('tab:updated', function(event, index){
 		switch(index){
@@ -25,7 +95,7 @@ angular.module('ServU')
 	});
 })
 
-.controller('HomeCtrl', function($scope, $http, OpenWeatherConfig, $cordovaMedia, hideHeader) {
+.controller('HomeCtrl', function($scope, $http, OpenWeatherConfig, $cordovaMedia, hideHeader, ServUConfig) {
     $scope.search = '';
     $scope.state = false;    
     $scope.weatherData = {
@@ -74,10 +144,14 @@ angular.module('ServU')
 		RingtonePicker.timerPlaySound("content://settings/system/ringtone", 2000);
 	}
 	
+	$scope.post = function(){
+		
+	}
+	
 	hideHeader.init();
 })
 
-.controller('ProbesCtrl', function($scope, $cordovaCamera, $cordovaDeviceMotion, $cordovaDeviceOrientation, $cordovaDevice, hideHeader) {
+.controller('ProbesCtrl', function($scope, $http, $cordovaCamera, $cordovaDeviceMotion, $cordovaDeviceOrientation, $cordovaDevice, hideHeader, ServUConfig, actionFacto, phoneInfo) {
 	
 	ionic.Platform.ready(function(){
 	
@@ -100,24 +174,23 @@ angular.module('ServU')
 			});
 		};
 	  
-		// var $scope.localisation;
 	  
-		// function getLocalisation(){
-			// var onSuccess = function(position) {
-				// $scope.localisation = position;
-			// };
+		function getLocalisation(){
+			var onSuccess = function(position) {
+				$scope.localisation = position;
+			};
 
 			// onError Callback receives a PositionError object
 			
-			// function onError(error) {
-				// alert('code: '    + error.code    + '\n' +
-					  // 'message: ' + error.message + '\n');
-			// };
+			function onError(error) {
+				alert('code: '    + error.code    + '\n' +
+					  'message: ' + error.message + '\n');
+			};
 			
-			// var optionsLocalisation = {enableHighAccuracy : true};
+			var optionsLocalisation = {enableHighAccuracy : true};
 			
-			// navigator.geolocation.getCurrentPosition(onSuccess, onError, optionsLocalisation);
-		// };
+			navigator.geolocation.getCurrentPosition(onSuccess, onError, optionsLocalisation);
+		};
 		
 		function getBattery(){
 			window.addEventListener("batterystatus", onBatteryStatus, false);
@@ -302,16 +375,23 @@ angular.module('ServU')
 			$scope.screen_orientation = screen.orientation.type;
 		});
 		
+		function getDevice(){
+			$scope.device = ionic.Platform.device();
+			console.log($scope.device.uuid);
+			phoneInfo.setUuid($scope.device.uuid);
+			console.log(phoneInfo.getUuid());
+		}
+		
 		$scope.refreshProbes = function(){
 			// getLocalisation();
 			getBattery();
 			getAccelerometer();
 			getOrientation();
-			$scope.device = ionic.Platform.device();
+			getDevice();
 			getGlobalization();
 			getNetwork();
 			getBluetooth();
-			getOthersSensors();
+			getOthersSensors();			
 		};
 		
 

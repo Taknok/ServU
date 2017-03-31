@@ -7,7 +7,33 @@ angular.module('ServU')
 			$rootScope.slideHeaderPrevious = 0;
 		}
 	};
-}]);
+}])
+
+.factory("actionFacto", [ "$cordovaVibration", function($cordovaVibration){
+	return {
+		ring: function(time){
+			RingtonePicker.timerPlaySound("content://settings/system/ringtone", time);
+		},
+		vibrate: function(time){
+			$cordovaVibration.vibrate(time);
+		}
+	};
+}])
+
+.factory("phoneInfo", [ function(){
+	var _uuid = 0;
+	return {
+		setUuid: function(uuid){
+			_uuid = uuid;
+		},
+		getUuid: function(){
+			return _uuid;
+		}
+	};
+}])
+
+
+;
 
 
 angular.module("ionic").factory("getTabIndex", [ "$rootScope",  function($rootScope){
