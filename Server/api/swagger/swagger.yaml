@@ -3,7 +3,7 @@ info:
   version: 0.0.2
   title: ServU
 # during dev, should point to your local machine
-host: localhost:8080
+host: 192.168.137.1:8001
 # basePath prefixes all resource paths
 basePath: /api
 #
@@ -45,7 +45,6 @@ parameters:
     required: true
     schema:
       $ref: "#/definitions/action_post"
-
 
 
 
@@ -317,8 +316,12 @@ paths:
       responses:
         "201":
           description: Success
+        "400":
+          description: Wrong format
         "404":
           description: uuid not found
+        "409":
+          description: Conflict on post
     put:
       operationId: putProbes
       description: "Update the status of the probes"
@@ -341,8 +344,11 @@ paths:
           description: "uuid not found"
 
   /phone/{uuid}/actions:
+    x-swagger-router-controller: phone
+    
     post:
-      description: "Post the actions availables on this phone"
+      operationId: postActions
+      description: "Post the actions availables on this phone (chose by user)"
       parameters:
         - $ref: "#/parameters/uuid"
         - name: actions
@@ -360,9 +366,10 @@ paths:
           description: "Wrong format"
         "404":
           description: "Device or action id not found"
-
-  /phone/{uuid}/action:
+        "409":
+          description: "Conflict"
     get:
+      operationId: getActions
       description: "Get the action in top queue to do"
       parameters:
         - $ref: "#/parameters/uuid"
@@ -370,32 +377,73 @@ paths:
         "200":
           description: "Return the action to do"
           schema:
-            $ref: "#/definitions/action"
+            type: array
+            items:
+              $ref: "#/definitions/action"
         "404":
-          description: "Device not found"
-
-  /phone/{uuid}/action/{action-id}:
+          description: "Device not found or no action"
     put:
-      description: "Update the action for that id needed. Ex update action status"
+      operationId: putActions
+      description: "Update the actions availables on this phone (chose by user)"
       parameters:
         - $ref: "#/parameters/uuid"
-        - name: action-id
-          description: id de l'actiona mettre a jour
-          type: string
+        - name: actions
+          description: "Array of actions available on this phone"
           required: true
-          in: path
-        - name: status
-          description: status of this action
-          type: string
-          enum: ["pending","in progress","done"]
-          required: true
-          in: query
+          in: body
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/action_post"
       responses:
-        "204":
+        "201":
           description: "Success"
+        "400":
+          description: "Wrong format"
+        "404":
+          description: "Device or action id not found"
+    
+
+  
+
+  /phone/{uuid}/actions_user:
+    x-swagger-router-controller: phone
+    
+    get:
+      operationId: getActionsUser
+      description: "Get the action in top queue to do"
+      parameters:
+        - $ref: "#/parameters/uuid"
+      responses:
+        "200":
+          description: "Return the action to do"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/action"
         "404":
           description: "Device not found"
-
+    put:
+      operationId: putActionsUser
+      description: "Update the user action"
+      parameters:
+        - $ref: "#/parameters/uuid"
+        - name: ActionStatus
+          description: "Status of the action"
+          required: true
+          in: body
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/action_put"
+      responses:
+        "201":
+          description: "Success"
+        "400":
+          description: "Wrong format"
+        "404":
+          description: "Device or action id not found"
+    
 
 # complex objects have schema definitions
 
@@ -464,7 +512,6 @@ definitions:
     type: object
     required:
       - name
-      - active
     properties:
       name:
         type: string
@@ -484,12 +531,22 @@ definitions:
         type: string
       status:
         $ref: "#/definitions/status"
+      data:
+        type: object
 
       creation-date:
         type: string
         format: date
       parameters:
         type: object
+
+  action_put:
+    type: object
+    properties:
+      actionId:
+        type: integer
+      status:
+        $ref: "#/definitions/status"
 
   status:
     type: string
@@ -500,3 +557,5 @@ definitions:
     properties:
       name:
         type: string
+      active:
+        type: boolean
