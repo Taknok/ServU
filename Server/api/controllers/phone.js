@@ -19,41 +19,52 @@ module.exports = {
 }
 
 
-//POST   /phone/{uuid}/probes
 function postProbes(req, res, next) {
-  MongoClient.connect(url,  function(err, db) {
-	assert.equal(null, err);
-	console.log("Connected correctly to server");
+  MongoClient.connect(url,  function(err, db1) {
+    assert.equal(null, err);
+    console.log("Connected correctly to server");
 
-	  const phone = {
-		"uuid": req.swagger.params.uuid.value,
-		"probes": req.body
-	  }
-	db.collection("phone").insert(phone,function(err) {
-		 if (!err) res.json({success: 1, description: "Probes Added"});
-	   }
-	);
+    const phone = {
+      "uuid": req.swagger.params.uuid.value,
+       "device": req.body
+    }
+    db1.collection("phone").findOne({"uuid": req.swagger.params.uuid.value},function(error, exist) {
+      console.log(error);
+      if(exist == null && error == null){
+        db1.collection("phone").insert(phone,function(err, probe) {
+             if (!err) res.json(phone);
+             else{
+                 res.status(204).send();
+             }
+           }
+        );
+      }
+      else{
+        res.status(409).send();
+      }
+    });
+
   });
 }
 
 // /PUT  /phone/{uuid}/probes
-function putProbes(req, res, next) {
-  MongoClient.connect(url,  function(err, db) {
-	assert.equal(null, err);
-	console.log("Connected correctly to server");
-	db.collection("phone").findOne({"uuid" : req.swagger.params.uuid.value,},function(err, phone){
-	  if (err) throw err;
-	  console.log(phone);
-	  //  var id = req.swagger.params.uuid.value; //req.swagger contains the path parameters
-	  //  if(db.update({"uuid" : }, req.body)){
-	  //      res.json({success: 1, description: "Movie updated!"});
-	  //  }else{
-	  //      res.status(204).send();
-	  //  }
-	});
-  });
-}
-
+    function putProbes(req, res, next) {
+      MongoClient.connect(url,  function(err, db1) {
+        assert.equal(null, err);
+        console.log("Connected correctly to server");
+        console.log( req.swagger.params.uuid.value);
+        const phone = {
+          "uuid": req.swagger.params.uuid.value,
+           "device": req.body
+        }
+           db1.collection("phone").update({"uuid" : req.swagger.params.uuid.value}, phone,  function(err, modif){
+               if (!err) res.json(modif);
+           else{
+               res.status(204).send();
+           }
+        });
+      });
+    }
 
 function checkActions(actions){
 	if (typeof actions == 'undefined'){
@@ -70,9 +81,9 @@ function postActions(req, res, next) {
 	MongoClient.connect(url,  function(err, db) {
 		assert.equal(null, err);
 		console.log("Connected correctly to server");
-		
+
 		var actions = req.body;
-		
+
 		if (!checkActions(actions)){
 			res.status(400).send("")
 			return;
@@ -80,19 +91,19 @@ function postActions(req, res, next) {
 		var action;
 		for(var i = 0; i < actions.length; i++){ //for in ne marche pas ici :(
 			action = actions[i]
-			
+
 			db.collection("phone").findOne({"uuid" : req.swagger.params.uuid.value, "actions" : { "$elemMatch" : {"name" : action.name }}}, function(err, data){
 				if ( data == null){
-					
+
 					const updateAction = { "$push" :{
 							"actions": action
 						}
 					}
-					
+
 					db.collection("phone").update({"uuid" : req.swagger.params.uuid.value, }, updateAction, { upsert: true}, function(err) {
-						if (!err) res.json({success: 1, description: "Action Added"});	
+						if (!err) res.json({success: 1, description: "Action Added"});
 					});
-					
+
 				} else {
 					res.status(409).send("");
 				}
@@ -106,7 +117,7 @@ function getActions(req, res, next) {
 	MongoClient.connect(url,  function(err, db) {
 		assert.equal(null, err);
 		console.log("Connected correctly to server");
-		
+
 		db.collection("phone").findOne({"uuid" : req.swagger.params.uuid.value, "actions" : { "$exists" : true }}, function(err, phone){ //on pourrait demander de ret que actions mais flemme
 			if (phone != null){
 				if (err) throw err;
@@ -123,18 +134,18 @@ function putActions(req, res, next) {
 	MongoClient.connect(url,  function(err, db) {
 		assert.equal(null, err);
 		console.log("Connected correctly to server");
-		
+
 		var actions = req.body;
 
 		if (!checkActions(actions)){
 			res.status(400).send("")
 			return;
 		}
-		
+
 		var action;
 		for(var i = 0; i < actions.length; i++){ //for in ne marche pas ici :(
 			action = actions[i]
-			
+
 			db.collection("phone").findOne({"uuid" : req.swagger.params.uuid.value, "actions" : { "$elemMatch" : {"name" : action.name }}}, function(err, data){
 				if ( data == null){
 					res.status(404).send("");
@@ -160,18 +171,18 @@ function getActionsUser(req, res, next) {
 		assert.equal(null, err);
 		console.log("Phone " + req.swagger.params.uuid.value + " getActionsUser");
 		console.log("Connected correctly to server");
-		
+
 		db.collection("phone").findOne({"uuid" : req.swagger.params.uuid.value, "actionsUser" : { "$exists" : true }}, function(err, phone){ //idem pour ce get
 			if (err) throw err;
 			if (phone != null){	//if uuid there
 				db.collection("phone").findOne({"uuid" : req.swagger.params.uuid.value, "actionsUser" : { "$elemMatch" : {"status" : {"$eq" : "pending"} }}}, function(err, phone){
-					if (phone != null){	
+					if (phone != null){
 						res.json(phone.actionsUser);
 					} else { //if nothing send null array
 						res.json([]);
 					}
 				});
-				
+
 			} else { //uuid not found
 				res.status(404).send();
 			}
@@ -185,11 +196,11 @@ function putActionsUser(req, res, next) {
 		assert.equal(null, err);
 		console.log("Phone " + req.swagger.params.uuid.value + " putActionsUser");
 		console.log("Connected correctly to server");
-		
+
 		var actionsStatus = req.body;
 
 		// faudra veriefier que c'est sous le bon format
-		
+
 		var actionStatus;
 		for(var i = 0; i < actionsStatus.length; i++){ //for in ne marche pas ici :(
 			actionStatus = actionsStatus[i]
@@ -203,7 +214,7 @@ function putActionsUser(req, res, next) {
 							"actionsUser.$.status": actionStatus.status
 						}
 					}
-					
+
 					db.collection("phone").update({"uuid" : req.swagger.params.uuid.value, "actionsUser" : { "$elemMatch" : {"actionId" : actionStatus.actionId }}}, updateActionUser, {}, function(err) {
 						if (!err) res.json({success: 1, description: "Action user Updated"});
 					});

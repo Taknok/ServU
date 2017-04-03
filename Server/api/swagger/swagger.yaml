@@ -2,8 +2,8 @@ swagger: "2.0"
 info:
   version: 0.0.2
   title: ServU
-# during dev, should point to your local machine
-host: 192.168.137.1:8001
+
+host: 192.168.20.113:8001
 # basePath prefixes all resource paths
 basePath: /api
 #
@@ -56,6 +56,7 @@ paths:
 # ######################
 
   /users:
+    x-swagger-router-controller: users
     get:
       description: Returns all the users
       parameters:
@@ -77,6 +78,7 @@ paths:
         "404":
           description: User not found
     post:
+      operationId: postUsers
       description: Add a new user
       parameters:
         - name: user
@@ -94,7 +96,9 @@ paths:
           description: Another user has the same username
 
   /users/{username}:
+    x-swagger-router-controller: users
     get:
+      operationId: getUsersUsername
       description: Returns a user
       parameters:
       - $ref: "#/parameters/username"
@@ -106,6 +110,7 @@ paths:
         "404":
           description: User not found
     put:
+      operationId: putUsersUsername
       description: Update a user
       parameters:
         - $ref: "#/parameters/username"
@@ -114,7 +119,7 @@ paths:
           description: User's informations
           required: true
           schema:
-              $ref: "#/definitions/user_post"
+              $ref: "#/definitions/user_put"
       responses:
         "204":
           description: Success
@@ -125,6 +130,7 @@ paths:
         "409":
           description: Another user has the same pseudo
     delete:
+      operationId: deleteUsersUsername
       description: Delete a user
       parameters:
         - $ref: "#/parameters/username"
@@ -135,7 +141,9 @@ paths:
           description: User not found
 
   /users/{username}/devices:
+    x-swagger-router-controller: users
     get:
+      operationId: getUsersDevice
       description: Returns all devices attached to the user
       parameters:
         - $ref: "#/parameters/username"
@@ -149,6 +157,7 @@ paths:
         "404":
           description: "This user does not exist or has no devices"
     post:
+      operationId: postUsersDevice
       description: "Add a device"
       parameters:
       - $ref: "#/parameters/username"
@@ -169,7 +178,9 @@ paths:
           description: User not found
 
   /users/{username}/devices/{uuid}:
+    x-swagger-router-controller: users
     get:
+      operationId: getUsersDeviceUuid
       description: Returns informations about the device
       parameters:
         - $ref: "#/parameters/username"
@@ -182,6 +193,7 @@ paths:
         "404":
           description: User or device not found
     delete:
+      operationId: deleteUsersDeviceUuid
       description: Delete a device
       parameters:
         - $ref: "#/parameters/username"
@@ -193,6 +205,7 @@ paths:
           description: User or device not found
 
   /users/{username}/devices/{uuid}/probes:
+    x-swagger-router-controller: users
     get:
       description: Get the list of probes for this device
       parameters:
@@ -209,6 +222,7 @@ paths:
           description: User or device not found
 
   /users/{username}/devices/{uuid}/probes/{name}:
+    x-swagger-router-controller: users
     get:
       description: Get the informations of the probe for this device
       parameters:
@@ -228,6 +242,7 @@ paths:
           description: Probe not found
 
   /users/{username}/devices/{uuid}/actions:
+    x-swagger-router-controller: users
     get:
       description: Get the list of actions availables for this device
       parameters:
@@ -257,6 +272,7 @@ paths:
           description: User or device not found
 
   /users/{username}/devices/{uuid}/actions/{action-id}:
+    x-swagger-router-controller: users
     get:
       description: Get the informations about this action
       parameters:
@@ -345,7 +361,7 @@ paths:
 
   /phone/{uuid}/actions:
     x-swagger-router-controller: phone
-    
+
     post:
       operationId: postActions
       description: "Post the actions availables on this phone (chose by user)"
@@ -402,13 +418,13 @@ paths:
           description: "Wrong format"
         "404":
           description: "Device or action id not found"
-    
 
-  
+
+
 
   /phone/{uuid}/actions_user:
     x-swagger-router-controller: phone
-    
+
     get:
       operationId: getActionsUser
       description: "Get the action in top queue to do"
@@ -443,18 +459,14 @@ paths:
           description: "Wrong format"
         "404":
           description: "Device or action id not found"
-    
+
 
 # complex objects have schema definitions
 
 definitions:
   user:
     type: object
-    required:
-      - username
-      - firstname
-      - lastname
-      - email
+
     properties:
       username:
         type: string
@@ -485,6 +497,23 @@ definitions:
       password:
         type: string
         format: password
+
+  user_put:
+    type: object
+
+    properties:
+      username:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+        format: password
+
 
   device:
     type: object
