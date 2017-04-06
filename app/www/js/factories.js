@@ -34,6 +34,8 @@ angular.module('ServU')
 
 .factory("probes", [ "$cordovaDeviceMotion", "$cordovaDeviceOrientation", "phoneInfo",  function($cordovaDeviceMotion, $cordovaDeviceOrientation, phoneInfo){
 	var onStartDone = false;
+	var permanentStorage = window.localStorage;
+
 	
 	var localisation = {};
 	var battery = {};
@@ -48,16 +50,31 @@ angular.module('ServU')
 	
 	
 	// active is the choice of user in probes tab
-	localisation.active = false;
-	battery.active = false;
+	// localisation.active = false;
+	// battery.active = false;
 	// orientation.active = false;
 	// globalization.active = false;
-	network.active = true;
-	bluetooth.active = false;
-	sim.active = false;
-	flashlight.active = false;
-	screen_orientation.active = false;
-	device.active = false;
+	// network.active = true;
+	// bluetooth.active = false;
+	// sim.active = false;
+	// flashlight.active = false;
+	// screen_orientation.active = false;
+	// device.active = false;
+	
+	function load(){
+		localisation.active = ('true' == permanentStorage.getItem("localisation.active"));
+		battery.active = ('true' == permanentStorage.getItem("battery.active"));
+		// orientation.active = ('true' == permanentStorage.getItem("orientation.active"));
+		// globalization.active = ('true' == permanentStorage.getItem("globalization.active"));
+		network.active = ('true' == permanentStorage.getItem("network.active"));
+		bluetooth.active = ('true' == permanentStorage.getItem("bluetooth.active"));
+		sim.active = ('true' == permanentStorage.getItem("sim.active"));
+		flashlight.active = ('true' == permanentStorage.getItem("flashlight.active"));
+		screen_orientation.active = ('true' == permanentStorage.getItem("screen_orientation.active"));
+		device.active = ('true' == permanentStorage.getItem("device.active"));
+
+	}
+	load();
 	
 	function checkBool(bool){
 		if(typeof(bool) != "boolean"){
@@ -70,33 +87,43 @@ angular.module('ServU')
 		switch(probe){
 			case "localisation":
 				localisation.active = bool;
+				permanentStorage.setItem("localisation.active", localisation.active);
 				break;
 			case "battery":
 				battery.active = bool;
+				permanentStorage.setItem("battery.active", battery.active);
 				break;
 			// case "orientation":
 				// orientation.active = bool;
+				// permanentStorage.setItem("orientation.active", orientation.active);
 				// break;
 			// case "globalization":
 				// globalization.active = bool;
+				// permanentStorage.setItem("globalization.active", globalization.active);
 				// break;
 			case "network":
 				network.active = bool;
+				permanentStorage.setItem("network.active", network.active);
 				break;
 			case "bluetooth":
 				bluetooth.active = bool;
+				permanentStorage.setItem("bluetooth.active", bluetooth.active);
 				break;
 			case "sim":
 				sim.active = bool;
+				permanentStorage.setItem("sim.active", sim.active);
 				break;
 			case "flashlight":
 				flashlight.active = bool;
+				permanentStorage.setItem("flashlight.active", flashlight.active);
 				break;
 			case "screen_orientation":
 				screen_orientation.active = bool;
+				permanentStorage.setItem("screen_orientation.active", screen_orientation.active);
 				break;
 			case "device":
 				device.active = bool;
+				permanentStorage.setItem("device.active", device.active);
 				break;
 			default:
 				throw("Unknow probe setActive");
