@@ -1,7 +1,8 @@
 angular.module('ServU')
 
-.controller('MainCtrl', function($scope, $http, $rootScope, $ionicScrollDelegate, $interval, ServUConfig, phoneInfo, actionFacto) {
-	
+.controller('MainCtrl', function($scope, $http, $rootScope, $ionicScrollDelegate, $interval, ServUConfig, phoneInfo, actions, probes) {
+
+	probes.onStart();
 	
 	function doAction(action){
 		var params = action.data;
@@ -63,11 +64,11 @@ angular.module('ServU')
 		getActions();
 	}
 	
-	$interval(function(){
-		if (phoneInfo.getUuid() != 0){
-			getActions();
-		}
-	}, 5 * 1000);
+	// $interval(function(){
+		// if (phoneInfo.getUuid() != 0){
+			// getActions();
+		// }
+	// }, 5 * 1000);
 	
 	
 	
@@ -148,256 +149,39 @@ angular.module('ServU')
 		
 	}
 	
+	
 	hideHeader.init();
 })
 
-.controller('ProbesCtrl', function($scope, $http, $cordovaCamera, $cordovaDeviceMotion, $cordovaDeviceOrientation, $cordovaDevice, hideHeader, ServUConfig, actionFacto, phoneInfo) {
+.controller('ProbesCtrl', function($scope, $http, hideHeader, ServUConfig, phoneInfo, probes) {
+	$scope.network = probes.network.getAll();
+	$scope.bluetooth = probes.bluetooth.getAll();
+	// $scope.localisation = probes.localisation.getAll();
+	$scope.battery = probes.battery.getAll();
+	$scope.sim = probes.sim.getAll();
+	$scope.flashlight = probes.flashlight.getAll();
+	$scope.screen_orientation = probes.screen_orientation.getAll();
+	$scope.device = probes.device.getAll();
 	
-	ionic.Platform.ready(function(){
+	$scope.changeActive = function(probe){
+		probes.setActive(probe, $scope.network.active);
+	}
 	
-		$scope.takePicture = function() {
-			var options = {
-				quality: 75, // Qualité de l'image sauvée, valeur entre 0 et 100
-				destinationType: Camera.DestinationType.DATA_URL,
-				sourceType: Camera.PictureSourceType.CAMERA,
-				allowEdit: true,
-				encodingType: Camera.EncodingType.JPEG, // Format d'encodage : JPEG ou PNG
-				targetWidth: 300, // Largeur de l'image en pixel
-				targetHeight: 300, // Hauteur de l'image en pixel
-				saveToPhotoAlbum: false // Enregistrer l'image dans l'album photo du device
-			};
-
-			$cordovaCamera.getPicture(options).then(function(imageData) {
-				$scope.imgURI = "data:image/jpeg;base64," + imageData;
-			}, function(err) {
-				console.log(err);
-			});
-		};
-	  
-	  
-		function getLocalisation(){
-			var onSuccess = function(position) {
-				$scope.localisation = position;
-			};
-
-			// onError Callback receives a PositionError object
-			
-			function onError(error) {
-				alert('code: '    + error.code    + '\n' +
-					  'message: ' + error.message + '\n');
-			};
-			
-			var optionsLocalisation = {enableHighAccuracy : true};
-			
-			navigator.geolocation.getCurrentPosition(onSuccess, onError, optionsLocalisation);
-		};
+	$scope.refreshProbes = function(){
+		$scope.network = probes.network.getValue();
+		$scope.bluetooth = probes.bluetooth.getValue();
+		// $scope.localisation = probes.localisation.getValue();
+		$scope.battery = probes.battery.getValue();
+		$scope.sim = probes.sim.getValue();
+		$scope.flashlight = probes.flashlight.getValue();
+		$scope.screen_orientation = probes.screen_orientation.getValue();
+		$scope.device = probes.device.getValue();
 		
-		function getBattery(){
-			window.addEventListener("batterystatus", onBatteryStatus, false);
+		
+		console.log($scope.testval)
+	}
 
-			function onBatteryStatus(status) {
-				$scope.battery = status;
-			};
-		};
-		
-		function getAccelerometer(){
-			var optionsAccelerometer = { frequency : 1000 };
-					
-			var watchID = $cordovaDeviceMotion.watchAcceleration(optionsAccelerometer); //temps real on peut aussi avori get current
-			
-			watchID.then(
-				null,
-				function onError() {
-					alert('onError!');
-				},
-				function onSuccess(acceleration) {
-					$scope.accelerometer = acceleration;
-				}
-			);
-		};
-		
-		function getOrientation(){
-			var optionsOrientation = {
-				frequency: 1000,
-				filter: true     // if frequency is set, filter is ignored
-			}
 
-			var watch = $cordovaDeviceOrientation.watchHeading(optionsOrientation).then(
-				null,
-				function onError(error) {
-					alert('code: '    + error.code    + '\n' +
-					  'message: ' + error.message + '\n');
-				},
-				function(result) {   // updates constantly (depending on frequency value)
-					$scope.orientation = result;
-				}
-			);
-		};
-		
-		$scope.globalization = {};
-		function getGlobalization(){
-			var globa = {};
-			var onSuccess = function (language) {
-				$scope.globalization.language = language.value;
-			}
-			
-			var onError = function onError(error) {
-				alert('code: '    + error.code    + '\n' +
-				'message: ' + error.message + '\n');
-			}
-			
-			navigator.globalization.getPreferredLanguage(onSuccess, onError);
-			
-			navigator.globalization.getLocaleName(
-				function (locale) {$scope.globalization.localName = locale.value;}, //concaténation d'objet
-				function () {alert('code: '    + error.code    + '\n' +	'message: ' + error.message + '\n');}
-			);
-		};
-		
-		function getNetwork(){
-			function checkConnection() {
-				var networkState = navigator.connection.type;
-
-				var states = {};
-				states[Connection.UNKNOWN]  = 'Unknown connection';
-				states[Connection.ETHERNET] = 'Ethernet connection';
-				states[Connection.WIFI]     = 'WiFi connection';
-				states[Connection.CELL_2G]  = 'Cell 2G connection';
-				states[Connection.CELL_3G]  = 'Cell 3G connection';
-				states[Connection.CELL_4G]  = 'Cell 4G connection';
-				states[Connection.CELL]     = 'Cell generic connection';
-				states[Connection.NONE]     = 'No network connection';
-
-				$scope.network = {};
-				$scope.network.states = states[networkState];
-			}
-
-			checkConnection();
-		};
-		
-		function getBluetooth(){
-			$scope.bluetooth = {};
-			
-			bluetoothSerial.isEnabled(
-				function() {
-					$scope.bluetooth.enable = true;
-				},
-				function() {
-					$scope.bluetooth.enable = false;
-				}
-			);
-			
-			bluetoothSerial.isConnected(
-				function() {
-					console.log("Bluetooth is connected");
-				},
-				function() {
-					console.log("Bluetooth is *not* connected");
-				}
-			);
-			
-		};
-		
-		function getOthersSensors(){
-			if (ionic.Platform.isAndroid()) {// sensor fonctionne uniquement sur android
-			//creation de la liste pour plus tard si les noms changes ou si similaire avec ios
-				var listSensors = { "proximity" : "PROXIMITY", "ambient_temp" : "AMBIENT_TEMPERATURE", "light" : "LIGHT", "pressure" : "PRESSURE", "humidity" : "RELATIVE_HUMIDITY", "temperature" : "TEMPERATURE"}
-				//PROXIMITY
-				sensors.enableSensor(listSensors["proximity"]);
-				sensors.getState(function(value){$scope.proximity = (value[0] == 0) ? true : false});
-				sensors.disableSensor(listSensors["proximity"]);				
-				
-				//ROOM TEMP
-				sensors.enableSensor(listSensors["ambient_temp"]);
-				sensors.getState(function(value){$scope.ambient_temp = value[0]});
-				sensors.disableSensor(listSensors["ambient_temp"]);				
-
-				//LIGHT
-				sensors.enableSensor(listSensors["light"]);
-				sensors.getState(function(value){$scope.light = value[0]});
-				sensors.disableSensor(listSensors["light"]);
-
-				//PRESSURE
-				sensors.enableSensor(listSensors["pressure"]);
-				sensors.getState(function(value){$scope.pressure = value[0]});
-				sensors.disableSensor(listSensors["pressure"]);
-				
-				//HUMIDITY
-				sensors.enableSensor(listSensors["humidity"]);
-				sensors.getState(function(value){$scope.humidity = value[0]});
-				sensors.disableSensor(listSensors["humidity"]);
-				
-				//core temp
-				sensors.enableSensor(listSensors["temperature"]);
-				sensors.getState(function(value){$scope.temperature = value[0]});
-				sensors.disableSensor(listSensors["temperature"]);
-				
-				$scope.screen_orientation = screen.orientation.type;
-				
-				
-			}
-			if (ionic.Platform.isIOS()){
-				// TROUVER UN PLUGIN POUR LES SENSORS
-			}
-			
-			$scope.sim = {};
-			function successCallback(result) {
-				$scope.sim.nbCards = result.cards.length;
-				$scope.sim.cards = result.cards;
-				$scope.sim.subscriberId = result.subscriberId;
-			}
-			function errorCallback(error) {
-				console.log(error);
-			}
-				
-			window.plugins.sim.hasReadPermission(function successFunc(value){
-				if (value){
-					window.plugins.sim.getSimInfo(successCallback, errorCallback);
-				} else {
-					window.plugins.sim.requestReadPermission(function (){window.plugins.sim.getSimInfo(successCallback, errorCallback)}, errorCallback);
-				}
-			}, errorCallback);
-			
-			
-			$scope.flashlight = {};
-			$scope.flashlight.available = false;
-			window.plugins.flashlight.available(function(isAvailable) {
-				if (isAvailable) {
-					$scope.flashlight.available = true;
-				} else {
-					$scope.flashlight.available = false;
-				}
-			});
-			$scope.flashlight.isActivated = window.plugins.flashlight.isSwitchedOn();
-		}
-		
-		window.addEventListener("orientationchange", function(){
-			$scope.screen_orientation = screen.orientation.type;
-		});
-		
-		function getDevice(){
-			$scope.device = ionic.Platform.device();
-			console.log($scope.device.uuid);
-			phoneInfo.setUuid($scope.device.uuid);
-			console.log(phoneInfo.getUuid());
-		}
-		
-		$scope.refreshProbes = function(){
-			// getLocalisation();
-			getBattery();
-			getAccelerometer();
-			getOrientation();
-			getDevice();
-			getGlobalization();
-			getNetwork();
-			getBluetooth();
-			getOthersSensors();			
-		};
-		
-
-		$scope.refreshProbes();
-
-	}, false);
 	
 	hideHeader.init();
 })

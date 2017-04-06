@@ -3,7 +3,7 @@ info:
   version: 0.0.2
   title: ServU
 # during dev, should point to your local machine
-host: 192.168.137.1:8001
+host: 169.254.208.124:8001
 # basePath prefixes all resource paths
 basePath: /api
 #

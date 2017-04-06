@@ -21,7 +21,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   var port = process.env.PORT || 8080;
   server.listen(8000,'127.0.0.1',function(){
     server.close(function(){
-      server.listen(8001,'192.168.137.1');
+      server.listen(8001,'169.254.208.124');
     })
   })
 
