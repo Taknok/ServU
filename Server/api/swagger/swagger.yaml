@@ -3,7 +3,7 @@ info:
   version: 0.0.2
   title: ServU
 
-host: 192.168.20.113:8001
+host: 192.168.21.55:8001
 # basePath prefixes all resource paths
 basePath: /api
 #
@@ -151,7 +151,7 @@ paths:
         "200":
           description: "Success"
           schema:
-            type: array
+            type: object
             items:
               $ref: "#/definitions/device"
         "404":
@@ -207,6 +207,7 @@ paths:
   /users/{username}/devices/{uuid}/probes:
     x-swagger-router-controller: users
     get:
+      operationId: getUsersDeviceUuidProbes
       description: Get the list of probes for this device
       parameters:
         - $ref: "#/parameters/username"
@@ -224,6 +225,7 @@ paths:
   /users/{username}/devices/{uuid}/probes/{name}:
     x-swagger-router-controller: users
     get:
+      operationId: getUsersDeviceUuidProbesName
       description: Get the informations of the probe for this device
       parameters:
         - $ref: "#/parameters/username"
@@ -244,6 +246,7 @@ paths:
   /users/{username}/devices/{uuid}/actions:
     x-swagger-router-controller: users
     get:
+
       description: Get the list of actions availables for this device
       parameters:
         - $ref: "#/parameters/username"
@@ -258,6 +261,7 @@ paths:
         "404":
           description: User or device not found
     post:
+      operationId: postUsersDeviceUuidActions
       description: Trigger an action for this device
       parameters:
       - $ref: "#/parameters/username"
@@ -368,7 +372,7 @@ paths:
       parameters:
         - $ref: "#/parameters/uuid"
         - name: actions
-          description: "Array of actions available on this phone"
+          description: "object of actions available on this phone"
           required: true
           in: body
           schema:
@@ -393,9 +397,9 @@ paths:
         "200":
           description: "Return the action to do"
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/action"
+            type: object
+
+
         "404":
           description: "Device not found or no action"
     put:
@@ -476,6 +480,8 @@ definitions:
         type: string
       email:
         type: string
+      devices:
+        type: object
 
   user_post:
     type: object
@@ -497,6 +503,9 @@ definitions:
       password:
         type: string
         format: password
+      devices:
+        type: object
+
 
   user_put:
     type: object
@@ -513,6 +522,9 @@ definitions:
       password:
         type: string
         format: password
+      devices:
+        type: object
+
 
 
   device:

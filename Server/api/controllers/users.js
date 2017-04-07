@@ -16,15 +16,17 @@ module.exports = {
   getUsersDevice,
   postUsersDevice,
   getUsersDeviceUuid,
-  deleteUsersDeviceUuid
+  deleteUsersDeviceUuid,
+  getUsersDeviceUuidProbes,
+  getUsersDeviceUuidProbesName,
+  postUsersDeviceUuidActions
 }
-
+//utilisé les $set
 
 function postUsers(req, res, next) {
   MongoClient.connect(url,  function(err, db1) {
     assert.equal(null, err);
     console.log("Connected correctly to server");
-
     db1.collection("users").findOne({"username": req.body.username},function(error, exist) {
       if(exist == null && error == null){
         db1.collection("users").insert(req.body,function(err, probe) {
@@ -46,11 +48,10 @@ function postUsers(req, res, next) {
 function getUsersUsername(req, res, next) {
   MongoClient.connect(url,  function(err, db1) {
     assert.equal(null, err);
-
     console.log("Connected correctly to server");
     db1.collection("users").findOne({"username": req.swagger.params.username.value},function(error, use) {
       if(use != null && error == null){
-        var user = {"username": use.username, "firstname":use.firstname, "lastname": use.lastname, "email": use.email};
+        var user = {"username": use.username, "firstname":use.firstname, "lastname": use.lastname, "email": use.email, "devices": use.devices};
         res.json(user)
       }
       else{
@@ -99,7 +100,6 @@ function getUsersUsername(req, res, next) {
       MongoClient.connect(url,  function(err, db1) {
         assert.equal(null, err);
         console.log("Connected correctly to server");
-
         db1.collection("users").findOne({"username": req.swagger.params.username.value},function(error, exist) {
           if(exist != null && error == null){
             db1.collection("users").remove( { "username": req.swagger.params.username.value },function(err, val) {
@@ -125,10 +125,7 @@ function getUsersUsername(req, res, next) {
         console.log("Connected correctly to server");
         db1.collection("users").findOne({"username": req.swagger.params.username.value},function(error, use) {
           if(use != null && error == null){
-            if (use.devices == null && error == null) {
-              res.json([]);
-            }
-            else res.json(use.devices)
+           res.json(use.devices);
           }
           else{
             res.status(409).send();
@@ -145,31 +142,18 @@ function getUsersUsername(req, res, next) {
         console.log("Connected correctly to server");
         db1.collection("users").findOne({"username": req.swagger.params.username.value},function(error, user) {
           if(user != null && error == null){
-            var existe = false;
-            for (var i = 0; i < user.devices.length; i++) {
-              if (user.devices[i].uuid == req.body.uuid) {
-                existe = true;
-              }
-            }
-            if(!existe){
-              if (!user.devices) {
-                user.devices = [req.body]
-              }
-              else{
-                user.devices[user.devices.length] = req.body
-              }
-              db1.collection("users").update({"username" : req.swagger.params.username.value}, user,  function(err2, modif){
+            var tmp = "devices." + String([req.body.uuid]);
+            const device = { "$set" : {[tmp] : req.body}};
+              db1.collection("users").update({"username" : req.swagger.params.username.value},  device,  function(err2, modif){
                 if (!err2) res.json({success: 1, description: "Users modifié"});
                 else{
+                  console.log("1");
                      res.status(400).send();
                 }
               });
-            }
-            else{
-              res.status(400).send();
-            }
-          }
+           }
           else{
+            console.log("2");
             res.status(404).send();
           }
         });
@@ -181,14 +165,8 @@ function getUsersUsername(req, res, next) {
         assert.equal(null, err);
         console.log("Connected correctly to server");
         db1.collection("users").findOne({"username": req.swagger.params.username.value},function(error, use) {
-          if(use != null && use.devices != null && error == null){
-            console.log(use.devices[i]);
-            for (var i = 0; i < use.devices.length; i++) {
-              if(use.devices[i].uuid == req.swagger.params.uuid.value){
-                res.json(use.devices[i]);
-              }
-            }
-              res.status(404).send();
+          if(use != null && use.devices[req.swagger.params.uuid.value] != null && error == null){
+            res.json(use.devices[req.swagger.params.uuid.value]);
           }
           else{
             res.status(404).send();
@@ -203,37 +181,104 @@ function getUsersUsername(req, res, next) {
         console.log("Connected correctly to server");
 
         db1.collection("users").findOne({"username": req.swagger.params.username.value},function(error,use) {
-            if(use != null && use.devices != null && error == null){
-              var i = 0
-              console.log(use.devices);
-                delete use.devices[0];
-              console.log(use.devices);
-                // while(use.devices[i].uuid == req.swagger.params.uuid.value){
-                //   i++;
-                //   console.log("0");
-                // }
-                // if (use.devices[i-1].uuid == req.swagger.params.uuid.value) {
-                //   console.log("1");
-                //   while (i < use.devices.length-1) {
-                //     use.devices[i-1] = use.devices[i]
-                //     i++;
-                //   }
-                  use.devices[i] = null
-                  // db1.collection("users").update({"username" : req.swagger.params.username.value}, use,  function(err2, modif){
-                  //   if (!err2) res.json({success:1, description:"Device deleted"});
-                  //   else{
-                  //        res.status(400).send();
-                  //   }
-                  // });
-          //       }
-          //       else{
-          //         res.status(404).send();
-          //       }
-          //     }
-          // else{
-          //   res.status(404).send();
+          if(use != null && use.devices[req.swagger.params.uuid.value] != null && error == null){
+                delete(use.devices[req.swagger.params.uuid.value]);
+                const device = { "$set" : {"devices" : use.devices}};
+                  db1.collection("users").update({"username" : req.swagger.params.username.value},  device,  function(err2, modif){
+                    if (!err2) res.json({success: 1, description: "Users modifié"});
+                    else{
+                      console.log("1");
+                         res.status(400).send();
+                    }
+                  });
           }
+          else res.status(404).send();
         });
 
       });
+    }
+
+
+// GET /users/{username}/devices/{uuid}/probes
+
+
+    function getUsersDeviceUuidProbes(req, res, next) {
+      MongoClient.connect(url,  function(err, db1) {
+        assert.equal(null, err);
+        console.log("Connected correctly to server");
+        const test = "devices."+String([req.swagger.params.uuid.value]+".uuid")
+        db1.collection("users").findOne({"username": req.swagger.params.username.value, [test] : req.swagger.params.uuid.value},function(error, use) {
+          if(use != null && error == null){
+            db1.collection("phone").findOne({"uuid": req.swagger.params.uuid.value},function(err, phone) {
+              if(phone != null && err == null){
+                console.log(phone.probes);
+                res.json(phone.probes)
+              }
+              else{
+                res.status(404).send();
+              }
+            });
+          }
+          else{
+            res.status(404).send();
+          }
+        });
+      });
+    }
+
+    // GET /users/{username}/devices/{uuid}/probes/{name}
+    function getUsersDeviceUuidProbesName(req, res, next) {
+      MongoClient.connect(url,  function(err, db1) {
+        assert.equal(null, err);
+        console.log("Connected correctly to server");
+        const test = "devices."+String([req.swagger.params.uuid.value]+".uuid")
+        db1.collection("users").findOne({"username": req.swagger.params.username.value, [test] : req.swagger.params.uuid.value},function(error, use) {
+          if(use != null && error == null){
+            db1.collection("phone").findOne({"uuid": req.swagger.params.uuid.value, "probes.name":req.swagger.params.name.value},function(err, phone) {
+              if(phone != null && err == null){
+                var i = 0;
+                while(i < phone.probes.length && phone.probes[i].name != req.swagger.params.name.value){
+                  i++;
+                }
+                res.json(phone.probes[i])
+              }
+              else{
+                res.status(404).send();
+              }
+            });
+          }
+          else{
+            res.status(404).send();
+          }
+        });
+      });
+    }
+// GET /users/{username}/devices/{uuid}/actions
+
+
+
+// POST /users/{username}/devices/{uuid}/actions
+
+    function postUsersDeviceUuidActions(req, res, next) {
+    	MongoClient.connect(url,  function(err, db) {
+    		assert.equal(null, err);
+    		console.log("Connected correctly to server");
+    		var actions = req.body;
+        db.collection("phone").findOne({"uuid": req.swagger.params.uuid.value}, function(err, data){
+          console.log(data);
+          if ( data != null && data.actions[req.body.name]==null){
+              var tmp = "actions." + String([req.body.name]);
+              var updateAction = { "$set" : {[tmp] : req.body}};
+              db.collection("phone").update({"uuid" : req.swagger.params.uuid.value, }, updateAction, { upsert: true}, function(err2) {
+                if (!err2 ) res.json({success: 1, description: "Action Updated"})
+                else{
+                  res.status(409).send("");
+                }
+              });
+          }
+          else {
+              res.status(409).send("");
+          }
+        });
+    	});
     }

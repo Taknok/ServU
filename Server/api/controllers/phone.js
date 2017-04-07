@@ -18,7 +18,6 @@ module.exports = {
 	putActionsUser
 }
 
-
 function postProbes(req, res, next) {
   MongoClient.connect(url,  function(err, db1) {
     assert.equal(null, err);
@@ -26,8 +25,9 @@ function postProbes(req, res, next) {
 
     const phone = {
       "uuid": req.swagger.params.uuid.value,
-       "device": req.body
+       "probes": req.body
     }
+    console.log(phone);
     db1.collection("phone").findOne({"uuid": req.swagger.params.uuid.value},function(error, exist) {
       console.log(error);
       if(exist == null && error == null){
@@ -55,7 +55,7 @@ function postProbes(req, res, next) {
         console.log( req.swagger.params.uuid.value);
         const phone = {
           "uuid": req.swagger.params.uuid.value,
-           "device": req.body
+           "probes": req.body
         }
            db1.collection("phone").update({"uuid" : req.swagger.params.uuid.value}, phone,  function(err, modif){
                if (!err) res.json(modif);
@@ -76,39 +76,50 @@ function checkActions(actions){
 	return true;
 }
 
+
 // /POST  /phone/{uuid}/actions
 function postActions(req, res, next) {
 	MongoClient.connect(url,  function(err, db) {
 		assert.equal(null, err);
 		console.log("Connected correctly to server");
-
 		var actions = req.body;
-
 		if (!checkActions(actions)){
+      console.log("ok");
 			res.status(400).send("")
 			return;
 		}
-		var action;
-		for(var i = 0; i < actions.length; i++){ //for in ne marche pas ici :(
-			action = actions[i]
+    var count = 0;
+    var test3;//='{"uuid":"' +String([req.swagger.params.uuid.value])+'",$or:['
+    actions.forEach(function(action) {
+      var test1 = '{"actions.'+String([action.name])+'.name":"'+String([action.name])+'"}'
+      if(req.body[0]==action) test3 ="[" + test1
+      else test3 = test3+","+test1;
+    });
+    test3 = test3+"]"
+    // console.log(test3);
+    var test2 = JSON.parse(test3)
+    // console.log(test2);
+    db.collection("phone").findOne({"uuid": req.swagger.params.uuid.value, $or: test2}, function(err, data){
+      console.log(data);
+      if ( data == null){
+        actions.forEach(function(action) {
 
-			db.collection("phone").findOne({"uuid" : req.swagger.params.uuid.value, "actions" : { "$elemMatch" : {"name" : action.name }}}, function(err, data){
-				if ( data == null){
-
-					const updateAction = { "$push" :{
-							"actions": action
-						}
-					}
-
-					db.collection("phone").update({"uuid" : req.swagger.params.uuid.value, }, updateAction, { upsert: true}, function(err) {
-						if (!err) res.json({success: 1, description: "Action Added"});
-					});
-
-				} else {
-					res.status(409).send("");
-				}
-			});
-		}
+          var tmp = "actions." + String([action.name]);
+          var updateAction = { "$set" : {[tmp] : action}};
+          db.collection("phone").update({"uuid" : req.swagger.params.uuid.value, }, updateAction, { upsert: true}, function(err2) {
+            count++;
+            if (!err2 && count == actions.length) res.json({success: 1, description: "Action Updated"});
+            else if (!err2);
+            else{
+              res.status(409).send("");
+            }
+          });
+        });
+      }
+      else {
+          res.status(409).send("");
+      }
+    });
 	});
 }
 
@@ -121,6 +132,7 @@ function getActions(req, res, next) {
 		db.collection("phone").findOne({"uuid" : req.swagger.params.uuid.value, "actions" : { "$exists" : true }}, function(err, phone){ //on pourrait demander de ret que actions mais flemme
 			if (phone != null){
 				if (err) throw err;
+        console.log(phone.actions);
 				res.json(phone.actions);
 			} else {
 				res.status(404).send();
