@@ -9,8 +9,7 @@ var util = require('util');
 
 
 module.exports = {
-	postUsers,
-  postLogin,
+  postUsers,
   getUsersUsername,
   putUsersUsername,
   deleteUsersUsername,
@@ -30,54 +29,21 @@ function postUsers(req, res, next) {
     console.log("Connected correctly to server");
     db1.collection("users").findOne({"username": req.body.username},function(error, exist) {
       if(exist == null && error == null){
-        var user = req.body;
-        console.log(user);
-        delete(user.password2);
-        console.log(user);
         db1.collection("users").insert(req.body,function(err, probe) {
              if (!err){
-               console.log("Users added");
-                res.json({success: 1, description: "Users deleted"});
-              }
+               res.render('gestion', {
+                   username: req.body.username,
+                   lastname: req.body.lastname,
+                   firstname: req.body.firstname});
+             }
              else{
-               console.log("erreur");
-               console.log(err);
-              res.status(204).send();
+                 res.status(204).send();
              }
            }
         );
       }
       else{
-        console.log("erreur");
-        console.log(error);
         res.status(409).send();
-      }
-    });
-
-  });
-}
-
-
-
-function postLogin(req, res, next) {
-  MongoClient.connect(url,  function(err, db1) {
-    assert.equal(null, err);
-    console.log("Connected correctly to server");
-    db1.collection("users").findOne({"username": req.body.username,"password":req.body.password},function(error, use) {
-      console.log(use);
-      if(use != null && error == null){
-        console.log("coucou");
-        var reponce = {"reponce": true};
-        res.json(reponce)
-      }
-      else if (use == null && error == null) {
-        console.log("coucou2");
-        var reponce = {"reponce": false};
-        res.json(reponce)
-      }
-      else{
-        console.log("erreur");
-        res.status(404).send();
       }
     });
   });
@@ -87,10 +53,14 @@ function getUsersUsername(req, res, next) {
   MongoClient.connect(url,  function(err, db1) {
     assert.equal(null, err);
     console.log("Connected correctly to server");
+    console.log(req.body);
     db1.collection("users").findOne({"username": req.swagger.params.username.value},function(error, use) {
       if(use != null && error == null){
         var user = {"username": use.username, "firstname":use.firstname, "lastname": use.lastname, "email": use.email, "devices": use.devices};
-        res.json(user)
+        res.render('gestion', {
+            username: req.body.username,
+            lastname: req.body.lastname,
+            firstname: req.body.firstname});
       }
       else{
         res.status(409).send();

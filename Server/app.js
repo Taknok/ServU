@@ -9,7 +9,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var express = require('express')
   , http = require('http')
   , app = express()
-  , server = http.createServer(app)
+  , server = http.createServer(app);
 
 module.exports = app; // for testing
 
@@ -33,6 +33,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   app.use(express.static(__dirname));
   app.use(methodOverride('_method'));
 
+
   console.log("serveur bien lancé");
   /* On redirige vers la todolist si la page demandée n'est pas trouvée */
 
@@ -46,10 +47,10 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   user_session.username = username;
   user_session.lastname = lastname;
   user_session.firstname = firstname;
+  user_session.email = "salut ca va ?";
 
   /** Routes */
   app.get('/', function(req, res){
-      console.log("slaut");
       if (typeof(req.session.info_user) != 'undefined') {
           req.session.info_user = user_session;
           res.render('index', {
@@ -65,20 +66,36 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
       }
   });
 
-  app.get('/user/:username', function (req, res){
+  app.get('/api/users/:username', function (req, res){
       res.render('gestion', {
           username: user_session.username,
           lastname: user_session.lastname,
-          firstname: user_session.firstname});
+          firstname: user_session.firstname,
+          email: user_session.email});
       console.log(user_session.username);
   });
+
+  app.get('/api/users/login', function (req, res){
+      if(res.reponce == true){
+          res.render('gestion', {
+              username: user_session.username,
+              lastname: user_session.lastname,
+              firstname: user_session.firstname});
+      }
+      else {
+          res.render('index', {
+              username: user_session.username,
+              lastname: user_session.lastname,
+              firstname: user_session.firstname});
+      }
+    });
 
   app.get('*', function(req, res) {
       res.send("erreur 404");
   });
 
 
-  app.put('/user/:username',urlencodedParser, function(req, res) {
+  app.put('/api/users/:username',urlencodedParser, function(req, res) {
      if (req.body.change_prenom != undefined && req.body.change_nom != undefined && req.body.change_prenom != ''
           && req.body.change_nom != ''){
           lastname = req.body.change_prenom;
@@ -88,29 +105,28 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
           password = req.body.password;
       }
       console.log(req.body);
-      res.redirect('/user');
+      res.redirect('/api/users');
   });
-
-  app.post('/api/users',urlencodedParser, function(req, res) {
+    /*
+  app.post('/api/users',urlencodedParser, function(req, res){
       console.log(req.body);
-      if (req.body.username != '' && req.body.prenom != '' && req.body.nom != ''
-          && req.body.password != '' && req.body.password2 != '' && req.body.password2 == req.body.password
-          && req.body.email != ''){
+      if (req.body.username != '' && req.body.firstname != '' && req.body.lastname != ''
+          && req.body.password != '' && req.body.password2 != '' && req.body.email != ''){
           user_session.username = req.body.username;
-          user_session.lastname = req.body.nom;
-          user_session.firstname = req.body.prenom;
+          user_session.lastname = req.body.lastname;
+          user_session.firstname = req.body.firstname;
           user_session.email = req.body.email;
           user_session.password  = req.body.password;
-          res.redirect('/user/' + req.body.username);
+          res.redirect('api/users/' + req.body.username);
       }
       else{
           res.redirect('/');
       }
   });
+  */
 
-
+  //server.listen(8001,'192.168.21.55');
   server.listen(3000,'127.0.0.1');
-
 
   // if (swaggerExpress.runner.swagger.paths['/api']) {
   //   console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');

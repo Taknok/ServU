@@ -14,10 +14,16 @@ schemes:
 # format of bodies a client can send (Content-Type)
 consumes:
   - application/json
+  - application/x-www-form-urlencoded
+  - test/html
+  - text/plain
   #ajouter xml si on a le temps
 # format of the responses to the client (Accepts)
 produces:
   - application/json
+  - application/x-www-form-urlencoded
+  - text/html
+  - text/plain
   #idem xml
 
 
