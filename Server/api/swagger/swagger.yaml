@@ -57,26 +57,7 @@ paths:
 
   /users:
     x-swagger-router-controller: users
-    get:
-      description: Returns all the users
-      parameters:
-        - name: firstname
-          in: query
-          required: false
-          type: string
-        - name: lastname
-          in: query
-          required: false
-          type: string
-      responses:
-        "200":
-          description: Success
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/user"
-        "404":
-          description: User not found
+   
     post:
       operationId: postUsers
       description: Add a new user

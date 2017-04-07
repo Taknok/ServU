@@ -8,6 +8,8 @@
   "license": "",
   "main": "app.js",
   "dependencies": {
+    "cookie-session": "2.0.0-beta.1",
+    "method-override": "2.3.8",
     "swagger-express-mw": "^0.1.0",
     "body-parser": "~1.16.0",
     "cookie-parser": "~1.4.3",
