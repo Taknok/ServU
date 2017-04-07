@@ -10,6 +10,7 @@ var util = require('util');
 
 module.exports = {
 	postUsers,
+  postLogin,
   getUsersUsername,
   putUsersUsername,
   deleteUsersUsername,
@@ -29,19 +30,56 @@ function postUsers(req, res, next) {
     console.log("Connected correctly to server");
     db1.collection("users").findOne({"username": req.body.username},function(error, exist) {
       if(exist == null && error == null){
+        var user = req.body;
+        console.log(user);
+        delete(user.password2);
+        console.log(user);
         db1.collection("users").insert(req.body,function(err, probe) {
-             if (!err) res.json({success: 1, description: "Users deleted"});
+             if (!err){
+               console.log("Users added");
+                res.json({success: 1, description: "Users deleted"});
+              }
              else{
-                 res.status(204).send();
+               console.log("erreur");
+               console.log(err);
+              res.status(204).send();
              }
            }
         );
       }
       else{
+        console.log("erreur");
+        console.log(error);
         res.status(409).send();
       }
     });
 
+  });
+}
+
+
+
+function postLogin(req, res, next) {
+  MongoClient.connect(url,  function(err, db1) {
+    assert.equal(null, err);
+    console.log("Connected correctly to server");
+    db1.collection("users").findOne({"username": req.body.username,"password":req.body.password},function(error, use) {
+      console.log(use);
+      if(use != null && error == null){
+        console.log("coucou");
+        var reponce = {"reponce": true};
+        res.json(reponce)
+      }
+      else if (use == null && error == null) {
+        console.log("coucou2");
+        var reponce = {"reponce": false};
+        res.json(reponce)
+      }
+      else{
+        console.log("erreur");
+        res.status(404).send();
+      }
+    });
   });
 }
 

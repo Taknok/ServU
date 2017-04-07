@@ -109,7 +109,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   });
 
 
-  server.listen(8001,'192.168.21.55');
+  server.listen(3000,'127.0.0.1');
 
 
   // if (swaggerExpress.runner.swagger.paths['/api']) {
