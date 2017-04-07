@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>ServU</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../css/stylish-portfolio.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="../css/ionicons.css" rel="stylesheet" type="text/css">
+
+    <!-- Personnal CSS Piti -->
+    <link href="../css/persoCSS/amethystFont.css" rel="stylesheet">
+    <link href="../css/persoCSS/colorOrange.css" rel="stylesheet">
+
+    <link href="../css/persoCSS/custom.css" rel="stylesheet">
+    <style>
+        .correct {
+            border-color: rgba(68, 191, 68, 0.75);
+        }
+
+        .correct:focus {
+            border-color: rgba(68, 191, 68, 0.75);
+            box-shadow: 0 0 8px rgba(68, 191, 68, 0.5);
+        }
+
+        .incorrect {
+            border-color: rgba(191, 68, 68, 0.75);
+        }
+
+        .incorrect:focus {
+            border-color: rgba(191, 68, 68, 0.75);
+            box-shadow: 0 0 8px rgba(191, 68, 68, 0.5);
+        }
+    </style>
+
+    <!-- qrcode library -->
+    <script type="text/javascript" src="../js/qrcode.js"></script>
+
+</head>
+
+<body ng-app="root">
+
+<!-- Navigation 2-->
+<a id="menu-toggle" href="#" class="btn btn-dark btn-lg toggle"><i class="fa fa-bars"></i></a>
+<nav id="sidebar-wrapper">
+    <ul class="sidebar-nav">
+        <a id="menu-close" href="#" class="btn btn-light btn-lg pull-right toggle"><i class="fa fa-times"></i></a>
+        <li class="sidebar-brand">
+            <a href="/" onclick=$("#menu-close").click();>ServU</a>
+        </li>
+        <li>
+            <a href="/users/<%= username %>" onclick=$("#menu-close").click();>Profil</a>
+        </li>
+        <li>
+            <a href="#devices" onclick=$("#menu-close").click();>Devices</a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Profile -->
+<section id="profile" class="profile">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2 class="fontAmethyst">Profile</h2>
+                <hr class="small">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-10 col-lg-offset-1">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <h1><i class="glyphicon glyphicon-user"></i></h1>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="panel-title pseudo_profil"><h1><%= username %></h1></div>
+                            </div>
+                            <div class="col-md-1 text-vertical-center">
+                                <br>
+                                <input type="button" class="btn btn-default text-right" id="toggler" value="Hide information" onClick="action();" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body" id="togglee" ng-if="isFirstElementVisible">
+                        <div class="row">
+                            <div class="col-lg-3 col-lg-offset-1"><p class="lead">
+                                    Pseudo : <%= username %><br>
+                                First name : <%= firstname %><br>
+                                 Last name : <%= lastname %><br></p>
+                            </div>
+                            <div class="col-lg-6 col-lg-offset-1">
+                                <div class="col-lg-11">
+                                    <div class="text-center lead">Modify your profile information</div>
+                                </div>
+                                <div class="col-lg-1">
+                                    <button type="button" class="btn btn-default" onClick="modif_info();"><i class="glyphicon glyphicon-pencil"></i></button>
+                                </div>
+                                <form action="api/user/<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_info">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-6" for="text">Change first name :</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="change_prenom" name="firstname" placeholder="Enter new first name">
+                                            <span class="erreur_info alert-danger">At least 2 characters must be entered !</span>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-6" for="text">Change last name :</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="change_nom" name="lastname" placeholder="Enter new last name">
+                                            <span class="erreur_info alert-danger">At least 2 characters must be entered !</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group text-center">
+                                        <button type="submit" class="btn btn-default">Confirm</button>
+                                    </div>
+                                </form>
+                                <div class="col-lg-11">
+                                    <div class="text-center lead">Modify password</div>
+                                </div>
+                                <div class="col-lg-1">
+                                    <button type="button" class="btn btn-default" onClick="modif_mdp();"><i class="glyphicon glyphicon-pencil"></i></button>
+                                </div>
+                                <form action="api/user/<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_mdp">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-6" for="text">New password :</label>
+                                        <div class="col-sm-6">
+                                            <input type="password" class="form-control" name="password" id="password" placeholder="Enter your new password">
+                                            <span class="erreur_info alert-danger">At least 6 characters must be entered !</span>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-6" for="pwd">Confirm password :</label>
+                                        <div class="col-sm-6">
+                                            <input type="password" class="form-control" name="password2" id="password2" placeholder="Confirm password">
+                                            <span class="erreur_info alert-danger">Passwords don't match, please enter them again</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group text-center">
+                                        <button type="submit" class="btn btn-default">Confirm</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.row -->
+    </div><!-- /.container -->
+</section>
+
+<!-- Devices -->
+<section id="devices" class="devices bg-primary">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 col-lg-offset-1 text-center">
+                <div class="panel panel-primary" style="border: none">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <div class='well well-sm well-warning' data-toggle='tooltip' data-placement='bottom' title='Number of phones' id='nbPhones'>
+                                    <!-- nb of phones -->
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class='well well-sm well-warning' data-toggle='tooltip' data-placement='bottom' title='Number of tablets' id='nbTablets'>
+                                    <!-- nb of tablets -->
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <h2 class="fontAmethyst">Available devices</h2>
+                                <hr class="small">
+                            </div>
+                            <div class="col-md-2">
+                                <div class="btn-group" style="margin-top: 25%; margin-bottom: 25%">
+                                    <button class="btn btn-warning" data-toggle="modal" data-target='#addModal'>
+                                <span data-toggle="tooltip" title="Add device" data-placement="top">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                </span>
+                                    </button>
+                                    <div id="refreshBtn" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Refresh">
+                                        <i class="glyphicon glyphicon-refresh"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="panel-body"> <!-- Devices -->
+                        <div class="row" id="items">
+
+                        </div>
+                        <!-- ./row ./devices -->
+                    </div>
+                    <!-- ./panel-body -->
+                </div>
+                <!-- ./Main panel -->
+            </div>
+            <!-- /.col-lg-10 -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container -->
+</section>
+
+<!-- Delete modal -->
+<section>
+    <div class='modal fade' id='deleteModal' tabindex='-1' role='dialog' aria-labelledby='deleteModalLabel'>
+        <div class='modal-dialog' role='document'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+                    <h5 class='modal-title'>Confirm delete</h5>
+                </div>
+                <div class='modal-body'>
+                    <p>Are you sure you want to delete this device ?</p>
+                    <p id="deleteModalText"></p>
+                </div>
+                <div class='modal-footer' id="deleteModalFooter"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Add modal -->
+<section>
+    <div class='modal fade' id='addModal' tabindex='-1' role='dialog' aria-labelledby='addModalLabel'>
+        <div class='modal-dialog' role='document'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+                    <h5 class='modal-title'>Add new device</h5>
+                </div>
+                <div class='modal-body'>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div id="code"></div>
+                            <script type="text/javascript">
+                                new QRCode(document.getElementById("code"), "http://www.savoir-inutile.com");
+                            </script>
+                        </div>
+                        <div class="col-md-6">
+                            <p>Flash this code with your device to add it automatically to your account</p>
+                            <p class="text-muted"><i>You can also go into your app to add it manually (not available yet)</i></p>
+                        </div>
+                    </div>
+                </div>
+                <div class='modal-footer' id="addModalFooter">
+                    <div class="row">
+                        <div class="col-md-3 pull-left">
+                            <img src="../img/soon-play.PNG" class="store">
+                        </div>
+                        <div class="col-md-3 pull-left">
+                            <img src="../img/soon-app.PNG" class="store">
+                        </div>
+                    </div>
+                    <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- More modal -->
+<section>
+    <div class='modal fade' id='moreModal' tabindex='-1' role='dialog' aria-labelledby='moreModalLabel'>
+        <div class='modal-dialog' role='document'>
+            <div class='modal-content'>
+                <div class='modal-header' id="moreModalHeader">
+                    <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+                </div>
+                <div class='modal-body'>
+                    <p>This feature is not available yet, check back later to see when it comes !</p>
+                </div>
+                <div class='modal-footer' id="addModalFooter">
+                    <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <button class="btn btn-lg" onclick="getTest();">Test</button>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 col-lg-offset-1 text-center">
+                <h3 class="fontAmethyst"><strong>Serv U</strong></h3>
+                <hr class="small">
+                <p>1 Dr Albert Schweitzer Av.
+                    <br>Talence, France 33400</p>
+                <ul class="list-unstyled">
+                    <li><i class="fa fa-phone fa-fw"></i> (123) 456-7890</li>
+                    <li><i class="fa fa-envelope-o fa-fw"></i> <a href="mailto:name@example.com">name@example.com</a></li>
+                </ul>
+                <br>
+                <ul class="list-inline">
+                    <li>
+                        <a href="#"><i class="fa fa-facebook fa-fw fa-3x"></i></a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-twitter fa-fw fa-3x"></i></a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-dribbble fa-fw fa-3x"></i></a>
+                    </li>
+                </ul>
+                <hr class="small">
+                <p class="text-muted">Copyright &copy; ServU Team 8 2017</p>
+            </div>
+        </div>
+    </div>
+    <a id="to-top" href="#top" class="btn btn-dark btn-lg"><i class="fa fa-chevron-up fa-fw fa-1x"></i></a>
+</footer>
+
+
+<!-- jQuery -->
+<script src="../js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/persoJS/devicesController.js"></script>
+<script src="../js/persoJS/templates.js"></script>
+<script src="../js/persoJS/formulaire.js"></script>
+
+<!-- Validation JQuery Form -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!--<script src="../js/bootstrap.min.js"></script>-->
+
+<!-- Theme Bootstrap -->
+<script type="text/javascript" src="../js/persoJS/themeBootstrap.js" ></script>
+
+<!-- Personnal Script PITI -->
+<script type="text/javascript" src="../js/persoJS/controlConnection.js" ></script>
+
+<script>document.title = '<%= username%> - ' + document.title;</script>
+
+</body>
+
+</html>

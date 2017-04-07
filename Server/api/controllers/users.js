@@ -9,7 +9,7 @@ var util = require('util');
 
 
 module.exports = {
-	postUsers,
+  postUsers,
   getUsersUsername,
   putUsersUsername,
   deleteUsersUsername,
@@ -30,7 +30,12 @@ function postUsers(req, res, next) {
     db1.collection("users").findOne({"username": req.body.username},function(error, exist) {
       if(exist == null && error == null){
         db1.collection("users").insert(req.body,function(err, probe) {
-             if (!err) res.json({success: 1, description: "Users deleted"});
+             if (!err){
+               res.render('gestion', {
+                   username: req.body.username,
+                   lastname: req.body.lastname,
+                   firstname: req.body.firstname});
+             }
              else{
                  res.status(204).send();
              }
@@ -41,7 +46,6 @@ function postUsers(req, res, next) {
         res.status(409).send();
       }
     });
-
   });
 }
 
@@ -49,10 +53,14 @@ function getUsersUsername(req, res, next) {
   MongoClient.connect(url,  function(err, db1) {
     assert.equal(null, err);
     console.log("Connected correctly to server");
+    console.log(req.body);
     db1.collection("users").findOne({"username": req.swagger.params.username.value},function(error, use) {
       if(use != null && error == null){
         var user = {"username": use.username, "firstname":use.firstname, "lastname": use.lastname, "email": use.email, "devices": use.devices};
-        res.json(user)
+        res.render('gestion', {
+            username: req.body.username,
+            lastname: req.body.lastname,
+            firstname: req.body.firstname});
       }
       else{
         res.status(409).send();

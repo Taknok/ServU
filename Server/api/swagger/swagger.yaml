@@ -2,8 +2,9 @@ swagger: "2.0"
 info:
   version: 0.0.2
   title: ServU
+
 # during dev, should point to your local machine
-host: 192.168.21.55:8001
+host: 127.0.0.1:3000
 
 # basePath prefixes all resource paths
 basePath: /api
@@ -15,13 +16,17 @@ schemes:
 # format of bodies a client can send (Content-Type)
 consumes:
   - application/json
+  - application/x-www-form-urlencoded
+  - test/html
+  - text/plain
   #ajouter xml si on a le temps
 # format of the responses to the client (Accepts)
 produces:
   - application/json
+  - application/x-www-form-urlencoded
+  - text/html
+  - text/plain
   #idem xml
-
-
 
 
 parameters:
@@ -46,6 +51,14 @@ parameters:
     required: true
     schema:
       $ref: "#/definitions/action_post"
+      
+  login:
+    name: login
+    description: "login object"
+    in: body
+    required: true
+    schema:
+      $ref: "#/definitions/login"
 
 
 
@@ -58,26 +71,7 @@ paths:
 
   /users:
     x-swagger-router-controller: users
-    get:
-      description: Returns all the users
-      parameters:
-        - name: firstname
-          in: query
-          required: false
-          type: string
-        - name: lastname
-          in: query
-          required: false
-          type: string
-      responses:
-        "200":
-          description: Success
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/user"
-        "404":
-          description: User not found
+
     post:
       operationId: postUsers
       description: Add a new user
@@ -138,6 +132,21 @@ paths:
       responses:
         "204":
           description: Success
+        "404":
+          description: User not found
+
+  /users/login:
+    x-swagger-router-controller: users
+    post:
+      operationId: getLogin
+      description: Vérification du login
+      parameters:
+        - $ref: "#/parameters/login"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/loginResult"
         "404":
           description: User not found
 
@@ -469,6 +478,25 @@ paths:
 # complex objects have schema definitions
 
 definitions:
+
+  login:
+    type: object
+    required:
+      - username
+      - password
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+        format: password
+        
+  loginResult:
+    type: object
+    properties:
+      reponce:
+        type: boolean
+
   user:
     type: object
 
