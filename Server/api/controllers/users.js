@@ -9,17 +9,19 @@ var util = require('util');
 
 
 module.exports = {
-    postUsers,
-    getUsersUsername,
-    putUsersUsername,
-    deleteUsersUsername,
-    getUsersDevice,
-    postUsersDevice,
-    getUsersDeviceUuid,
-    deleteUsersDeviceUuid,
-    getUsersDeviceUuidProbes,
-    getUsersDeviceUuidProbesName,
-    postUsersDeviceUuidActions
+
+  postUsers,
+  postLogin,
+  getUsersUsername,
+  putUsersUsername,
+  deleteUsersUsername,
+  getUsersDevice,
+  postUsersDevice,
+  getUsersDeviceUuid,
+  deleteUsersDeviceUuid,
+  getUsersDeviceUuidProbes,
+  getUsersDeviceUuidProbesName,
+  postUsersDeviceUuidActions
 }
 //utilisé les $set
 
@@ -49,6 +51,32 @@ function postUsers(req, res, next) {
         });
     });
 }
+function postLogin(req, res, next) {
+  MongoClient.connect(url,  function(err, db1) {
+    assert.equal(null, err);
+    console.log("Connected correctly to server");
+    db1.collection("users").findOne({"username": req.body.username,"password":req.body.password},function(error, use) {
+      console.log(use);
+      if(use != null && error == null){
+        req.session.username = use.username;
+        req.session.lastname = use.lastname;
+        req.session.firstname = use.firstname;
+        var user = '/api/users/'+ String(req.body.username);
+        res.redirect(user);
+      }
+      else if (use == null && error == null) {
+        console.log("coucou2");
+        var reponce = {"reponce": false};
+        res.redirect('/');
+      }
+      else{
+        console.log("erreur");
+        res.status(404).send();
+      }
+    });
+  });
+}
+
 
 // GET /users/{username}
 function getUsersUsername(req, res, next) {
@@ -59,13 +87,15 @@ function getUsersUsername(req, res, next) {
                 res.render('gestion', {
                     username: req.session.username,
                     lastname: req.session.lastname,
-                    firstname: req.session.firstname
+                    firstname: req.session.firstname,
+                    email: exist.email
                 });
             }
             else{
                 res.status(409).send();
             }
         });
+
     });
 }
 

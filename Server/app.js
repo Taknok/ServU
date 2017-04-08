@@ -31,6 +31,7 @@ app.use(express.static(__dirname));
 app.use(methodOverride('_method'));
 
 SwaggerExpress.create(config, function(err, swaggerExpress) {
+
     if (err) { throw err; }
 
     // install middleware
@@ -67,15 +68,6 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
         }
     });
 
-    /*
-    app.get('/api/users/:username', function (req, res){
-        res.render('gestion', {
-            username: user_session.username,
-            lastname: user_session.lastname,
-            firstname: user_session.firstname,
-            email: user_session.email});
-        console.log(user_session.username);
-    });
 
     app.get('/api/users/login', function (req, res){
         if(res.reponce == true){

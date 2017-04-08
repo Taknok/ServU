@@ -51,7 +51,7 @@ parameters:
     required: true
     schema:
       $ref: "#/definitions/action_post"
-      
+
   login:
     name: login
     description: "login object"
@@ -68,6 +68,7 @@ paths:
 # ######################
 #     API USER SIDE
 # ######################
+
 
   /users:
     x-swagger-router-controller: users
@@ -138,15 +139,13 @@ paths:
   /users/login:
     x-swagger-router-controller: users
     post:
-      operationId: getLogin
+      operationId: postLogin
       description: Vérification du login
       parameters:
         - $ref: "#/parameters/login"
       responses:
-        "200":
+        "201":
           description: Success
-          schema:
-            $ref: "#/definitions/loginResult"
         "404":
           description: User not found
 
@@ -490,12 +489,7 @@ definitions:
       password:
         type: string
         format: password
-        
-  loginResult:
-    type: object
-    properties:
-      reponce:
-        type: boolean
+
 
   user:
     type: object
