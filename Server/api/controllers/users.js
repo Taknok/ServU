@@ -99,7 +99,7 @@ function getUsersUsername(req, res, next) {
     });
 }
 
-// /PUT  /phone/{uuid}/probes
+// /PUT  /users/{username}
 function putUsersUsername(req, res, next) {
     MongoClient.connect(url,  function(err, db1) {
         assert.equal(null, err);
@@ -109,12 +109,20 @@ function putUsersUsername(req, res, next) {
                 db1.collection("users").findOne({"username": req.swagger.params.username.value},function(error, use) {
                     if(use != null && error == null){
                         if (req.body.username) use.username = req.body.username;
-                        if (req.body.lastname) use.lastname = req.body.lastname;
-                        if (req.body.firstname) use.firstname = req.body.firstname;
+                        if (req.body.lastname){
+                            use.lastname = req.body.lastname;
+                            req.session.lastname = req.body.lastname;
+                        }
+                        if (req.body.firstname){
+                            use.firstname = req.body.firstname;
+                            req.session.firstname = req.body.firstname;
+                        }
                         if (req.body.email) use.email = req.body.email;
-                        if (req.body.password) use.password = req.body.password;
+                        if (req.body.password){
+                            use.password = req.body.password;
+                        }
                         db1.collection("users").update({"username" : req.swagger.params.username.value}, use,  function(err2, modif){
-                            if (!err2) res.json({success: 1, description: "Users modifié"});
+                            if (!err2) res.redirect('/api/users/' + req.session.username);
                             else{
                                 res.status(400).send();
                             }

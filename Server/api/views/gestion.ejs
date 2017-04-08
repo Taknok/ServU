@@ -111,7 +111,7 @@
                                 <div class="col-lg-1">
                                     <button type="button" class="btn btn-default" onClick="modif_info();"><i class="glyphicon glyphicon-pencil"></i></button>
                                 </div>
-                                <form action="api/user/<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_info">
+                                <form action="<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_info">
                                     <div class="form-group">
                                         <label class="control-label col-sm-6" for="text">Change first name :</label>
                                         <div class="col-sm-6">
@@ -137,7 +137,7 @@
                                 <div class="col-lg-1">
                                     <button type="button" class="btn btn-default" onClick="modif_mdp();"><i class="glyphicon glyphicon-pencil"></i></button>
                                 </div>
-                                <form action="api/user/<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_mdp">
+                                <form action="/api/users/<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_mdp">
                                     <div class="form-group">
                                         <label class="control-label col-sm-6" for="text">New password :</label>
                                         <div class="col-sm-6">
