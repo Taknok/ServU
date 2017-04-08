@@ -59,7 +59,7 @@
         </li>
         <li><% if(!session){ %>
             <a id="connectionButton">Sign In</a>
-            <div class="bg-primary connectionInfo" style="display: none;">
+            <div class="bg-warning connectionInfo" style="display: none;">
                 <form action="/api/users/login" id="signinForm" data-toggle="validator" action="devices.html"  method="post" role="form">
                     <div class="form-group">
                         <label for="UsernameConnexion">Username</label>
@@ -86,10 +86,13 @@
             <a href="#services" onclick=$("#menu-close").click();>Services</a>
         </li>
         <li>
-            <a href="#portfolio" onclick=$("#menu-close").click();>Work</a>
+            <a href="#portfolio" onclick=$("#menu-close").click();>Gallery</a>
         </li>
         <li>
             <a href="#tech" onclick=$("#menu-close").click();>Techs</a>
+        </li>
+        <li>
+            <a href="#team" onclick=$("#menu-close").click();>Team</a>
         </li>
         <li>
             <a href="#footer" onclick=$("#menu-close").click();>Contact</a>
@@ -275,7 +278,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-10 col-lg-offset-1 text-center">
-                <h2 class="fontAmethyst">Our Work</h2>
+                <h2 class="fontAmethyst">Gallery</h2>
                 <hr class="small">
                 <div class="row">
                     <div class="col-md-6">
@@ -366,6 +369,69 @@
                 </div>
                 <!-- /.row (nested) -->
             </div>
+        </div><!-- /.row -->
+    </div><!-- /.container -->
+</section>
+
+<!-- Services -->
+<section id="team" class="services bg-primary">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-10 col-lg-offset-1">
+                <h2 class="fontAmethyst">Our Team</h2>
+                <hr class="small">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="service-item">
+                            <img src="img/team/pad.png" class="img-thumbnail">
+                            <h4><strong>Alexandre Germain</strong></h4>
+                            <p>Project Leader</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="service-item">
+                            <img src="img/team/claire.png" class="img-thumbnail">
+                            <h4><strong>Claire Mellano</strong></h4>
+                            <p>Web Team</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="service-item">
+                            <img src="img/team/piti.png" class="img-thumbnail">
+                            <h4><strong>Guillaume Pitillion</strong></h4>
+                            <p>Web Team</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="service-item">
+                            <img src="img/team/flo.png" class="img-thumbnail">
+                            <h4><strong>Florian Payet</strong></h4>
+                            <p>Web Team</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="service-item">
+                            <img src="img/team/paul.png" class="img-thumbnail">
+                            <h4><strong>Paul Gressier</strong></h4>
+                            <p>Server Team</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="service-item">
+                            <img src="img/team/tac.png" class="img-thumbnail">
+                            <h4><strong>Quentin Chaumont</strong></h4>
+                            <p>Server Team</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="service-item">
+                            <img src="img/team/clem.png" class="img-thumbnail">
+                            <h4><strong>Clément Plotton</strong></h4>
+                            <p>Server Team</p>
+                        </div>
+                    </div>
+                </div><!-- /.row (nested) -->
+            </div><!-- /.col-lg-10 -->
         </div><!-- /.row -->
     </div><!-- /.container -->
 </section>
