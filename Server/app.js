@@ -14,8 +14,16 @@ var express = require('express')
 module.exports = app; // for testing
 
 var config = {
-    appRoot: __dirname // required config
+	appRoot: __dirname // required config
 };
+
+try {
+	process.chdir(config.appRoot); //on se place au bon endroit pour executer le processus
+}
+catch (err) {
+	console.log('chdir: ' + err);
+}
+
 
 /* On utilise les sessions */
 app.use(session({
@@ -24,7 +32,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.use('/node_modules', express.static(__dirname + '../node_modules'));
+app.use('/node_modules', express.static(__dirname + '/node_modules'));
 app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname));
