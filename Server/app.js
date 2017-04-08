@@ -1,5 +1,17 @@
 'use strict';
 
+var config = {
+	appRoot: __dirname // required config
+};
+
+try {
+	process.chdir(config.appRoot); //on se place au bon endroit pour executer le processus
+}
+catch (err) {
+	console.log('chdir: ' + err);
+}
+
+
 var SwaggerExpress = require('swagger-express-mw');
 var session = require('express-session');
 var bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
@@ -13,16 +25,6 @@ var express = require('express')
 
 module.exports = app; // for testing
 
-var config = {
-	appRoot: __dirname // required config
-};
-
-try {
-	process.chdir(config.appRoot); //on se place au bon endroit pour executer le processus
-}
-catch (err) {
-	console.log('chdir: ' + err);
-}
 
 
 /* On utilise les sessions */
