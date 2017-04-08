@@ -1,5 +1,16 @@
 'use strict';
 
+var config = {
+	appRoot: __dirname // required config
+};
+
+try {
+	process.chdir(config.appRoot); //on se place au bon endroit pour executer le processus
+}	
+catch (err) {
+	console.log('chdir: ' + err);
+}
+
 var SwaggerExpress = require('swagger-express-mw');
 var session = require('cookie-session');
 var bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
@@ -14,9 +25,7 @@ var express = require('express')
 module.exports = app; // for testing
 
 
-var config = {
-  appRoot: __dirname // required config
-};
+
 
 SwaggerExpress.create(config, function(err, swaggerExpress) {
   if (err) { throw err; }
@@ -26,7 +35,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 
 
   app.use('/public', express.static(__dirname + '/public'));
-  app.use('/node_modules', express.static(__dirname + '../node_modules'));
+  app.use('/node_modules', express.static(__dirname + '/node_modules'));
   app.set('view engine', 'ejs');
   /* On utilise les sessions */
   app.use(session({secret: 'todotopsecret'}));
@@ -124,7 +133,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
       }
   });
   */
-
+  
   //server.listen(8001,'192.168.21.55');
   server.listen(3000,'127.0.0.1');
 
