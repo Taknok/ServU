@@ -49,8 +49,8 @@
         <li class="sidebar-brand">
             <a href="#top" onclick=$("#menu-close").click();>ServU</a>
         </li>
-        <li><% if(session){ %>
-            <a href="/api/users/<%= username %>" onclick=$("#menu-close").click();>Profil</a>
+        <li><% if(session == true){ %>
+            <a href="/users/<%= username %>" onclick=$("#menu-close").click();>Profil</a>
             <% } %>
         </li>
         <li>

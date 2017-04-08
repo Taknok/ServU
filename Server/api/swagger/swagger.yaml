@@ -98,7 +98,7 @@ paths:
       parameters:
       - $ref: "#/parameters/username"
       responses:
-        "200":
+        "201":
           description: Success
           schema:
             $ref: "#/definitions/user"
