@@ -284,14 +284,15 @@ paths:
         "404":
           description: User or device not found
 
-  /users/{username}/devices/{uuid}/actions/{action-id}:
+  /users/{username}/devices/{uuid}/actions/{action_id}:
     x-swagger-router-controller: users
     get:
+      operationId: bbbb
       description: Get the informations about this action
       parameters:
         - $ref: "#/parameters/username"
         - $ref: "#/parameters/uuid"
-        - name: action-id
+        - name: action_id
           description: Id of the action
           in: path
           type: string
@@ -306,11 +307,12 @@ paths:
         "404":
           description: Action not found
     delete:
+      operationId: deleteUsersDeviceUuidActions
       description: Delete this action
       parameters:
         - $ref: "#/parameters/username"
         - $ref: "#/parameters/uuid"
-        - name: action-id
+        - name: action_id
           description: Id of the action
           in: path
           type: string

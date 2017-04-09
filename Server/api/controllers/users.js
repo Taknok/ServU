@@ -21,7 +21,8 @@ module.exports = {
   deleteUsersDeviceUuid,
   getUsersDeviceUuidProbes,
   getUsersDeviceUuidProbesName,
-  postUsersDeviceUuidActions
+  postUsersDeviceUuidActions,
+  deleteUsersDeviceUuidActions
 }
 //utilisé les $set
 
@@ -362,4 +363,28 @@ function postUsersDeviceUuidActions(req, res, next){
             // }
         });
     });
+}
+
+
+// DELETE /users/{username}/devices/{uuid}/actions/{action_id}
+function deleteUsersDeviceUuidActions(req, res, next){
+    MongoClient.connect(url,  function(err, db) {
+        assert.equal(null, err);
+
+		var strucActionUserId = "actionUser." + req.swagger.params.action_id.value;
+		console.log(strucActionUserId);
+		
+		db.collection("phone").update({
+			uuid : req.swagger.params.action_id.value, 
+			[strucActionUserId] : {$exists: true}
+		}, {
+			$unset:{ 
+				[strucActionUserId] : true
+			}
+		
+        });
+		
+		res.status(204).send("");
+    });
+	
 }
