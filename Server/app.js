@@ -137,7 +137,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
      */
 
     //server.listen(8001,'192.168.21.55');
-    server.listen(3001,'127.0.0.1');
+    server.listen(3000,'127.0.0.1');
 
     // if (swaggerExpress.runner.swagger.paths['/api']) {
     //   console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
