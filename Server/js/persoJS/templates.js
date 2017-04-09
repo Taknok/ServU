@@ -71,6 +71,18 @@ function getDevicePanelFooterTemplate(username,id){
     "</div>");
 }
 
+// Function that returns the html for an element of the more modal
+function getMoreModalElementTemplate(name,data) {
+    return(
+        "<div class='col-sm-3'>" +
+            "<div class='panel panel-primary'>" +
+                "<div class='panel-heading'>"+name+"</div>" +
+                "<div class='panel-body'>"+data+"</div>" +
+            "</div>" +
+        "</div>"
+    );
+}
+
 // Device variable structure
 var device1 = {
     id: 1,

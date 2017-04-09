@@ -177,8 +177,27 @@ function changeMoreModal(id) {
 
     device = getDeviceById(id);
 
+    var currentTime = new Date();
+
     $("#moreModalHeader > h5").remove();
+    $("#moreModalBody >").remove();
+
     $("#moreModalHeader").append("<h5 class='modal-title'><b>More about "+device.name+"</b></h5>");
+    $("#moreModalBody").append(
+        "<div class='row'>" +
+            getMoreModalElementTemplate("Network","<p>State : "+device.connection+"</p>") +
+            getMoreModalElementTemplate("Bluetooth","<p>State : disabled</p>") +
+            getMoreModalElementTemplate("GPS",
+                "<p>Latitude : "+Math.floor((Math.random() * 100000) + 1)/100+"</p>" +
+                "<p>Longitude : "+Math.floor((Math.random() * 100000) + 1)/100+"</p>" +
+                "<p>Accuracy : "+Math.floor((Math.random() * 10) + 1)+" meters</p>" +
+                "<p>Timestamp : "+currentTime.getDate()+" "+currentTime.getTime()+"</p>") +
+            getMoreModalElementTemplate("Battery",
+                "<p>Percentage : "+device.battery+"%</p>" +
+                "<p>In charge : "+device.inCharge+"</p>") +
+        "</div>"
+    );
+
 }
 
 // Function that completes the action modal
@@ -214,25 +233,6 @@ function changeActionModal(username,id,action) {
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
 });
-
-// Function that toggles direct actions on a device
-function deviceAction(action,id) {
-
-    device = getDeviceById(id);
-
-    switch (action) {
-        case "ring":
-            alert("The device "+device.name+" will now ring");
-            break;
-        case "vibrate":
-            alert("The device "+device.name+" will now vibrate");
-            break;
-        case "flash":
-            alert("The device "+device.name+" will now flash");
-            break;
-        default:
-    }
-}
 
 // Function that refreshes the data at load of the page
 $(document).ready(function() {

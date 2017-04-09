@@ -176,7 +176,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
     app.post('/users/:username/devices/:uuid/actions',urlencodedParser, function(req, res, next) {
         console.log(req.body);
         next();
-    })
+    });
 
     /*
      app.post('/api/users',urlencodedParser, function(req, res){
