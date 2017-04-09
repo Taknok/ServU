@@ -31,7 +31,18 @@ function postUsers(req, res, next) {
         assert.equal(null, err);
         db1.collection("users").findOne({"username": req.body.username},function(error, exist) {
             if(exist == null && error == null){
-                db1.collection("users").insert(req.body,function(err, probe) {
+                var information_tel = {"devices" : [{
+                    "name": "string",
+                    "manufacturer": "string",
+                    "model": "string",
+                    "platform": "string",
+                    "version": "string",
+                    "serial": "string",
+                    "uuid": "1"
+                }]};
+                var data = req.body;
+                var result = Object.assign({},information_tel, data);
+                db1.collection("users").insert(result,function(err, probe) {
                         if (!err){
                             req.session.username = req.body.username;
                             req.session.lastname = req.body.lastname;
@@ -65,7 +76,6 @@ function postLogin(req, res, next) {
         res.redirect(user);
       }
       else if (use == null && error == null) {
-        console.log("coucou2");
         var reponce = {"reponce": false};
         res.redirect('/');
       }
@@ -245,8 +255,6 @@ function deleteUsersDeviceUuid(req, res, next) {
 
 
 // GET /users/{username}/devices/{uuid}/probes
-
-
 function getUsersDeviceUuidProbes(req, res, next) {
     MongoClient.connect(url,  function(err, db1) {
         assert.equal(null, err);
@@ -301,25 +309,39 @@ function getUsersDeviceUuidProbesName(req, res, next) {
 // GET /users/{username}/devices/{uuid}/actions
 
 
-
 // POST /users/{username}/devices/{uuid}/actions
-
-function postUsersDeviceUuidActions(req, res, next) {
+function postUsersDeviceUuidActions(req, res, next){
     MongoClient.connect(url,  function(err, db) {
         assert.equal(null, err);
-        console.log("Connected correctly to server");
         var actions = req.body;
-        db.collection("phone").findOne({"uuid": req.swagger.params.uuid.value}, function(err, data){
-            console.log(data);
-            if ( data != null && data.actions[req.body.name]==null){
-                var tmp = "actions." + String([req.body.name]);
+        db.collection("users").findOne({"username" : req.swagger.params.username.value, "phone.uuid" : req.swagger.params.uuid.value}, function(err, data){
+            if ( data != null ){ //&& data.actions[req.body.action]==null){
+                var tmp = "actions." + String([req.body.action]);
                 var updateAction = { "$set" : {[tmp] : req.body}};
+                console.log("on a bien recu l'action");
+                db.collection("phone").insert({ "uuid" : req.body.uuid, "action": req.body.action },function(err, probe) {
+                        if (!err){
+                            req.session.username = req.body.username;
+                            req.session.lastname = req.body.lastname;
+                            req.session.firstname = req.body.firstname;
+                            res.redirect('/api/users/' + req.body.username);
+                        }
+                        else{
+                            res.status(204).send();
+                        }
+                    }
+                );
+
+                /*
                 db.collection("phone").update({"uuid" : req.swagger.params.uuid.value, }, updateAction, { upsert: true}, function(err2) {
-                    if (!err2 ) res.json({success: 1, description: "Action Updated"})
+                    if (!err2 ){
+                        res.json({success: 1, description: "Action Updated"});
+                    }
                     else{
                         res.status(409).send("");
                     }
                 });
+                */
             }
             else {
                 res.status(409).send("");

@@ -16,7 +16,7 @@ function post(path, params, method) {
 function postAction(path,params,method,id,action) {
 
     post(path,params,method);
-
+    console.log('envoie la requete ' + path);
     device = getDeviceById(id);
 
     $.notify({
@@ -187,7 +187,7 @@ function changeActionModal(username,id,action) {
 
     device = getDeviceById(id);
 
-    path = "/users/" + username + "/devices/" + device.id + "/action";
+    path = "/api/users/" + username + "/devices/" + device.id + "/actions";
     params = "{username: \""+username+"\", uuid: "+id+", action: \""+action+"\"}";
 
     $("#actionModalBody > p").remove();

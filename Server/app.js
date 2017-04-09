@@ -112,7 +112,8 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
         res.redirect('/api/users');
     });
 
-    app.post('/users/:username/devices/:uuid/action',urlencodedParser, function(req, res, next) {
+    /*
+    app.post('/users/:username/devices/:uuid/actions',urlencodedParser, function(req, res, next) {
         console.log(req.body);
         next();
     })
@@ -136,7 +137,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
      */
 
     //server.listen(8001,'192.168.21.55');
-    server.listen(3000,'127.0.0.1');
+    server.listen(3001,'127.0.0.1');
 
     // if (swaggerExpress.runner.swagger.paths['/api']) {
     //   console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
