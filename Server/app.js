@@ -145,6 +145,27 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 				
 				user_session = req.session; //bcp de changement de var non ? on peut pas garder req.session ? 
 				
+				
+				
+				// SUPPR APRES MOCK (FAKE) DEVICE
+				var device = {
+				  "name": "dev",
+				  "manufacturer": "sam",
+				  "model": "1",
+				  "platform": "android",
+				  "version": "1.0.0",
+				  "serial": "1",
+				  "uuid": "1"
+				}
+				var apiUrl = 'http://127.0.0.1:3000/api/users/' + user_session.username + '/devices'
+				request.post({ url : apiUrl , form : device },function(err,httpResponse,body){
+					console.log("error :",err);
+					console.log("body :",body);
+					console.log(httpResponse.statusCode);
+				});
+				
+				
+				
 				res.redirect('/users/' + req.body.username);
 			}
 			

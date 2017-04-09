@@ -58,7 +58,7 @@ function getDevicePanelFooterTemplate(username,id){
     "<span class='clearfix'></span>" +
     "</a>" +
     "</li>" +
-    "<li><a data-toggle='modal' data-target='#actionModal' onclick='changeActionModal(\""+username+"\","+id+",\"flash\")'>" +
+    "<li><a data-toggle='modal' data-target='#actionModal' onclick='changeActionModal(\""+username+"\","+id+",\"flashlight\")'>" +
     "<div class='pull-left'>Flash</div>" +
     "<i class='glyphicon glyphicon-flash pull-right'></i>" +
     "<span class='clearfix'></span>" +

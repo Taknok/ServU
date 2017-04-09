@@ -66,7 +66,6 @@ function refresh() {
 function loadDeviceInfo(device) {
 
     username = document.getElementById("pseudo").innerHTML;
-    console.log(username);
 
     id = device.id;
     name = device.name,
@@ -188,15 +187,25 @@ function changeActionModal(username,id,action) {
     device = getDeviceById(id);
 
     path = "/api/users/" + username + "/devices/" + device.id + "/actions";
-    params = "{username: \""+username+"\", uuid: "+id+", action: \""+action+"\"}";
-
+	
+	//moche a changer
+	var params = { 
+		name : action,
+		status : "pending",
+		creation_date : "now",
+		data : { time : 2000 },
+		parameters : { time : 2000 }
+	};
+	
+	var stringParams = JSON.stringify(params);
+	console.log(stringParams);
     $("#actionModalBody > p").remove();
     $("#actionModalFooter > ").remove();
 
     $("#actionModalBody").append("<p><b>Send \""+action+"\" to the device "+device.name+" ?</b></p>");
     $("#actionModalFooter").append(
         "<button class='btn btn-secondary' data-dismiss='modal'>Cancel</button>"+
-        "<button class='btn btn-primary' data-dismiss='modal' onclick='postAction(\""+path+"\","+params+",\"post\","+id+",\""+action+"\");'>Confirm</button>"
+        "<button class='btn btn-primary' data-dismiss='modal' onclick='postAction(\""+path+"\","+ stringParams +",\"post\","+id+",\""+action+"\");'>Confirm</button>"
     )
 
 }

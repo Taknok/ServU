@@ -50,7 +50,7 @@ parameters:
     in: body
     required: true
     schema:
-      $ref: "#/definitions/action_post"
+      $ref: "#/definitions/actionUser_post"
 
   login:
     name: login
@@ -590,19 +590,33 @@ definitions:
       - name
     properties:
       id:
-        type: integer
+        type: string
       name:
         type: string
       status:
         $ref: "#/definitions/status"
       data:
         type: object
-
-      creation-date:
+      creation_date:
         type: string
-        format: date
       parameters:
         type: object
+
+  actionUser_post:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+      status:
+        $ref: "#/definitions/status"
+      data:
+        type: object
+      creation_date:
+        type: string
+
+
 
   action_put:
     type: object

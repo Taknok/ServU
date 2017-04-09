@@ -54,8 +54,8 @@ function postProbes(req, res, next) {
         console.log("Connected correctly to server");
         console.log( req.swagger.params.uuid.value);
         const phone = {
-          "uuid": req.swagger.params.uuid.value,
-           "probes": req.body
+			"uuid": req.swagger.params.uuid.value,
+			"probes": req.body
         }
            db1.collection("phone").update({"uuid" : req.swagger.params.uuid.value}, phone,  function(err, modif){
                if (!err) res.json(modif);
