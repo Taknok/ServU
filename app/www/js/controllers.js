@@ -187,8 +187,19 @@ angular.module('ServU')
 		console.log(tel);
 		phoneInfo.setUuid(tel.uuid);
 		
+		var data = {
+			uuid : phoneInfo.getUuid(),
+			"name": phoneInfo.getUsername,
+			"manufacturer": "a",
+			"model": "a",
+			"platform": "a",
+			"version": "a",
+			"serial": "a",
+			"uuid": phoneInfo.getUuid()
+		}
+		
 		var urlPhone = ServUConfig.searchUrl + "/users/" + phoneInfo.getUsername() + "/devices";
-		$http.post(urlPhone, phoneInfo.getUuid());
+		$http.post(urlPhone,);
 		
 		
 		var probe = {
