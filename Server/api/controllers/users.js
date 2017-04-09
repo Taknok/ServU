@@ -56,18 +56,14 @@ function postUsers(req, res, next) {
 function postLogin(req, res, next) {
   MongoClient.connect(url,  function(err, db1) {
     assert.equal(null, err);
-    db1.collection("users").findOne({"username": req.body.username,"password":req.body.password},function(error, use) {
-      if(use != null && error == null){
-        res.status(404).send();
-      }
-      else if (use == null && error == null) {
-        var reponce = {"reponce": false};
-        res.redirect('/');
-      }
-      else{
-        console.log("erreur");
-        res.status(404).send();
-      }
+    db1.collection("users").findOne({"username": req.body.username,"password":req.body.password},function(error, exist){
+        if(exist != null && error == null) {
+            delete(exist.password);
+            res.status(201).json(exist);
+        }
+        else {
+            res.status(409).send();
+        }
     });
   });
 }

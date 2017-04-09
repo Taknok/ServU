@@ -86,35 +86,15 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 	app.get('/users/:username', function (req, res){
         if (typeof(req.session.username) != 'undefined') {
             res.render('gestion', {
-                username: user_session.username,
-                lastname: user_session.lastname,
-                firstname: user_session.firstname,
+                username: req.session.username,
+                lastname: req.session.lastname,
+                firstname: req.session.firstname,
                 session: true});
         }
         else{
             res.send("<h1>UNKNOW USER</h1>");
         }
     });
-
-    app.get('/users/login', function (req, res){
-        if(res.reponce == true){
-            res.render('gestion', {
-                username: user_session.username,
-                lastname: user_session.lastname,
-                firstname: user_session.firstname});
-        }
-        else {
-            res.render('index', {
-                username: user_session.username,
-                lastname: user_session.lastname,
-                firstname: user_session.firstname});
-        }
-    });
-
-    app.get('*', function(req, res) {
-        res.send("erreur 404");
-    });
-
 
     app.put('/users/:username',urlencodedParser, function(req, res) {
         if (req.body.change_prenom != undefined && req.body.change_nom != undefined && req.body.change_prenom != ''
@@ -141,10 +121,10 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 				req.session.username = req.body.username;
 				req.session.lastname = req.body.lastname;
 				req.session.firstname = req.body.firstname;
-				
-				user_session = req.session; //bcp de changement de var non ? on peut pas garder req.session ? 
-				
-				
+
+				user_session = req.session; //bcp de changement de var non ? on peut pas garder req.session ?
+
+
 				
 				// SUPPR APRES MOCK (FAKE) DEVICE
 				var device = {
@@ -163,8 +143,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 					console.log(httpResponse.statusCode);
 				});
 				
-				
-				
+
 				res.redirect('/users/' + req.body.username);
 			}
 			
@@ -172,23 +151,30 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
     });
 
     app.post('/signIn', function(req, res) {
-        request.post({ url : 'http://127.0.0.1:3000/api/users', form : req.body }, function(err,httpResponse,body){
+        request.post({ url : 'http://127.0.0.1:3000/api/users/login', form : req.body }, function(err,httpResponse,body){
             if (err){
                 console.error(err);
                 res.redirect('/');
             }
             if (httpResponse.statusCode == "201"){
-                req.session.username = use.username;
-                req.session.lastname = use.lastname;
-                req.session.firstname = use.firstname;
-                var user = '/api/users/'+ String(req.body.username);
-                res.redirect(user);
+                var retournement = JSON.parse(httpResponse.body);
+                var objet = eval('(' + httpResponse.body + ')');
+                req.session.username = retournement.username;
+                req.session.lastname = retournement.lastname;
+                req.session.firstname = retournement.firstname;
 
-                user_session = req.session; //bcp de changement de var non ? on peut pas garder req.session ?
-
-                res.redirect('/users/' + req.body.username);
+                res.redirect('/users/' + retournement.username);
             }
         });
+    });
+
+    app.get('/logout', function(req, res) {
+        req.session.destroy();
+        res.redirect('/');
+    });
+
+    app.get('*', function(req, res) {
+        res.send("erreur 404");
     });
     /*
     app.post('/users/:username/devices/:uuid/actions',urlencodedParser, function(req, res, next) {
