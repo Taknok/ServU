@@ -17,6 +17,7 @@ var session = require('express-session');
 var bodyParser = require('body-parser'); // Charge le middleware de gestion des paramètres
 var methodOverride = require('method-override');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
+var request = require('request');
 
 var express = require('express')
     , http = require('http')
@@ -39,6 +40,10 @@ app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname));
 app.use(methodOverride('_method'));
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+}));
 
 SwaggerExpress.create(config, function(err, swaggerExpress) {
 
@@ -78,8 +83,20 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
         }
     });
 
+	app.get('/users/:username', function (req, res){
+        if (typeof(req.session.username) != 'undefined') {
+            res.render('gestion', {
+                username: user_session.username,
+                lastname: user_session.lastname,
+                firstname: user_session.firstname,
+                session: true});
+        }
+        else{
+            res.send("<h1>UNKNOW USER</h1>");
+        }
+    });
 
-    app.get('/api/users/login', function (req, res){
+    app.get('/users/login', function (req, res){
         if(res.reponce == true){
             res.render('gestion', {
                 username: user_session.username,
@@ -99,7 +116,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
     });
 
 
-    app.put('/api/users/:username',urlencodedParser, function(req, res) {
+    app.put('/users/:username',urlencodedParser, function(req, res) {
         if (req.body.change_prenom != undefined && req.body.change_nom != undefined && req.body.change_prenom != ''
             && req.body.change_nom != ''){
             lastname = req.body.change_prenom;
@@ -109,8 +126,30 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
             password = req.body.password;
         }
         console.log(req.body);
-        res.redirect('/api/users');
+        res.redirect('/users');
     });
+	
+	app.post('/signUp', function(req, res) {
+        request.post({ url : 'http://127.0.0.1:3000/api/users', form : req.body }, function(err,httpResponse,body){
+			if (err){
+				console.error(err);
+				res.redirect('/');
+			}
+			
+			if (httpResponse.statusCode == "201"){
+				console.log(httpResponse.statusCode);
+				
+				req.session.username = req.body.username;
+				req.session.lastname = req.body.lastname;
+				req.session.firstname = req.body.firstname;
+				
+				user_session = req.session; //bcp de changement de var non ? on peut pas garder req.session ? 
+				
+				res.redirect('/users/' + req.body.username);
+			}
+			
+		});
+    })
 
     /*
     app.post('/users/:username/devices/:uuid/actions',urlencodedParser, function(req, res, next) {

@@ -50,8 +50,8 @@
             <a href="#top" onclick=$("#menu-close").click();>ServU</a>
         </li>
         <li><% if(session){ %>
-            <a href="/api/users/<%= username %>" onclick=$("#menu-close").click();>Profil</a>
-            <a href="/api/users/<%= username %>" onclick=$("#menu-close").click();>Logout</a>
+            <a href="/users/<%= username %>" onclick=$("#menu-close").click();>Profil</a>
+            <a href="/users/<%= username %>" onclick=$("#menu-close").click();>Logout</a>
             <% } %>
         </li>
         <li><% if(!session){ %>
@@ -61,7 +61,7 @@
         <li><% if(!session){ %>
             <a id="connectionButton">Sign In</a>
             <div class="bg-warning connectionInfo" style="display: none;">
-                <form action="/api/users/login" id="signinForm" data-toggle="validator" action="devices.html"  method="post" role="form">
+                <form action="api/users/login" id="signinForm" data-toggle="validator" action="devices.html"  method="post" role="form">
                     <div class="form-group">
                         <label for="UsernameConnexion">Username</label>
                         <input type="text" class="form-control" name="username" id="UsernameConnexion" placeholder="Username" required>
@@ -121,7 +121,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">Registration</h4>
             </div>
-            <form action="/api/users" method="post" id="registerForm" data-toggle="validator" role="form">
+            <form action="/signUp" method="post" id="registerForm" data-toggle="validator" role="form">
                 <div class="modal-body">
                     <div class="form-group has-feedback">
                         <label for="UsernameRegister" class="control-label">Username</label>

@@ -31,7 +31,7 @@ function postUsers(req, res, next) {
         assert.equal(null, err);
         db1.collection("users").findOne({"username": req.body.username},function(error, exist) {
             if(exist == null && error == null){
-                var information_tel = {"devices" : [{
+                var information_tel = {"phone" : [{
                     "name": "string",
                     "manufacturer": "string",
                     "model": "string",
@@ -44,10 +44,11 @@ function postUsers(req, res, next) {
                 var result = Object.assign({},information_tel, data);
                 db1.collection("users").insert(result,function(err, probe) {
                         if (!err){
-                            req.session.username = req.body.username;
-                            req.session.lastname = req.body.lastname;
-                            req.session.firstname = req.body.firstname;
-                            res.redirect('/api/users/' + req.body.username);
+							res.status(201).send();
+                            // req.session.username = req.body.username;
+                            // req.session.lastname = req.body.lastname;
+                            // req.session.firstname = req.body.firstname;
+                            // res.redirect('/api/users/' + req.body.username);
                         }
                         else{
                             res.status(204).send();
