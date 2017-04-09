@@ -51,7 +51,7 @@
         </li>
         <li><% if(session){ %>
             <a href="/users/<%= username %>" onclick=$("#menu-close").click();>Profil</a>
-            <a href="/users/<%= username %>" onclick=$("#menu-close").click();>Logout</a>
+            <a href="/logout" onclick=$("#menu-close").click();>Logout</a>
             <% } %>
         </li>
         <li><% if(!session){ %>
@@ -61,7 +61,7 @@
         <li><% if(!session){ %>
             <a id="connectionButton">Sign In</a>
             <div class="bg-warning connectionInfo" style="display: none;">
-                <form action="api/users/login" id="signinForm" data-toggle="validator" action="devices.html"  method="post" role="form">
+                <form action="/signIn" id="signinForm" data-toggle="validator" action="devices.html"  method="post" role="form">
                     <div class="form-group">
                         <label for="UsernameConnexion">Username</label>
                         <input type="text" class="form-control" name="username" id="UsernameConnexion" placeholder="Username" required>
