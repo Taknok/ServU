@@ -48,7 +48,7 @@
     </style>
 
     <!-- qrcode library -->
-    <script type="text/javascript" src="../js/qrcode.js"></script>
+    <script type="text/javascript" src="../../js/qrcode.js"></script>
 
 </head>
 
@@ -89,7 +89,7 @@
                                 <h1><i class="glyphicon glyphicon-user"></i></h1>
                             </div>
                             <div class="col-md-7">
-                                <div class="panel-title pseudo_profil"><h1><%= username %></h1></div>
+                                <div class="panel-title pseudo_profil"><h1 id="pseudo"><%= username %></h1></div>
                             </div>
                             <div class="col-md-1 text-vertical-center">
                                 <br>
@@ -254,7 +254,7 @@
                         <div class="col-md-6">
                             <div id="code"></div>
                             <script type="text/javascript">
-                                new QRCode(document.getElementById("code"), "http://www.savoir-inutile.com");
+                                new QRCode(document.getElementById("code"), "http://www.servu.ml");
                             </script>
                         </div>
                         <div class="col-md-6">
@@ -266,10 +266,10 @@
                 <div class='modal-footer' id="addModalFooter">
                     <div class="row">
                         <div class="col-md-3 pull-left">
-                            <img src="../img/soon-play.PNG" class="store">
+                            <img src="../../img/soon-play.PNG" class="store">
                         </div>
                         <div class="col-md-3 pull-left">
-                            <img src="../img/soon-app.PNG" class="store">
+                            <img src="../../img/soon-app.PNG" class="store">
                         </div>
                     </div>
                     <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
@@ -299,8 +299,24 @@
     </div>
 </section>
 
+<!-- Action modal -->
 <section>
-    <button class="btn btn-lg" onclick="getTest();">Test</button>
+    <div class='modal fade' id='actionModal' tabindex='-1' role='dialog' aria-labelledby='actionModalLabel'>
+        <div class='modal-dialog' role='document'>
+            <div class='modal-content'>
+                <div class='modal-header'>
+                    <h5 class="modal-title">Action sending confirmation</h5>
+                    <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+                </div>
+                <div class='modal-body' id="actionModalBody">
+
+                </div>
+                <div class='modal-footer' id="actionModalFooter">
+
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <!-- Footer -->
@@ -345,6 +361,7 @@
 <script src="../../js/persoJS/devicesController.js"></script>
 <script src="../../js/persoJS/templates.js"></script>
 <script src="../../js/persoJS/formulaire.js"></script>
+<script src="../../js/bootstrap-notify.js"></script>
 
 <!-- Validation JQuery Form -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.js"></script>

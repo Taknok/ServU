@@ -1,6 +1,39 @@
 
 var nbPhone;
 var nbTablet;
+var username;
+
+// Function to post requests
+function post(path, params, method) {
+    $.ajax({
+        url: path,
+        type: method,
+        data: params
+    });
+}
+
+// Function to post actions
+function postAction(path,params,method,id,action) {
+
+    post(path,params,method);
+
+    device = getDeviceById(id);
+
+    $.notify({
+        // options
+        icon: 'glyphicon glyphicon-ok',
+        message: 'Action '+action+" has been sent to "+device.name
+    },{
+        // settings
+        type: 'success',
+        placement: {
+            from: 'bottom',
+            align: 'left'
+        },
+        delay: 10000,
+        mouse_over: 'pause'
+    });
+}
 
 // Function that refreshes the data
 function refresh() {
@@ -32,9 +65,12 @@ function refresh() {
 // Function that generate a device panel in html using its data
 function loadDeviceInfo(device) {
 
+    username = document.getElementById("pseudo").innerHTML;
+    console.log(username);
+
     id = device.id;
     name = device.name,
-    description = device.description;
+        description = device.description;
     type = device.type;
     battery = device.battery;
     inCharge = device.inCharge;
@@ -64,30 +100,29 @@ function loadDeviceInfo(device) {
 
     $("#items").append(
         '<div class="col-md-6" id="item">' +
-            '<div class="panel panel-warning panel-warning-dark">' +
-                getDevicePanelTitleTemplate(id,type,name,warning) +
-                "<div class='panel-body'>" +
-                    "<div class='row'>"+
-                        "<div class='col-md-2'><i class='fa fa-info'></i></div>"+
-                        "<div class='col-md-6'>"+description+"</div>"+
-                        "<div class='col-md-1'><i class='glyphicon glyphicon-signal'></i></div>"+
-                        "<div class='col-md-1'>"+connection+"</div>"+
-                    "</div>"+
-                    "<div class='row'>"+
-                        "<div class='col-md-2' id='deviceCharge'><i class='ion-"+batteryType+"'></i></div>"+
-                        "<div class='col-md-10'>"+
-                            "<div class='progress'>"+
-                                "<div class='progress-bar progress-bar-"+barType+" "+animationToogle+"' role='progressbar' aria-valuenow='"+battery+
-                                    "' aria-valuemin='0' aria-valuemax='100' style='width: "+battery+"%'>"+
-                                "<span id='deviceChargeBar'>"+batteryDisplay+"</span>"+
-                            "</div>"+
-                        "</div>"+
-                    "</div>"+
-                "</div>" +
-            "</div>" +
-            getDevicePanelFooterTemplate(id) +
+        '<div class="panel panel-warning panel-warning-dark">' +
+        getDevicePanelTitleTemplate(id,type,name,warning) +
+        "<div class='panel-body'>" +
+        "<div class='row'>"+
+        "<div class='col-md-2'><i class='fa fa-info'></i></div>"+
+        "<div class='col-md-6'>"+description+"</div>"+
+        "<div class='col-md-1'><i class='glyphicon glyphicon-signal'></i></div>"+
+        "<div class='col-md-1'>"+connection+"</div>"+
+        "</div>"+
+        "<div class='row'>"+
+        "<div class='col-md-2' id='deviceCharge'><i class='ion-"+batteryType+"'></i></div>"+
+        "<div class='col-md-10'>"+
+        "<div class='progress'>"+
+        "<div class='progress-bar progress-bar-"+barType+" "+animationToogle+"' role='progressbar' aria-valuenow='"+battery+
+        "' aria-valuemin='0' aria-valuemax='100' style='width: "+battery+"%'>"+
+        "<span id='deviceChargeBar'>"+batteryDisplay+"</span>"+
+        "</div>"+
+        "</div>"+
+        "</div>"+
+        "</div>" +
+        "</div>" +
+        getDevicePanelFooterTemplate(username,id) +
         '</div>');
-
 }
 
 // Function that completes the delete confirmation modal
@@ -113,7 +148,20 @@ function deleteById(id,name) {
     };
 
     refresh();
-    alert(name+" has been deleted");
+    $.notify({
+        // options
+        icon: 'glyphicon glyphicon-ok',
+        message: "The device "+name+" has been deleted"
+    },{
+        // settings
+        type: 'success',
+        placement: {
+            from: 'bottom',
+            align: 'left'
+        },
+        delay: 10000,
+        mouse_over: 'pause'
+    });
 }
 
 // Function that returns the device identified by id
@@ -132,6 +180,25 @@ function changeMoreModal(id) {
 
     $("#moreModalHeader > h5").remove();
     $("#moreModalHeader").append("<h5 class='modal-title'><b>More about "+device.name+"</b></h5>");
+}
+
+// Function that completes the action modal
+function changeActionModal(username,id,action) {
+
+    device = getDeviceById(id);
+
+    path = "/users/" + username + "/devices/" + device.id + "/action";
+    params = "{username: \""+username+"\", uuid: "+id+", action: \""+action+"\"}";
+
+    $("#actionModalBody > p").remove();
+    $("#actionModalFooter > ").remove();
+
+    $("#actionModalBody").append("<p><b>Send \""+action+"\" to the device "+device.name+" ?</b></p>");
+    $("#actionModalFooter").append(
+        "<button class='btn btn-secondary' data-dismiss='modal'>Cancel</button>"+
+        "<button class='btn btn-primary' data-dismiss='modal' onclick='postAction(\""+path+"\","+params+",\"post\","+id+",\""+action+"\");'>Confirm</button>"
+    )
+
 }
 
 // Enable tooltips

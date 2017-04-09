@@ -111,6 +111,12 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
         console.log(req.body);
         res.redirect('/api/users');
     });
+
+    app.post('/users/:username/devices/:uuid/action',urlencodedParser, function(req, res, next) {
+        console.log(req.body);
+        next();
+    })
+
     /*
      app.post('/api/users',urlencodedParser, function(req, res){
      console.log(req.body);
