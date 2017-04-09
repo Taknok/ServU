@@ -135,7 +135,6 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 				console.error(err);
 				res.redirect('/');
 			}
-			
 			if (httpResponse.statusCode == "201"){
 				console.log(httpResponse.statusCode);
 				
@@ -170,8 +169,27 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 			}
 			
 		});
-    })
+    });
 
+    app.post('/signIn', function(req, res) {
+        request.post({ url : 'http://127.0.0.1:3000/api/users', form : req.body }, function(err,httpResponse,body){
+            if (err){
+                console.error(err);
+                res.redirect('/');
+            }
+            if (httpResponse.statusCode == "201"){
+                req.session.username = use.username;
+                req.session.lastname = use.lastname;
+                req.session.firstname = use.firstname;
+                var user = '/api/users/'+ String(req.body.username);
+                res.redirect(user);
+
+                user_session = req.session; //bcp de changement de var non ? on peut pas garder req.session ?
+
+                res.redirect('/users/' + req.body.username);
+            }
+        });
+    });
     /*
     app.post('/users/:username/devices/:uuid/actions',urlencodedParser, function(req, res, next) {
         console.log(req.body);

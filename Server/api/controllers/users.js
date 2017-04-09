@@ -9,7 +9,6 @@ var util = require('util');
 
 
 module.exports = {
-
   postUsers,
   postLogin,
   getUsersUsername,
@@ -57,15 +56,9 @@ function postUsers(req, res, next) {
 function postLogin(req, res, next) {
   MongoClient.connect(url,  function(err, db1) {
     assert.equal(null, err);
-    console.log("Connected correctly to server");
     db1.collection("users").findOne({"username": req.body.username,"password":req.body.password},function(error, use) {
-      console.log(use);
       if(use != null && error == null){
-        req.session.username = use.username;
-        req.session.lastname = use.lastname;
-        req.session.firstname = use.firstname;
-        var user = '/api/users/'+ String(req.body.username);
-        res.redirect(user);
+        res.status(404).send();
       }
       else if (use == null && error == null) {
         var reponce = {"reponce": false};
