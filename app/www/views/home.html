@@ -1,22 +1,27 @@
 <ion-view view-title="weather" ng-controller="HomeCtrl" cache-view="false">
 <ion-content scroll="false" class="weather-home" scroll-watch>
-	<div class="overlay">
-	<label class="item-input">	
-		<span class="input-label city">Ville :</span>
-		<input type="text" placeholder="Paris,fr" ng-model="search" ng-keypress="loadWeather(search, $event)">
-	</label>	
-	</div>
-	<span class="mainText">{{keyCode}}</span>
-	<div ng-if="state" class="forecast">
-		<img src="{{weatherData.icon}}" class="icon"/>
-		<label class="bigText">{{weatherData.main}}</label>
-		<div class="mainText">Ville : {{weatherData.city}}</div>
-		<div class="mainText">Conditions courantes : {{weatherData.description}}</div>
-		<div class="bigText">{{weatherData.temp}} &deg C</div>
-	</div>
-	<button class="button" ng-click="flashlightOn()">{{'flash on' | translate}}</button>
-	<button class="button" ng-click="flashlightOff()">{{'flash off' | translate}}</button>
-	<button class="button" ng-click="vibrate()">{{'vibrate' | translate}}</button>
-	<button class="button" ng-click="ring()">{{'ring' | translate}}</button>
+	<div class="list card">
+
+  <div class="item item-avatar">
+    <img src="mcfly.jpg">
+    <h2>Marty McFly</h2>
+    <p>November 05, 1955</p>
+  </div>
+
+  <div class="item item-body">
+    <img class="full-image" src="delorean.jpg">
+    <p>
+      This is a "Facebook" styled Card. The header is created from a Thumbnail List item,
+      the content is from a card-body consisting of an image and paragraph text. The footer
+      consists of tabs, icons aligned left, within the card-footer.
+    </p>
+    <p>
+      <a href="#" class="subdued">1 Like</a>
+      <a href="#" class="subdued">5 Comments</a>
+    </p>
+  </div>
+
+</div>
+
 </ion-content>
 </ion-view>

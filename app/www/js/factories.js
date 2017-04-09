@@ -22,12 +22,18 @@ angular.module('ServU')
 
 .factory("phoneInfo", [ function(){
 	var _uuid = 0;
+	var _username = "Paul";
 	return {
 		setUuid: function(uuid){
 			_uuid = uuid;
 		},
 		getUuid: function(){
 			return _uuid;
+		},setUsername: function(username){
+			_username = username;
+		},
+		getUsername: function(){
+			return _username;
 		}
 	};
 }])

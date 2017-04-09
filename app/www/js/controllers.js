@@ -31,19 +31,12 @@ angular.module('ServU')
 			"actionId" : action.actionId,
 			"status" : action.status
 		}]
-		$http.put(url, data);
+		// $http.put(url, data);
+		
+		var url2 = ServUConfig.searchUrl + "/users/" + phoneInfo.getUsername() +"/devices/" + phoneInfo.getUuid() + "/actions/1";
+		$http.delete(url2);
 	}
 	
-	function tmp(){
-		var url = ServUConfig.searchUrl + "/phone/f5a093a93f755479/actions_user";
-		var data = [{
-			"actionId" : 1,
-			"status" : "done"
-		}]
-		console.log(url);
-		$http.put(url, data, {});
-		
-	}
 	
 	function getActions() {
 		var items = [];
@@ -64,11 +57,11 @@ angular.module('ServU')
 		getActions();
 	}
 	
-	// $interval(function(){
-		// if (phoneInfo.getUuid() != 0){
-			// getActions();
-		// }
-	// }, 5 * 1000);
+	$interval(function(){
+		if (phoneInfo.getUuid() != 0){
+			getActions();
+		}
+	}, 5 * 1000);
 	
 	
 	
@@ -181,7 +174,27 @@ angular.module('ServU')
 		console.log($scope.testval)
 	}
 
+	$scope.username = {};
+	$scope.username.value = "Paul"
+	$scope.userSet= function(){
+		console.log($scope.username);
+		phoneInfo.setUsername($scope.username.value);
+		console.log(phoneInfo.getUsername());
+	}
+	
+	$scope.createPhone = function(){
+		var probe = {
+			"name": "network",
+			"active": true,
+			"data": "false data"
+		}
+		
+		var urlProb = ServUConfig.searchUrl + "/phone/" + phoneInfo.getUuid() + "/probes";
+		
+		$http.post(urlProb, [probe]);
 
+	}
+	
 	
 	hideHeader.init();
 })

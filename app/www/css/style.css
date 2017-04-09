@@ -1,11 +1,5 @@
 /* Empty. Add your own CSS if you like */
-.weather-home {
-    background-image: url('../img/sky1.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    flex: 1;
-    flex-direction: column;
-}
+
 
 .overlay {
     padding-top: 5px;
