@@ -9,6 +9,7 @@ var util = require('util');
 
 
 module.exports = {
+	postPhone,
 	postProbes,
 	putProbes,
 	postActions,
@@ -18,6 +19,29 @@ module.exports = {
 	putActionsUser
 }
 
+
+// NE MARHCE PAS
+function postPhone(req, res, next) {
+	MongoClient.connect(url,  function(err, db1) {
+    assert.equal(null, err);
+
+		var obj = {};
+
+    db1.collection("phone").insert({
+		"uuid": req.swagger.params.uuid.value,
+		"actionUser" : obj
+	},function(error, exist) {
+		if (error) {
+			console.error(error);
+			res.status(409).send();
+		}else{
+			res.status(201).send();
+		}
+    });
+
+  });
+}
+
 function postProbes(req, res, next) {
   MongoClient.connect(url,  function(err, db1) {
     assert.equal(null, err);
@@ -25,7 +49,8 @@ function postProbes(req, res, next) {
 
     const phone = {
       "uuid": req.swagger.params.uuid.value,
-       "probes": req.body
+       "probes": req.body,
+	   "actionUser" : "{}"
     }
     console.log(phone);
     db1.collection("phone").findOne({"uuid": req.swagger.params.uuid.value},function(error, exist) {

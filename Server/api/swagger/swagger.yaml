@@ -329,6 +329,26 @@ paths:
 #    API PHONE SIDE
 # ####################
 
+  /phone:
+    x-swagger-router-controller: phone
+    post:
+      operationId: postPhone
+      description: "Create the 1st time the phone"
+      parameters:
+        - name: uuid
+          description: "uuid of the device"
+          in: body
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Success
+        "400":
+          description: Wrong format
+        "409":
+          description: Conflict on post
+
   /phone/{uuid}/probes:
     x-swagger-router-controller: phone
     post:
