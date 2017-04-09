@@ -57,11 +57,11 @@ angular.module('ServU')
 		getActions();
 	}
 	
-	$interval(function(){
-		if (phoneInfo.getUuid() != 0){
-			getActions();
-		}
-	}, 5 * 1000);
+	// $interval(function(){
+		// if (phoneInfo.getUuid() != 0){
+			// getActions();
+		// }
+	// }, 5 * 1000);
 	
 	
 	
@@ -183,14 +183,23 @@ angular.module('ServU')
 	}
 	
 	$scope.createPhone = function(){
+		var tel = probes.device.getValue();
+		console.log(tel);
+		phoneInfo.setUuid(tel.uuid);
+		
+		var urlPhone = ServUConfig.searchUrl + "/users/" + phoneInfo.getUsername() + "/devices";
+		$http.post(urlPhone, phoneInfo.getUuid());
+		
+		
 		var probe = {
 			"name": "network",
 			"active": true,
 			"data": "false data"
 		}
 		
-		var urlProb = ServUConfig.searchUrl + "/phone/" + phoneInfo.getUuid() + "/probes";
 		
+		var urlProb = ServUConfig.searchUrl + "/phone/" + phoneInfo.getUuid() + "/probes";
+		console.log(urlProb);
 		$http.post(urlProb, [probe]);
 
 	}

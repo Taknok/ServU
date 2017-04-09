@@ -8,7 +8,7 @@ angular.module('ServU')
 })
 
 .constant('ServUConfig', {
-   searchUrl: 'http://192.168.137.1:8001/api',
+   searchUrl: 'http://www.servu.ml/api',
    units: '&units=metric',
    appid: '&appid=62f6be4c772a3903ce384e4a8d1035ac',
    imgUrl: 'http://openweathermap.org/img/w/' 
