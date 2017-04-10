@@ -46,19 +46,19 @@ function getDevicePanelFooterTemplate(username,id){
     "<span class='clearfix'></span>" +
     "</button>" +
     "<ul class='dropdown-menu' id='actionList#"+id+"'>" +
-    "<li><a data-toggle='modal' data-target='#actionModal' onclick='changeActionModal(\""+username+"\","+id+",\"ring\")'>" +
+    "<li><a data-toggle='modal' data-target='#actionModal' onclick='changeActionModal(\""+username+"\",\""+id+"\",\"ring\")'>" +
     "<div class='pull-left'>Ring</div>" +
     "<i class='icon ion-ios-bell pull-right'></i>" +
     "<span class='clearfix'></span>" +
     "</a>" +
     "</li>" +
-    "<li><a data-toggle='modal' data-target='#actionModal' onclick='changeActionModal(\""+username+"\","+id+",\"vibrate\")'>" +
+    "<li><a data-toggle='modal' data-target='#actionModal' onclick='changeActionModal(\""+username+"\",\""+id+"\",\"vibrate\")'>" +
     "<div class='pull-left'>Vibrate</div>" +
     "<i class='icon ion-radio-waves pull-right'></i>" +
     "<span class='clearfix'></span>" +
     "</a>" +
     "</li>" +
-    "<li><a data-toggle='modal' data-target='#actionModal' onclick='changeActionModal(\""+username+"\","+id+",\"flashlight\")'>" +
+    "<li><a data-toggle='modal' data-target='#actionModal' onclick='changeActionModal(\""+username+"\",\""+id+"\",\"flashlight\")'>" +
     "<div class='pull-left'>Flash</div>" +
     "<i class='glyphicon glyphicon-flash pull-right'></i>" +
     "<span class='clearfix'></span>" +
@@ -82,6 +82,10 @@ function getMoreModalElementTemplate(name,data) {
         "</div>"
     );
 }
+
+
+
+
 
 // Device variable structure
 var device1 = {
