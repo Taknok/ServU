@@ -62,12 +62,42 @@ function refresh() {
 
 }
 
+
+
+function getId(username){
+	var uuid = 0;
+	var myurl =  "/api/users/" + username + "/devices"
+	$.get( myurl, function(data, status){
+		$.each(data, function(index, value) {
+			uuid = value.uuid;
+		}); 
+		console.log(uuid);
+	});
+	
+	
+	
+	
+}
+
 // Function that generate a device panel in html using its data
 function loadDeviceInfo(device) {
-
+	
     username = document.getElementById("pseudo").innerHTML;
-
-    id = device.id;
+	
+	var tmp = getId(username);
+	
+	var myurl =  "/api/users/" + username + "/devices"
+	$.get( myurl, function(data, status){
+		$.each(data, function(index, value) {
+			uuid = value.uuid;
+		}); 
+		
+		id = uuid;
+		console.log(uuid);
+	
+	
+	
+    // id = device.id;
     name = device.name,
         description = device.description;
     type = device.type;
@@ -122,6 +152,8 @@ function loadDeviceInfo(device) {
         "</div>" +
         getDevicePanelFooterTemplate(username,id) +
         '</div>');
+		
+		});
 }
 
 // Function that completes the delete confirmation modal
