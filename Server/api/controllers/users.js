@@ -320,7 +320,7 @@ function postUsersDeviceUuidActions(req, res, next){
 						}
 					};
 					console.log("on a bien recu l'action");
-					db.collection("phone").update({"uuid" : "1"}, updateAction, function(err, probe) {
+					db.collection("phone").update({"uuid" : req.swagger.params.uuid.value}, updateAction, function(err, probe) {
 							if (!err){
 								console.log("aaaaaaaaaa");
 								res.status(201).send();

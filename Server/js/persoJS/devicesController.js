@@ -64,38 +64,41 @@ function refresh() {
 
 
 
-function getId(username){
-	var uuid = 0;
-	var myurl =  "/api/users/" + username + "/devices"
-	$.get( myurl, function(data, status){
-		$.each(data, function(index, value) {
-			uuid = value.uuid;
-		}); 
-		console.log(uuid);
-	});
-	
-	
-	
-	
-}
+
 
 // Function that generate a device panel in html using its data
 function loadDeviceInfo(device) {
 	
     username = document.getElementById("pseudo").innerHTML;
 	
-	var tmp = getId(username);
-	
 	var myurl =  "/api/users/" + username + "/devices"
-	$.get( myurl, function(data, status){
-		$.each(data, function(index, value) {
-			uuid = value.uuid;
-		}); 
+	
+	function ajax(url) {
+		return new Promise(function(resolve, reject) {
+		var xhr = new XMLHttpRequest();
+		xhr.onload = function() {
+		  resolve(this.responseText);
+		};
+		xhr.onerror = reject;
+		xhr.open('GET', url);
+		xhr.send();
+		});
+	}
+	
+	ajax(myurl).then(function(result) {
+		data = JSON.parse(result);
+		for (var key in data) {
+			if (data.hasOwnProperty(key)) {
+				id = data[key].uuid;
+			}
+		}
 		
-		id = uuid;
-		console.log(uuid);
+		console.log(id); //id du dernier tel pour le moment
+		
 	
+
 	
+	device.id = id;
 	
     // id = device.id;
     name = device.name,
@@ -153,7 +156,10 @@ function loadDeviceInfo(device) {
         getDevicePanelFooterTemplate(username,id) +
         '</div>');
 		
-		});
+		}).catch(function() {
+		// An error occurred
+	});
+
 }
 
 // Function that completes the delete confirmation modal
@@ -197,6 +203,7 @@ function deleteById(id,name) {
 
 // Function that returns the device identified by id
 function getDeviceById(id) {
+	
     for(var i = devices.length-1; i >= 0; i--){
         if(devices[i].id == id){
             return devices[i];
@@ -256,7 +263,7 @@ function changeActionModal(username,id,action) {
     $("#actionModalBody").append("<p><b>Send \""+action+"\" to the device "+device.name+" ?</b></p>");
     $("#actionModalFooter").append(
         "<button class='btn btn-secondary' data-dismiss='modal'>Cancel</button>"+
-        "<button class='btn btn-primary' data-dismiss='modal' onclick='postAction(\""+path+"\","+ stringParams +",\"post\","+id+",\""+action+"\");'>Confirm</button>"
+        "<button class='btn btn-primary' data-dismiss='modal' onclick='postAction(\""+path+"\","+ stringParams +",\"post\",\""+id+"\",\""+action+"\");'>Confirm</button>"
     )
 
 }
