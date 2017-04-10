@@ -306,7 +306,7 @@ function postUsersDeviceUuidActions(req, res, next){
 					var action = req.swagger.params.action.value;
 					var updateAction = { "$set" : 
 						{ 
-							"actionUser" : 
+							"actionsUser" : 
 							{ 
 								"1" : 
 									{
@@ -360,7 +360,7 @@ function deleteUsersDeviceUuidActions(req, res, next){
     MongoClient.connect(url,  function(err, db) {
         assert.equal(null, err);
 
-		var strucActionUserId = "actionUser." + req.swagger.params.action_id.value;
+		var strucActionUserId = "actionsUser." + req.swagger.params.action_id.value;
 		console.log(strucActionUserId);
 		
 		db.collection("phone").update({

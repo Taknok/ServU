@@ -29,7 +29,7 @@ function postPhone(req, res, next) {
 
     db1.collection("phone").insert({
 		"uuid": req.swagger.params.uuid.value,
-		"actionUser" : obj
+		"actionsUser" : obj
 	},function(error, exist) {
 		if (error) {
 			console.error(error);
@@ -50,7 +50,7 @@ function postProbes(req, res, next) {
     const phone = {
       "uuid": req.swagger.params.uuid.value,
        "probes": req.body,
-	   "actionUser" : "{}"
+	   "actionsUser" : "{}"
     }
     console.log(phone);
     db1.collection("phone").findOne({"uuid": req.swagger.params.uuid.value},function(error, exist) {
