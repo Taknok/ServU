@@ -211,10 +211,18 @@ function getActionsUser(req, res, next) {
 
 		db.collection("phone").findOne({"uuid" : req.swagger.params.uuid.value, "actionsUser" : { "$exists" : true }}, function(err, phone){ //idem pour ce get
 			if (err) throw err;
+			console.log("a");
 			if (phone != null){	//if uuid there
-				db.collection("phone").findOne({"uuid" : req.swagger.params.uuid.value, "actionsUser" : { "$elemMatch" : {"status" : {"$eq" : "pending"} }}}, function(err, phone){
-					if (phone != null){
-						res.json(phone.actionsUser);
+				console.log(req.swagger.params.uuid.value);
+				var uuid = req.swagger.params.uuid.value;
+				//db.collection("phone").findOne({"uuid" : req.swagger.params.uuid.value, "actionsUser" : { "1" : {"status" : {"$eq" : "pending"} }}}, function(err, phone){
+				 db.collection("phone").findOne({ "uuid" : req.swagger.params.uuid.value , "actionsUser" : {$exists :true}}, function(err, phone){
+					console.log(phone);
+					console.log(phone.actionsUser["1"] != null);
+					console.log(phone != null);
+					console.log((phone != null) && (phone.actionsUser["1"] != null));
+					if ((phone != null) && (phone.actionsUser["1"] != null)){
+						res.json([phone.actionsUser["1"]]);
 					} else { //if nothing send null array
 						res.json([]);
 					}

@@ -364,11 +364,11 @@ function deleteUsersDeviceUuidActions(req, res, next){
 		console.log(strucActionUserId);
 		
 		db.collection("phone").update({
-			uuid : req.swagger.params.action_id.value, 
-			[strucActionUserId] : {$exists: true}
+			"uuid" : req.swagger.params.uuid.value, 
+			"actionsUser.1" : {"$exists": true}
 		}, {
-			$unset:{ 
-				[strucActionUserId] : true
+			"$unset" : { 
+				"actionsUser.1" : true
 			}
 		
         });
