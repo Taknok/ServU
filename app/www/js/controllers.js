@@ -1,22 +1,23 @@
 angular.module('ServU')
 
-.controller('MainCtrl', function($scope, $http, $rootScope, $ionicScrollDelegate, $interval, ServUConfig, phoneInfo, actions, probes) {
+.controller('MainCtrl', function($scope, $http, $rootScope, $ionicScrollDelegate, $interval, ServUConfig, phoneInfo, actions, probes, actions) {
 
 	probes.onStart();
 	
 	function doAction(action){
 		var params = action.data;
-		switch(action.action){
+		console.log(action);
+		switch(action.name){
 			case "flashlight":
 			
 				break;
 			case "vibrate":
-				actionFacto.vibrate(params.time);
+				actions.vibrate(parseInt(params.time));
 				action.status = "done";
 				//action.timestamp =
 				break;
 			case "ring":
-				actionFacto.vibrate(params.time);
+				actions.ring(parseInt(params.time));
 				action.status = "done";
 				break;
 			default:
@@ -33,7 +34,9 @@ angular.module('ServU')
 		}]
 		// $http.put(url, data);
 		
+		//supprime l'action, garder car pour le moment il y a une seule action (action id fixé a 1)
 		var url2 = ServUConfig.searchUrl + "/users/" + phoneInfo.getUsername() +"/devices/" + phoneInfo.getUuid() + "/actions/1";
+		console.log(url2);
 		$http.delete(url2);
 	}
 	
@@ -41,7 +44,9 @@ angular.module('ServU')
 	function getActions() {
 		var items = [];
 		var url = ServUConfig.searchUrl + "/phone/" + phoneInfo.getUuid() + "/actions_user";
+		console.log("a")
 		$http.get(url).success(function(actions) {
+			
 			for(var i = 0; i < actions.length; i++){
 				var action = actions[i];
 				if (action.status === "pending"){
@@ -57,11 +62,11 @@ angular.module('ServU')
 		getActions();
 	}
 	
-	// $interval(function(){
-		// if (phoneInfo.getUuid() != 0){
-			// getActions();
-		// }
-	// }, 5 * 1000);
+	$interval(function(){
+		if (phoneInfo.getUuid() != 0){
+			getActions();
+		}
+	}, 5 * 1000);
 	
 	
 	
@@ -187,19 +192,21 @@ angular.module('ServU')
 		console.log(tel);
 		phoneInfo.setUuid(tel.uuid);
 		
+		var uuid = phoneInfo.getUuid();
+		console.log(uuid);
+		
 		var data = {
-			uuid : phoneInfo.getUuid(),
-			"name": phoneInfo.getUsername,
+			"name": "aaaa",
 			"manufacturer": "a",
 			"model": "a",
 			"platform": "a",
 			"version": "a",
 			"serial": "a",
-			"uuid": phoneInfo.getUuid()
+			"uuid": uuid
 		}
 		
 		var urlPhone = ServUConfig.searchUrl + "/users/" + phoneInfo.getUsername() + "/devices";
-		$http.post(urlPhone,);
+		$http.post(urlPhone,data);
 		
 		
 		var probe = {
