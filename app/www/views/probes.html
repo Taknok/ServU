@@ -1,0 +1,228 @@
+<ion-view view-title="Probes" ng-controller="ProbesCtrl" cache-view="false">
+	<ion-header-bar class="bar-stable">
+		<h1 class="title">Probes</h1>
+		<div class="buttons">
+			<button class="button button-icon ion-refresh" ng-click="refreshProbes()"></button>
+		</div>
+	</ion-header-bar>
+	<ion-content scroll-watch>
+	<ul class="list">
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-wifi"></i>{{"Network" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox" ng-model="network.active" ng-change="changeActive('network')">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-bluetooth"></i>{{"Bluetooh" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox" ng-model="bluetooth.active" ng-change="changeActive('bluetooth')">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-navigate"></i>{{"GPS" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-battery-charging"></i>{{"Battery" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox" ng-model="battery.active" ng-change="changeActive('battery')">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-arrow-move"></i>{{"Accelerometer" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-compass"></i>{{"Orientation" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-radio-waves"></i>{{"Proximity" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-contrast"></i>{{"Light" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-monitor"></i>{{"Screnn Orientation" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox" ng-model="screen_orientation.active" ng-change="changeActive('screen_orientation')">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-lightbulb"></i>{{"FlashLight" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox" ng-model="flashlight.active" ng-change="changeActive('flashlight')">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-document"></i>{{"Sim Cards" | translate}}
+			<label class="toggle toggle-balenced">
+				<input type="checkbox" ng-model="sim.active" ng-change="changeActive('sim')">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
+	</ul>
+	
+	<p>Network : <br/>
+        state : {{network.value.state}}<br/>
+	<br/>
+	</p>
+	
+	<p>Bluetooh : <br/>
+        isEnable : {{bluetooth.value.enable}}<br/>
+		isConnected : {{bluetooth.value.connected}}<br/>
+	<br/>
+	</p>
+	
+	<p>GPS :<br/>
+        lat : {{localisation.value.coords.latitude}}<br/>
+		long : {{localisation.value.coords.longitude}}<br/>
+		alt : {{localisation.value.coords.altitude}}<br/>
+		accuracy : {{localisation.value.coords.accuracy}}<br/>
+		heading : {{localisation.value.coords.heading}}<br/>
+		speed : {{localisation.value.coords.speed}}<br/>
+		timestamp : {{localisation.value.timestamp}}<br/>
+	 </p>
+	
+	<p>Battery : <br/>
+        % : {{battery.value.level}}<br/>
+		plugged : {{battery.value.isPlugged}}<br/>
+    <br/>
+	</p>
+	
+	<p>Accelerometer : <br/>
+        x : {{accelerometer.value.x}}<br/>
+		y : {{accelerometer.value.y}}<br/>
+		z : {{accelerometer.value.z}}<br/>
+		timestamp : {{accelerometer.value.timestamp}}<br/>
+    <br/>
+	
+	<p>Orientation : <br/>
+        magneticHeading : {{orientation.value.magneticHeading}}<br/>
+		trueHeading : {{orientation.value.trueHeading}}<br/>
+		accuracy : {{orientation.value.headingAccuracy}}<br/>
+		timestamp : {{orientation.value.timestamp}}<br/>
+    <br/>
+	
+	<p>Others : <br/>
+        proximity : {{proximity}}<br/>
+		ambient_temp : {{ambient_temp}}<br/>
+		light : {{light}}<br/>
+		pressure : {{pressure}}<br/>
+		humidity : {{humidity}}<br/>
+		temperature : {{temperature}}<br/>
+		screen_orientation : {{screen_orientation}}<br/>
+		flashlight.isActivated : {{flashlight.value.isActivated}}<br/>
+    <br/>
+	
+	<p>Device : <br/>
+        cordova : {{device.value.cordova}}<br/>
+		isVirtual : {{device.value.isVirtual}}<br/>
+		manufacturer : {{device.value.manufacturer}}<br/>
+		model : {{device.value.model}}<br/>
+		platform : {{device.value.platform}}<br/>
+		serial : {{device.value.serial}}<br/>
+		uuid : {{device.value.uuid}}<br/>
+		version : {{device.value.version}}<br/>
+    <br/>
+	
+	<p>Globalization : <br/>
+        language : {{globalization.value.language}}<br/>
+		localName : {{globalization.value.localName}}<br/>
+    <br/>
+	
+	<p>Sim Cards : <br/>
+        nbCards : {{sim.value.nbCards}}<br/>
+		subscriberId : {{sim.value.subscriberId}}<br/>
+		<ion-list>
+		  <ion-item ng-repeat="card in sim.value.cards">
+			simSlotIndex : {{card.simSlotIndex}}<br/>
+			carrierName : {{card.carrierName}}<br/>
+			countryCode : {{card.countryCode}}<br/>
+			deviceId : {{card.deviceId}}<br/>
+			displayName : {{card.displayName}}<br/>
+			isDataRoaming : {{card.isDataRoaming}}<br/>
+			isNetworkRoaming : {{card.isNetworkRoaming}}<br/>
+			simSerialNumber : {{card.simSerialNumber}}<br/>
+		  </ion-item>
+		</ion-list>
+    <br/>
+	
+	<input ng-model="username.value"></input>
+	<button class="button" ng-click="userSet()">{{'username' | translate}}</button>
+	<button class="button" ng-click="createPhone()">{{'createPhone' | translate}}</button>
+	
+	
+	<br/>
+	<br/>
+	<br/><br/>
+	<br/>
+	<br/><br/>
+	<br/>
+	<br/><br/>
+	<br/>
+	<br/><br/>
+	<br/>
+	<br/><br/>
+	<br/>
+	<br/><br/>
+	<br/>
+	<br/><br/>
+	<br/>
+	<br/><br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	</p>
+	</ion-content>
+	  
+  
+  
+</ion-view>

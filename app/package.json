@@ -1,0 +1,53 @@
+{
+  "name": "weather",
+  "version": "1.1.1",
+  "description": "Weather: An Ionic project",
+  "dependencies": {
+    "gulp": "^3.5.6",
+    "gulp-sass": "^2.0.4",
+    "gulp-concat": "^2.2.0",
+    "gulp-minify-css": "^0.3.0",
+    "gulp-rename": "^1.2.0"
+  },
+  "devDependencies": {
+    "bower": "^1.3.3",
+    "gulp-util": "^2.2.14",
+    "shelljs": "^0.3.0"
+  },
+  "cordovaPlugins": [
+    "cordova-plugin-whitelist",
+    "cordova-plugin-statusbar",
+    "cordova-plugin-console",
+    "cordova-plugin-splashscreen",
+    "ionic-plugin-keyboard",
+    "cordova-plugin-camera",
+    "cordova-plugin-compat",
+    "cordova-plugin-geolocation",
+    "cordova-plugin-battery-status",
+    "cordova-plugin-device-motion",
+    "cordova-plugin-device-orientation",
+    "cordova-plugin-globalization",
+    "cordova-plugin-network-information",
+    "cordova-plugin-bluetooth-serial",
+    {
+      "locator": "https://github.com/fabiorogeriosj/cordova-plugin-sensors.git",
+      "id": "com.fabiorogeriosj.sensors"
+    },
+    "cordova-plugin-device",
+    "cordova-plugin-screen-orientation",
+    "cordova-plugin-sim",
+    "cordova-plugin-flashlight",
+    "cordova-plugin-vibration",
+    "org.apache.cordova.plugin.RingtonePicker",
+    "cordova-plugin-media",
+    "cordova-plugin-file",
+    "cordova-plugin-autostart"
+  ],
+  "cordovaPlatforms": [
+    {
+      "platform": "android",
+      "version": "",
+      "locator": "android"
+    }
+  ]
+}
