@@ -1,6 +1,71 @@
 angular.module('ServU')
 
-.controller('MainCtrl', function($scope, $http, $rootScope, $ionicScrollDelegate, $interval, ServUConfig, phoneInfo, actions, probes, actions) {
+.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS) {
+	$scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
+		AuthService.logout();
+		$state.go('login');
+		var alertPopup = $ionicPopup.alert({
+			title: 'Session Lost!',
+			template: 'Sorry, You have to login again.'
+		});
+	});
+})
+
+.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state) {
+	$scope.user = {
+		username: '',
+		password: ''
+	};
+ 
+	$scope.login = function() {
+		AuthService.login($scope.user).then(function(msg) {
+			$state.go('main');
+		}, function(errMsg) {
+			var alertPopup = $ionicPopup.alert({
+				title: 'Login failed!',
+				template: errMsg
+			});
+		});
+	};
+})
+
+.controller('RegisterCtrl', function($scope, AuthService, $ionicPopup, $state) {
+	$scope.user = {
+		name: '',
+		password: ''
+	};
+
+	$scope.signup = function() {
+		AuthService.register($scope.user).then(function(msg) {
+			$state.go('login');
+			var alertPopup = $ionicPopup.alert({
+				title: 'Register success!',
+				template: msg
+			});
+		}, function(errMsg) {
+			var alertPopup = $ionicPopup.alert({
+				title: 'Register failed!',
+				template: errMsg
+			});
+		});
+	};
+})
+
+.controller('MainCtrl', function($scope, $http, $rootScope, $ionicScrollDelegate, $interval, $state, ServUApi, phoneInfo, actions, probes, actions) {
+
+	$scope.fn1 = function (isopened) {
+            console.log('fn1 opened', isopened);
+        };
+
+        $scope.fn2 = function (param) {
+            console.log('fn2: ', param);
+        };
+
+        $scope.actions = [
+            { text: 'Settings'  , value: "arg of the fn", fn: $scope.fn1, disabled: true },
+            { text: 'Logout'  , value: 0, fn: $scope.logout, disabled : false },
+            { text: 'Logout'    , value: 2, href: "#/logout", disabled : true}
+        ];
 
 	probes.onStart();
 	
@@ -27,7 +92,7 @@ angular.module('ServU')
 	
 	function upSendAction(action){
 		
-		var url = ServUConfig.searchUrl + "/phone/" + phoneInfo.getUuid() + "/actions_user";
+		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/actions_user";
 		var data = [{
 			"actionId" : action.actionId,
 			"status" : action.status
@@ -35,7 +100,7 @@ angular.module('ServU')
 		// $http.put(url, data);
 		
 		//supprime l'action, garder car pour le moment il y a une seule action (action id fixé a 1)
-		var url2 = ServUConfig.searchUrl + "/users/" + phoneInfo.getUsername() +"/devices/" + phoneInfo.getUuid() + "/actions/1";
+		var url2 = ServUApi.url + "/users/" + phoneInfo.getUsername() +"/devices/" + phoneInfo.getUuid() + "/actions/1";
 		console.log(url2);
 		$http.delete(url2);
 	}
@@ -43,8 +108,7 @@ angular.module('ServU')
 	
 	function getActions() {
 		var items = [];
-		var url = ServUConfig.searchUrl + "/phone/" + phoneInfo.getUuid() + "/actions_user";
-		console.log("a")
+		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/actions_user";
 		$http.get(url).success(function(actions) {
 			
 			for(var i = 0; i < actions.length; i++){
@@ -94,64 +158,27 @@ angular.module('ServU')
 	});
 })
 
-.controller('HomeCtrl', function($scope, $http, OpenWeatherConfig, $cordovaMedia, hideHeader, ServUConfig) {
-    $scope.search = '';
-    $scope.state = false;    
-    $scope.weatherData = {
-    icon: '',
-    main: '',
-    city: '',
-    description: '',
-    temp: ''
-    };
-		
-    $scope.loadWeather = function(search, $event) {
-		$scope.keyCode = $event.keyCode;
-        if ($event.keyCode === 13) {
-            var url = OpenWeatherConfig.searchUrl + search + OpenWeatherConfig.units + OpenWeatherConfig.appid;
-            $http.get(url).success(function(data) {
-                $scope.weatherData.icon = OpenWeatherConfig.imgUrl + data.weather[0].icon + '.png';
-                $scope.weatherData.main = data.weather[0].main;
-                $scope.weatherData.city = data.name;
-                $scope.weatherData.description = data.weather[0].description;
-                $scope.weatherData.temp = data.main.temp;
-                $scope.state = true;
-            });
-        };
-    };
-	
-	ionic.Platform.ready(function(){
-		cordova.plugins.autoStart.enable();
-		console.log("autostart enable");
-	});
-	
-	
-	$scope.flashlightOn = function(){
-		console.log($scope.flashlight);
-		window.plugins.flashlight.switchOn();
-	}
-	$scope.flashlightOff = function(){
-		window.plugins.flashlight.switchOff();
-	}
-	
+.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader) {
+	$scope.destroySession = function() {
+		AuthService.logout();
+	};
 
-	$scope.ring = function(){
-		// RingtonePicker.pickRingtone(function(success){
-			// console.log(success);
-		// },function(){});
-		
-		RingtonePicker.timerPlaySound("content://settings/system/ringtone", 2000);
-	}
-	
-	$scope.post = function(){
-		
-	}
+	$scope.getInfo = function() {
+		$http.get(ServUApi.url + '/memberinfo').then(function(result) { //changer pour mettre les infos de notre user
+			$scope.memberinfo = result.data.msg;
+		});
+	};
+
+	$scope.logout = function() {
+		AuthService.logout();
+		$state.go('login');
+	};
 	
 	
 	hideHeader.init();
 })
 
-.controller('ProbesCtrl', function($scope, $http, hideHeader, ServUConfig, phoneInfo, probes) {
+.controller('ProbesCtrl', function($scope, $http, hideHeader, ServUApi, phoneInfo, probes) {
 	$scope.network = probes.network.getAll();
 	$scope.bluetooth = probes.bluetooth.getAll();
 	// $scope.localisation = probes.localisation.getAll();
@@ -205,7 +232,7 @@ angular.module('ServU')
 			"uuid": uuid
 		}
 		
-		var urlPhone = ServUConfig.searchUrl + "/users/" + phoneInfo.getUsername() + "/devices";
+		var urlPhone = ServUApi.url + "/users/" + phoneInfo.getUsername() + "/devices";
 		$http.post(urlPhone,data);
 		
 		
@@ -216,7 +243,7 @@ angular.module('ServU')
 		}
 		
 		
-		var urlProb = ServUConfig.searchUrl + "/phone/" + phoneInfo.getUuid() + "/probes";
+		var urlProb = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes";
 		console.log(urlProb);
 		$http.post(urlProb, [probe]);
 
@@ -258,7 +285,7 @@ angular.module('ServU')
 			});
 		}
 	};
-  
+	
 	$scope.refreshItem = function getItems() {
 		var items = [];
 		$http.get(url).success(function(data) {

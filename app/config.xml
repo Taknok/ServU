@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <widget id="com.pg.ServU" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>ServU</name>
-  <description>&#xD;&#xD;
-        Application to automatize actions&#xD;&#xD;
+  <description>&#xD;&#xD;&#xD;
+        Application to automatize actions&#xD;&#xD;&#xD;
     </description>
-  <author email="pg.developper.fr@gmail.com" href="http://example.com/">&#xD;&#xD;
-      Pg&#xD;&#xD;
+  <author email="pg.developper.fr@gmail.com" href="http://example.com/">&#xD;&#xD;&#xD;
+      Pg&#xD;&#xD;&#xD;
     </author>
   <content src="index.html"/>
   <access origin="*"/>
@@ -37,4 +37,5 @@
   <allow-navigation href="*"/>
   <allow-navigation href="http://192.168.20.55:8100"/>
   <allow-navigation href="http://192.168.137.1:8100"/>
+  <allow-navigation href="http://192.168.1.10:8100"/>
 </widget>
