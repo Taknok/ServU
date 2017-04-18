@@ -11,7 +11,7 @@ angular.module('ServU')
 	});
 })
 
-.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state) {
+.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, phoneInfo) {
 	$scope.user = {
 		username: '',
 		password: ''
@@ -19,6 +19,7 @@ angular.module('ServU')
  
 	$scope.login = function() {
 		AuthService.login($scope.user).then(function(msg) {
+			phoneInfo.setUsername($scope.user.username);
 			$state.go('main');
 		}, function(errMsg) {
 			var alertPopup = $ionicPopup.alert({

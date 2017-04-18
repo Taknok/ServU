@@ -211,7 +211,9 @@ angular.module('ServU')
 				screen_orientation.value = screen.orientation.type;
 			});
 			
-			getDevice();
+			getDevice()
+			console.log(phoneInfo.getUuid())
+			
 			console.log("onStart done");
 			onStartDone = true;
 		}
@@ -447,7 +449,7 @@ angular.module('ServU')
 	
 	var getDevice = function(){
 		device.value = ionic.Platform.device();
-		phoneInfo.setUuid(device.uuid);
+		phoneInfo.setUuid(device.value.uuid);
 		return device.value;
 	}
 	

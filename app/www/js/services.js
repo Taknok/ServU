@@ -46,18 +46,15 @@ angular.module('ServU')
 
 	var login = function(user) {
 		return $q(function(resolve, reject) {
-			console.log(user)
 			$http.post(ServUApi.url + '/users/login', user).then(function(result) {
 				if (result.status == 201) {
-					console.log("suc", result)
 					storeUserCredentials(result.data.token);
 					resolve(result.data.msg);
 				} else {
-					console.log(result)
-					reject(result.data.msg);
+					reject("");
 				}
 			}, function(result){
-				console.error("error post level", result);
+				reject("");
 			});
 		});
 	};
