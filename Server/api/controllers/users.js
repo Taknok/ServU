@@ -298,19 +298,19 @@ function postUsersDeviceUuidActions(req, res, next){
         var actions = req.body;
 		var deviceUuid = "devices." + req.swagger.params.uuid.value;
         db.collection("users").findOne({"username" : req.swagger.params.username.value}, function(err, data){
-			
+
 			try{
 				if(data.devices[req.swagger.params.uuid.value].uuid == req.swagger.params.uuid.value){
 					var tmp = "actions." + String([req.body.action]);
 					console.log(req.body);
 					var action = req.swagger.params.action.value;
-					var updateAction = { "$set" : 
-						{ 
-							"actionsUser" : 
-							{ 
-								"1" : 
+					var updateAction = { "$set" :
+						{
+							"actionsUser" :
+							{
+								"1" :
 									{
-										actionId : "1", 
+										actionId : "1",
 										name: action.name,
 										status: action.status,
 										data: action.data,
@@ -341,12 +341,12 @@ function postUsersDeviceUuidActions(req, res, next){
 						}
 					});
 					*/
-				}			
+				}
 			}
 			catch(err){
 				res.status(409).send("");
 			}
-            
+
             // else {
                 // res.status(409).send("");
             // }
@@ -362,18 +362,18 @@ function deleteUsersDeviceUuidActions(req, res, next){
 
 		var strucActionUserId = "actionsUser." + req.swagger.params.action_id.value;
 		console.log(strucActionUserId);
-		
+
 		db.collection("phone").update({
-			"uuid" : req.swagger.params.uuid.value, 
+			"uuid" : req.swagger.params.uuid.value,
 			"actionsUser.1" : {"$exists": true}
 		}, {
-			"$unset" : { 
+			"$unset" : {
 				"actionsUser.1" : true
 			}
-		
+
         });
-		
+
 		res.status(204).send("");
     });
-	
+
 }

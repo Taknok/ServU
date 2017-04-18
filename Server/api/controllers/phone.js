@@ -41,6 +41,20 @@ function postPhone(req, res, next) {
 
   });
 }
+function getProbes(req, res, next) {
+  MongoClient.connect(url,  function(err, db1) {
+    assert.equal(null, err);
+    console.log("Connected correctly to server");
+    db1.collection("phone").findOne({"uuid": req.swagger.params.uuid.value},function(error, phone) {
+        if(phone != null && error == null){
+          res.json(phone.probes)
+        }
+        else{
+            res.status(404).send();
+        }
+    });
+  });
+}
 
 function postProbes(req, res, next) {
   MongoClient.connect(url,  function(err, db1) {
