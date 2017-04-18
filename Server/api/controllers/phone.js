@@ -10,6 +10,7 @@ var util = require('util');
 
 module.exports = {
 	postPhone,
+  getProbes,
 	postProbes,
 	putProbes,
 	postActions,
