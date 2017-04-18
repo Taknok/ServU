@@ -1,5 +1,27 @@
 /* Empty. Add your own CSS if you like */
 
+#button-settings{
+	width: 30px
+}
+
+.settings-wrapper{
+	position: absolute;
+	right: 0;
+}
+
+#button-settings .list{
+	position: absolute;
+	right:0;
+}
+
+#button-settings .list .item{
+	padding: 4px 16px;
+	min-width:120px
+}
+
+#button-settings .noborder{
+	border:none
+}
 
 .slidingTabs .icon {
 	font-size: 30px;
