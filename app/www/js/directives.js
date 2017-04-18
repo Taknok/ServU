@@ -365,7 +365,7 @@ angular.module("ServU").directive('scrollWatch', function($rootScope, $ionicScro
 			buttomActiveClass: '@?',
 			noBorder: '=',
 			onClick: '&',
-			actions: '='
+			settings: '='
 		},
 		controller: btnSettingsController,
 		link: btnSettingsLink,

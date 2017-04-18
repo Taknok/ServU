@@ -51,21 +51,17 @@ angular.module('ServU')
 	};
 })
 
-.controller('MainCtrl', function($scope, $http, $rootScope, $ionicScrollDelegate, $interval, $state, ServUApi, phoneInfo, actions, probes, actions) {
+.controller('MainCtrl', function($scope, $http, $rootScope, $ionicScrollDelegate, $interval, $state, ServUApi, phoneInfo, actions, probes) {
 
 	$scope.fn1 = function (isopened) {
-            console.log('fn1 opened', isopened);
-        };
-
-        $scope.fn2 = function (param) {
-            console.log('fn2: ', param);
-        };
-
-        $scope.actions = [
-            { text: 'Settings'  , value: "arg of the fn", fn: $scope.fn1, disabled: true },
-            { text: 'Logout'  , value: 0, fn: $scope.logout, disabled : false },
-            { text: 'Logout'    , value: 2, href: "#/logout", disabled : true}
-        ];
+		console.log('fn1 opened', isopened);
+	};
+	
+	$scope.settings = [
+		{ text: 'Settings', value: "arg of the fn", fn: $scope.fn1, disabled: true },
+		{ text: 'Logout', value: 0, fn: $scope.logout, disabled : false },
+		{ text: 'Logout', value: 2, href: "#/logout", disabled : true}
+	];
 
 	probes.onStart();
 	
