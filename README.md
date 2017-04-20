@@ -42,7 +42,7 @@ adb devices
 ionic run android
 ```
 
-#### 2. Installer Sans Lien
+#### 3. Installer Sans Lien
 - Ouvrir une console dans le dossier `app/`
 - Effectuer :
 ```
