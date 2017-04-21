@@ -54,7 +54,7 @@ function postUsers(req, res, next) {
     });
 }
 function postLogin(req, res, next) {
-  MongoClient.connect(url,  function(err, db1) {
+  MongoClient.connect(url, function(err, db1) {
     assert.equal(null, err);
     db1.collection("users").findOne({"username": req.body.username,"password":req.body.password},function(error, exist){
         if(exist != null && error == null) {
@@ -71,7 +71,7 @@ function postLogin(req, res, next) {
 
 // GET /users/{username}
 function getUsersUsername(req, res, next) {
-    MongoClient.connect(url,  function(err, db1) {
+    MongoClient.connect(url, function(err, db1) {
         assert.equal(null, err);
         db1.collection("users").findOne({"username": req.session.username}, function (error, exist) {
             if (exist != null && error == null && typeof(req.session.username) != 'undefined'){
