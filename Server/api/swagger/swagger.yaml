@@ -353,6 +353,21 @@ paths:
 
   /phone/{uuid}/probes:
     x-swagger-router-controller: phone
+    get:
+      operationId: getProbes
+      description: Get the list of probes for this device
+      parameters:
+        - $ref: "#/parameters/uuid"
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/probe"
+        "404":
+          description: User or device not found
+
     post:
       operationId: postProbes
       description: "Create the 1st time the probes avalailables for this phone"
