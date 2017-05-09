@@ -1,6 +1,6 @@
 const express = require('express');
-const users = require("./../database/users");
-const error = require("../error");
+const users = require("../../database/users");
+const error = require("../../error");
 const deviceRouter = require("./devices");
 
 let router = express.Router();

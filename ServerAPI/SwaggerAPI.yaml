@@ -28,9 +28,6 @@ tags:
   description: Requests from the user
 
 
-
-
-
 parameters:
   username:
     name: username
@@ -38,7 +35,7 @@ parameters:
     in: path
     type: string
     required: true
-    
+
   uuid:
     name: uuid
     description: "uuid of the device"
@@ -47,34 +44,8 @@ parameters:
     required: true
 
 
-
-
-
-
 paths:
   /users:
-    get:
-      tags:
-      - User
-      description: Returns all the users
-      parameters:
-        - name: firstname
-          in: query
-          required: false
-          type: string
-        - name: lastname
-          in: query
-          required: false
-          type: string
-      responses:
-        "200":
-          description: Success
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/user"
-        "404":
-          description: User not found
     post:
       tags:
         - User
@@ -93,7 +64,7 @@ paths:
           description: Wrong format
         "409":
           description: Another user has the same username
-          
+
   /users/{username}:
     get:
       tags:
@@ -140,11 +111,12 @@ paths:
           description: Success
         "404":
           description: User not found
+
   /users/{username}/devices:
     get:
       tags:
       - User
-      description: Returns all devices attached to the user
+      description: Returns all devices owned by this user
       parameters:
         - $ref: "#/parameters/username"
       responses:
@@ -155,29 +127,8 @@ paths:
             items:
               $ref: "#/definitions/device"
         "404":
-          description: This user does not exist or has no devices
-    post:
-      tags:
-      - Phone
-      description: Add a device
-      parameters:
-      - $ref: "#/parameters/username"
-      - name: device
-        description: "Device to add"
-        in: body
-        schema:
-          $ref: "#/definitions/device"
-        required: true
-      responses:
-        "201":
-          description: Sucess
-        "400":
-          description: Wrong format
-        "404":
-          description: User not found
-        "409":
-          description: Another device has the same uuid
-    
+          description: This user does not exist
+
   /users/{username}/devices/{uuid}:
     get:
       tags:
@@ -205,30 +156,8 @@ paths:
           description: Success
         "404":
           description: User or device not found
-  
-  /users/{username}/devices/{uuid}/version:     
-    put:
-      tags:
-      - Phone
-      description: Update the version of the device
-      parameters:
-      - $ref: "#/parameters/username"
-      - $ref: "#/parameters/uuid"
-      - name: version
-        description: Version of the OS
-        in: body
-        schema:
-          $ref: "#/definitions/device_version"
-        required: true
-      responses:
-        "204":
-          description: Success
-        "400":
-          description: Wrong format
-        "404":
-          description: User or device not found
-          
-  /users/{username}/devices/{uuid}/name: 
+
+  /users/{username}/devices/{uuid}/name:
     put:
       tags:
       - User
@@ -249,7 +178,7 @@ paths:
           description: Wrong format
         "404":
           description: User or device not found
-    
+
   /users/{username}/devices/{uuid}/probes:
     get:
       tags:
@@ -267,29 +196,6 @@ paths:
               $ref: "#/definitions/probe"
         "404":
           description: User or device not found
-    post:
-      tags:
-      - Phone
-      description: Add a probe available on this device
-      parameters:
-      - $ref: "#/parameters/username"
-      - $ref: "#/parameters/uuid"
-      - name: probe
-        in: body
-        description: Probe's informations
-        schema:
-          $ref: "#/definitions/probe_post"
-        required: true
-      responses:
-        "201":
-          description: Probe succesfully added
-        "400":
-          description: Wrong format
-        "404":
-          description: User or device not found
-        "409":
-          description: This probe already exists
-          
 
   /users/{username}/devices/{uuid}/probes/{name}:
     get:
@@ -311,33 +217,8 @@ paths:
             $ref: "#/definitions/probe"
         "404":
           description: Probe not found
-    put:
-      tags:
-      - Phone
-      description: Update the informations of the probe for this device
-      parameters:
-        - $ref: "#/parameters/username"
-        - $ref: "#/parameters/uuid"
-        - name: name
-          description: Name of the probe
-          in: path
-          type: string
-          required: true
-        - name: probe
-          description: Probe's informations
-          in: body
-          schema:
-            $ref: "#/definitions/probe_put"
-          required: true
-      responses:
-        "204":
-          description: Success
-        "400":
-          description: Wrong data format for that probe
-        "404":
-          description: Probe not found
 
-  /users/{username}/devices/{uuid}/actions_available:
+  /users/{username}/devices/{uuid}/actionsAvailable:
     get:
       tags:
       - User
@@ -359,12 +240,180 @@ paths:
               $ref: "#/definitions/action_available"
         "404":
           description: User or device not found
+
+  /users/{username}/devices/{uuid}/actionsUser:
+    get:
+      tags:
+      - User
+      description: Returns the actions that the user has triggered on this device
+      parameters:
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/uuid"
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/action_triggered'
+        "404":
+          description: User or device not found
+    post:
+      tags:
+      - User
+      description: Trigger an action on this device
+      parameters:
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/uuid"
+        - name: Action to trigger
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/action_triggered_post'
+      responses:
+          "201":
+            description: Success
+            schema:
+              $ref: '#/definitions/action_triggered'
+          "400":
+            description: Wrong format
+          "404":
+            description: User or device not found
+
+  /users/{username}/devices/{uuid}/actionsUser/{action-id}:
+    get:
+      tags:
+      - User
+      description: Get the informations about this action
+      parameters:
+        - name: action-id
+          description: Id of the action
+          in: path
+          type: string
+          required: true
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/uuid"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/action_triggered'
+        "404":
+          description: Action not found
+    delete:
+      tags:
+      - User
+      description: Delete this action
+      parameters:
+        - name: action-id
+          description: Id of the action
+          in: path
+          type: string
+          required: true
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/uuid"
+      responses:
+        "204":
+          description: Success
+        "404":
+          description: Action not found
+
+  /phones:
+    post:
+      tags:
+      - Phone
+      description: Add a device
+      parameters:
+      - name: device
+        description: "Device to add"
+        in: body
+        schema:
+          $ref: "#/definitions/device_post"
+        required: true
+      responses:
+        "201":
+          description: Sucess
+        "400":
+          description: Wrong format or Owner not found
+        "409":
+          description: Another device has the same uuid
+
+  /phones/{uuid}/version:
+    put:
+      tags:
+      - Phone
+      description: Update the version of the device
+      parameters:
+      - $ref: "#/parameters/uuid"
+      - name: version
+        description: Version of the OS
+        in: body
+        schema:
+          $ref: "#/definitions/device_version"
+        required: true
+      responses:
+        "204":
+          description: Success
+        "400":
+          description: Wrong format
+        "404":
+          description: Device not found
+
+  /phones/{uuid}/probes:
+      post:
+        tags:
+        - Phone
+        description: Add a probe available on this device
+        parameters:
+        - $ref: "#/parameters/uuid"
+        - name: probe
+          in: body
+          description: Probe's informations
+          schema:
+            $ref: "#/definitions/probe_post"
+          required: true
+        responses:
+          "201":
+            description: Probe succesfully added
+          "400":
+            description: Wrong format
+          "404":
+            description: Device not found
+          "409":
+            description: This probe already exists
+
+  /phones/{uuid}/probes/{name}:
+    put:
+      tags:
+      - Phone
+      description: Update the informations of the probe for this device
+      parameters:
+        - $ref: "#/parameters/uuid"
+        - name: name
+          description: Name of the probe
+          in: path
+          type: string
+          required: true
+        - name: probe
+          description: Probe's informations
+          in: body
+          schema:
+            $ref: "#/definitions/probe_put"
+          required: true
+      responses:
+        "204":
+          description: Success
+        "400":
+          description: Wrong data format for that probe
+        "404":
+          description: Probe not found
+
+  /phones/{uuid}/actionsAvailable:
     post:
       tags:
       - Phone
       description: Add an action which is available on this device
       parameters:
-      - $ref: "#/parameters/username"
       - $ref: "#/parameters/uuid"
       - name: action
         in: body
@@ -378,17 +427,16 @@ paths:
         "400":
           description: Wrong format
         "404":
-          description: User or device not found
+          description: Device not found
         "409":
           description: This action already exists
-  
-  /users/{username}/devices/{uuid}/actions_available/{name}:
-    put:
+
+  /phones/{uuid}/actionsAvailable/{name}:
+     put:
       tags:
       - Phone
       description: Update the informations of an action which is available
       parameters:
-        - $ref: "#/parameters/username"
         - $ref: "#/parameters/uuid"
         - name: name
           description: Name of the action
@@ -408,112 +456,31 @@ paths:
           description: Wrong data format for this action
         "404":
           description: Action not found
-  
-  /users/{username}/devices/{uuid}/action_to_do:
+
+  /phones/{uuid}/actionUserToDo:
     get:
       tags:
       - Phone
       description: Get the next action which has to be performed by the device
       parameters:
-        - $ref: "#/parameters/username"
         - $ref: "#/parameters/uuid"
       responses:
         "200":
           description: Success
           schema:
             $ref: '#/definitions/action_triggered'
-        "404":
-          description: User or device not found
-      
-  /actions:
-    get:
-      tags:
-      - User
-      description: Returns the actions filtered by username and/or device
-      parameters:
-        - name: username
-          description: Username of the action's author
-          in: query
-          required: true
-          type: string
-        - name: device_uuid
-          description: Device on which the action will be triggered
-          in: query
-          required: true
-          type: string
-      responses:
-        "200":
-          description: Success
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/action_triggered'
-        "400":
-          description: Bad Request
-        "404":
-          description: No such action
-  
-    post:
-      tags:
-      - User
-      description: Trigger an action
-      parameters:
-        - name: Action to trigger
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/action_triggered_post'
-      responses:
-          "201":
-            description: Success
-            schema:
-              $ref: '#/definitions/action_triggered'
-          "400":
-            description: Wrong format
-      
-  /actions/{action-id}:
-    get:
-      tags:
-      - User
-      description: Get the informations about this action
-      parameters:
-        - name: action-id
-          description: Id of the action
-          in: path
-          type: string
-          required: true
-      responses:
-        "200":
-          description: Success
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/action_triggered'
-        "404":
-          description: Action not found
-          
-    delete:
-      tags:
-      - User
-      description: Delete this action
-      parameters:
-        - name: action-id
-          description: Id of the action
-          in: path
-          type: string
-          required: true
-      responses:
         "204":
-          description: Success
+          description: No actions pending on this device
         "404":
-          description: Action not found
-              
-  /actions/{action-id}/status:
+          description: Device not found
+
+  /phones/{uuid}/actionsUser/{action-id}:
     put:
       tags:
       - Phone
       description: Update the status of this action
       parameters:
+      - $ref: "#/parameters/uuid"
       - name: action-id
         in: path
         type: string
@@ -532,10 +499,9 @@ paths:
           description: Wrong format
         "404":
           description: Action not found
-        
+
 
 # complex objects have schema definitions
-
 definitions:
   user:
     type: object
@@ -553,7 +519,7 @@ definitions:
         type: string
       mail:
         type: string
-        
+
   user_post:
     type: object
     properties:
@@ -568,15 +534,15 @@ definitions:
       password:
         type: string
         format: password
-        
+
   device:
     type: object
     properties:
       name:
         type: string
-      manufacturer: 
+      manufacturer:
         type: string
-      model: 
+      model:
         type: string
       platform:
         type: string
@@ -586,7 +552,27 @@ definitions:
         type: string
       uuid:
         type: string
-        
+
+  device_post:
+    type: object
+    properties:
+      name:
+        type: string
+      manufacturer:
+        type: string
+      model:
+        type: string
+      platform:
+        type: string
+      version:
+        type: string
+      serial:
+        type: string
+      uuid:
+        type: string
+      owner:
+        type: string
+
   probe:
     type: object
     properties:
@@ -601,7 +587,7 @@ definitions:
       lastUpdate:
         type: string
         format: date-time
-  
+
   probe_post:
     type: object
     properties:
@@ -613,7 +599,7 @@ definitions:
         type: boolean
       data:
         type: object
-        
+
   probe_put:
     type: object
     properties:
@@ -623,7 +609,7 @@ definitions:
         type: boolean
       data:
         type: object
-  
+
   device_version:
     type: object
     properties:
@@ -634,7 +620,7 @@ definitions:
     properties:
       name:
         type: string
-        
+
   action_available:
     type: object
     properties:
@@ -646,7 +632,7 @@ definitions:
         type: boolean
       description:
         type: string
-  
+
   action_available_put:
     type: object
     properties:
@@ -656,15 +642,11 @@ definitions:
         type: boolean
       description:
         type: string
-  
+
   action_triggered:
     type: object
     properties:
       id:
-        type: string
-      creator_username:
-        type: string
-      device_uuid:
         type: string
       type:
         type: string
@@ -677,14 +659,10 @@ definitions:
       creation_date:
         type: string
         format: date-time
-  
+
   action_triggered_post:
     type: object
     properties:
-      creator_username:
-        type: string
-      device_uuid:
-        type: string
       type:
         type: string
       name:

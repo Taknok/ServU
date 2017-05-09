@@ -13,7 +13,8 @@ const devicesProperties = [
     new cm.Property("platform", "string", undefined),
     new cm.Property("version", "string", undefined),
     new cm.Property("serial", "string", undefined),
-    new cm.Property("uuid", "string", false)
+    new cm.Property("uuid", "string", false),
+    new cm.Property("owner", "string", false)
 ];
 
 let devicesCollection = new mongoCommon.createCollection(
@@ -39,8 +40,28 @@ exports.getDeviceByUuid = function (uuid, owner) {
     return devicesCollection.getOneElementByQuery(query);
 };
 
-exports.addDevice = function (owner, device) {
-    device['owner'] = owner;
+exports.getOwnerOfDeviceByUuid = function (uuid) {
+    let query = {};
+    query.uuid = uuid;
+    return db.mongo(devicesCollection.name)
+        .then(collection => collection.find(query).toArray())
+        .then(docs => {
+            return new Promise((resolve, reject) => {
+                if (docs.length > 1) {
+                    reject(new error.error(500, "DB Error : Two devices have the same uuid"));
+                } else {
+                    if (docs[0] !== undefined) {
+                        resolve(docs[0].owner);
+                    } else {
+                        resolve(undefined);
+                    }
+
+                }
+            })
+        })
+};
+
+exports.addDevice = function (device) {
     return devicesCollection.addOneElement(device);
 };
 
@@ -77,9 +98,8 @@ exports.deleteDevicesByOwner = function (owner) {
     return devicesCollection.deleteManyElements(filter);
 };
 
-exports.updateOneDevice = function (owner, uuid, device2) {
+exports.updateOneDevice = function (uuid, device2) {
     let filter = {};
-    filter['owner'] = owner;
     filter['uuid'] = uuid;
     return devicesCollection.updateOneElement(filter, device2);
 };

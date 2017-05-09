@@ -4,8 +4,6 @@ const mongoCommon = require("./mongoCommon");
 const ObjectId = require('mongodb').ObjectID;
 
 const actionsProperties = [
-    new cm.Property("creator_username", "string", undefined),
-    new cm.Property("device_uuid", "string", undefined),
     new cm.Property("type", "string", undefined),
     new cm.Property("name", "string", undefined),
     new cm.Property("parameters", "object", undefined)
@@ -13,7 +11,7 @@ const actionsProperties = [
 
 let actionsCollection = mongoCommon.createCollection(
     "Actions",
-    {},
+    {"creator_username": 0, "device_uuid": 0},
     "name"
 );
 
@@ -68,8 +66,10 @@ exports.getAllActionsByUuidAndCreator = function (uuid, creatorUsername) {
 
 };
 
-exports.getOneActionById = function (id) {
+exports.getOneActionById = function (id, creator, deviceUuid) {
     let query = {};
+    query.creator_username = creator;
+    query.device_uuid = deviceUuid;
     return getIdObject(id)
         .then(id => {
             query._id = id;
@@ -97,14 +97,18 @@ exports.getOldestActionPendingByDevice = function (uuid) {
     });
 };
 
-exports.addAction = function (action) {
+exports.addAction = function (action, creator, deviceUuid) {
     action.creation_date = Date.now();
     action.status = STATUS[0];
+    action.creator_username = creator;
+    action.device_uuid = deviceUuid;
     return actionsCollection.addOneElement(action).then(action => changeIdName(action));
 };
 
-exports.updateOneActionById = function (id, action2) {
+exports.updateOneActionById = function (id, creator, deviceUuid, action2) {
     let filter = {};
+    filter.creator_username = creator;
+    filter.device_uuid = deviceUuid;
     return getIdObject(id)
         .then(id => {
             filter._id = id;
@@ -122,8 +126,10 @@ exports.updateCreatorOfManyActions = function (creator, creator2) {
     return db.mongo(actionsCollection.name).then(collection => collection.updateMany(filter, update));
 };
 
-exports.deleteActionById = function (id) {
+exports.deleteActionById = function (id, creator, deviceUuid) {
     let filter = {};
+    filter.creator_username = creator;
+    filter.device_uuid = deviceUuid;
     return getIdObject(id)
         .then(id => {
             filter._id = id;

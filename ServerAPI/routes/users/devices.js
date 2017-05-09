@@ -1,9 +1,9 @@
 const express = require('express');
-const devices = require("../database/devices");
-const error = require("../error");
+const devices = require("../../database/devices");
+const error = require("../../error");
 const probesRouter = require("./probes");
 const actionsAvailableRouter = require("./actionsAvailable");
-const actions = require("../database/actions");
+const actionsRouter = require("./actions");
 
 let router = express.Router();
 module.exports = router;
@@ -12,42 +12,11 @@ router.get('/devices', function (req, res, next) {
     let username = req.SERVER.username;
     devices.getAllDevicesByUsername(username)
         .then(docs => {
-            if (docs.length === 0) {
-                next(new error.error(404, "This user has no devices"));
-            } else {
-                res.status(200).json(docs);
-            }
+            res.status(200).json(docs);
         })
         .catch(err => {
             next(err)
         })
-});
-
-router.post('/devices', function (req, res, next) {
-    let username = req.SERVER.username;
-    let _device = req.body;
-    try {
-        let device = devices.validateDevice(_device);
-        devices.getDeviceByUuid(device.uuid)
-            .then(deviceReturned => {
-                return new Promise((resolve, reject) => {
-                    if (deviceReturned !== undefined) {
-                        reject(new error.error(409, "Another device has the same uuid"));
-                    } else {
-                        resolve();
-                    }
-                })
-            })
-            .then(() => devices.addDevice(username, device))
-            .then(() => {
-                res.status(201).end()
-            })
-            .catch(err => {
-                next(err)
-            });
-    } catch (err) {
-        next(new error.error(400, "Wrong format", err.message));
-    }
 });
 
 router.use('/devices/:uuid\*', function (req, res, next) {
@@ -97,8 +66,7 @@ router.delete('/devices/:uuid', function (req, res, next) {
 
 function updateHandler(req, res, next) {
     let uuid = req.SERVER.uuid;
-    let owner = req.SERVER.username;
-    devices.updateOneDevice(owner, uuid, req.SERVER.device2)
+    devices.updateOneDevice(uuid, req.SERVER.device2)
         .then(updated => {
             if (updated) {
                 res.status(204).end();
@@ -111,17 +79,6 @@ function updateHandler(req, res, next) {
         })
 }
 
-router.put('/devices/:uuid/version', function (req, res, next) {
-    let version = req.body.version;
-    if (version === undefined || typeof version !== "string") {
-        next(new error.error(400, "Wrong format"));
-    } else {
-        req.SERVER.device2 = {};
-        req.SERVER.device2['version'] = version;
-        next();
-    }
-}, updateHandler);
-
 router.put('/devices/:uuid/name', function (req, res, next) {
     let name = req.body.name;
     if (name === undefined || typeof name !== "string") {
@@ -133,20 +90,6 @@ router.put('/devices/:uuid/name', function (req, res, next) {
     }
 }, updateHandler);
 
-router.get('/devices/:uuid/action_to_do', function (req, res, next) {
-    let uuid = req.SERVER.uuid;
-    actions.getOldestActionPendingByDevice(uuid)
-        .then(action => {
-            if (action !== undefined) {
-                res.status(200).json(action);
-            } else {
-                next(new error.error("404", "No actions pending on this device"));
-            }
-        })
-        .catch(err => {
-            next(err)
-        })
-});
-
 router.use('/devices/:uuid/', probesRouter);
 router.use('/devices/:uuid/', actionsAvailableRouter);
+router.use('/devices/:uuid/', actionsRouter);

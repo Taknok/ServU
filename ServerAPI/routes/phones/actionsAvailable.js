@@ -1,27 +1,11 @@
 const express = require('express');
-const error = require('../error');
-const actionsAvailables = require('../database/actionsAvailable');
+const error = require('../../error');
+const actionsAvailables = require('../../database/actionsAvailable');
 
 let router = express.Router();
 module.exports = router;
 
-router.get('/actions_available', function (req, res, next) {
-    let uuid = req.SERVER.uuid;
-    let enabled = req.query['active'];
-    actionsAvailables.getAllActionsByUuid(uuid, enabled)
-        .then(docs => {
-            if (docs.length === 0) {
-                next(new error.error(404, "This device has no actions available"));
-            } else {
-                res.status(200).json(docs);
-            }
-        })
-        .catch(err => {
-            next(err)
-        })
-});
-
-router.post('/actions_available', function (req, res, next) {
+router.post('/actionsAvailable', function (req, res, next) {
     let uuid = req.SERVER.uuid;
     let owner = req.SERVER.username;
     let _action = req.body;
@@ -49,7 +33,7 @@ router.post('/actions_available', function (req, res, next) {
     }
 });
 
-router.put('/actions_available/:name', function (req, res, next) {
+router.put('/actionsAvailable/:name', function (req, res, next) {
     let uuid = req.SERVER.uuid;
     let name = req.params.name;
     let _action2 = req.body;
