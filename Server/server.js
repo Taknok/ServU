@@ -5,6 +5,7 @@ const db = require("./database/database");
 const userRoute = require("./routes/users/users");
 const phoneRoute = require("./routes/phones/devices");
 const error = require("./error");
+const jwt = require('jsonwebtoken');
 
 let app = express();
 const port = 8080;
