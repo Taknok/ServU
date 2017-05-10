@@ -98,11 +98,11 @@ function loadDeviceInfo(device) {
 	
 
 	
-	device.id = id;
+	//device.id = id;
 	
-    // id = device.id;
-    name = device.name,
-        description = device.description;
+    id = device.id;
+    name = device.name;
+    description = device.description;
     type = device.type;
     battery = device.battery;
     inCharge = device.inCharge;
@@ -131,7 +131,8 @@ function loadDeviceInfo(device) {
     }
 
     $("#items").append(
-        '<div class="col-md-6" id="item">' +
+        '<div class="row">' +
+        '<div class="col-md-6">' +
         '<div class="panel panel-warning panel-warning-dark">' +
         getDevicePanelTitleTemplate(id,type,name,warning) +
         "<div class='panel-body'>" +
@@ -154,8 +155,24 @@ function loadDeviceInfo(device) {
         "</div>" +
         "</div>" +
         getDevicePanelFooterTemplate(username,id) +
+        '</div>' +
+        '</div>' +
+        '<div class="col-md-6">' +
+        '<div class="panel panel-primary">' +
+        '<div class="panel-heading">' +
+        '<div class="row">' +
+        '<div class="col-md-offset-2 col-md-8 text-center">' +
+        '<div class="panel-title">Events of '+name +'</div>' +
+        '</div>' +
+        '<div class="col-md-2">' +
+        '<button class="btn btn-xs btn-info"><i class="glyphicon glyphicon-plus"></i></button>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '<div class="panel-body" style="color:black"><b>No events yet</b></div>' +
+        '</div>' +
+        '</div>' +
         '</div>');
-		
 		}).catch(function() {
 		// An error occurred
 	});
@@ -223,17 +240,17 @@ function changeMoreModal(id) {
 
     $("#moreModalHeader").append("<h5 class='modal-title'><b>More about "+device.name+"</b></h5>");
     $("#moreModalBody").append(
-        "<div class='row'>" +
-            getMoreModalElementTemplate("Network","<p>State : "+device.connection+"</p>") +
-            getMoreModalElementTemplate("Bluetooth","<p>State : disabled</p>") +
-            getMoreModalElementTemplate("GPS",
-                "<p>Latitude : "+Math.floor((Math.random() * 100000) + 1)/100+"</p>" +
-                "<p>Longitude : "+Math.floor((Math.random() * 100000) + 1)/100+"</p>" +
-                "<p>Accuracy : "+Math.floor((Math.random() * 10) + 1)+" meters</p>" +
-                "<p>Timestamp : "+currentTime.getDate()+" "+currentTime.getTime()+"</p>") +
-            getMoreModalElementTemplate("Battery",
-                "<p>Percentage : "+device.battery+"%</p>" +
-                "<p>In charge : "+device.inCharge+"</p>") +
+        "<div class='panel-group' id='accordion'>" +
+        getMoreModalElementTemplate('wifi','Network',"<p><b>State : </b>"+device.connection+"</p>") +
+        getMoreModalElementTemplate('bluetooth','Bluetooth',"<p><b>State : </b>disabled</p>") +
+        getMoreModalElementTemplate('location','Position',
+            "<p><b>Latitude : </b>"+Math.floor((Math.random() * 100000) + 1)/100+"</p>" +
+            "<p><b>Longitude : </b>"+Math.floor((Math.random() * 100000) + 1)/100+"</p>" +
+            "<p><b>Accuracy : </b>"+Math.floor((Math.random() * 10) + 1)+" meters</p>" +
+            "<p><b>Timestamp : </b>"+currentTime.getDate()+" "+currentTime.getTime()+"</p>") +
+        getMoreModalElementTemplate('battery-full','Battery',
+            "<p><b>Percentage : </b>"+device.battery+"%</p>" +
+            "<p><b>In charge : </b>"+device.inCharge+"</p>") +
         "</div>"
     );
 

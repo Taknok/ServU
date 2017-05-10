@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" ng-app="root" ng-controller="gestion">
 <head>
 
     <meta charset="utf-8">
@@ -52,7 +51,7 @@
 
 </head>
 
-<body ng-app="root">
+<body>
 
 <!-- Navigation 2-->
 <a id="menu-toggle" href="#" class="btn btn-dark btn-lg toggle"><i class="fa fa-bars"></i></a>
@@ -100,7 +99,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel-body" id="togglee" ng-if="isFirstElementVisible">
+                    <div class="panel-body" id="togglee">
                         <div class="row">
                             <div class="col-lg-3 col-lg-offset-1"><p class="lead">
                                     Pseudo : <%= username %><br>
@@ -208,7 +207,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="panel-body"> <!-- Devices -->
-                        <div class="row" id="items">
+                        <div id="items">
 
                         </div>
                         <!-- ./row ./devices -->
@@ -261,8 +260,8 @@
                             </script>
                         </div>
                         <div class="col-md-6">
-                            <p>Flash this code with your device to add it automatically to your account</p>
-                            <p class="text-muted"><i>You can also go into your app to add it manually (not available yet)</i></p>
+                            <p>Flash this code within ServU app on your device to add it automatically to your account</p>
+                            <p class="text-muted"><i>Tip : refresh your devices on the web interface with the refresh button to see it appear</i></p>
                         </div>
                     </div>
                 </div>
@@ -377,7 +376,11 @@
 <script type="text/javascript" src="../../js/persoJS/themeBootstrap.js" ></script>
 
 <!-- Personnal Script PITI -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+
 <script type="text/javascript" src="../../js/persoJS/controlConnection.js" ></script>
+<script src="../js/persoJS/controller.js"></script>
 
 <script>document.title = '<%= username%> - ' + document.title;</script>
 

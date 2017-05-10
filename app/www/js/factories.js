@@ -9,6 +9,17 @@ angular.module('ServU')
 	};
 }])
 
+.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
+	return {
+		responseError: function (response) {
+		$rootScope.$broadcast({
+			401: AUTH_EVENTS.notAuthenticated,
+		}[response.status], response);
+		return $q.reject(response);
+		}
+	};
+})
+
 .factory("actions", [ "$cordovaVibration", function($cordovaVibration){
 	return {
 		ring: function(time){
@@ -200,7 +211,9 @@ angular.module('ServU')
 				screen_orientation.value = screen.orientation.type;
 			});
 			
-			getDevice();
+			getDevice()
+			console.log(phoneInfo.getUuid())
+			
 			console.log("onStart done");
 			onStartDone = true;
 		}
@@ -436,7 +449,7 @@ angular.module('ServU')
 	
 	var getDevice = function(){
 		device.value = ionic.Platform.device();
-		phoneInfo.setUuid(device.uuid);
+		phoneInfo.setUuid(device.value.uuid);
 		return device.value;
 	}
 	

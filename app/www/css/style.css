@@ -1,41 +1,26 @@
 /* Empty. Add your own CSS if you like */
 
-
-.overlay {
-    padding-top: 5px;
-    background-color: #000000;
-    opacity: 0.5;
-    flex-direction: column;
-    align-items: center;
+#button-settings{
+	width: 30px
 }
 
-.input-label {
-  color: #000000;
+.settings-wrapper{
+	position: absolute;
+	right: 0;
 }
 
-input[type="text"] {
-    color: #FFFFFF;
+#button-settings .list{
+	position: absolute;
+	right:0;
 }
 
-.forecast {
-    align-items: center;
-    flex-direction: column;
+#button-settings .list .item{
+	padding: 4px 16px;
+	min-width:120px
 }
 
-
-.bigText {
-    flex: 2;
-    font-size: 20px;
-    text-align: center;
-    margin: 5px;
-    color: #FFFFFF;
-}
-
-.mainText {
-    flex: 1;
-    font-size: 16px;
-    text-align: center;
-    color: #FFFFFF;
+#button-settings .noborder{
+	border:none
 }
 
 .slidingTabs .icon {
