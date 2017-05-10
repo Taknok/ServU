@@ -2,6 +2,7 @@ const express = require('express');
 const users = require("../../database/users");
 const error = require("../../error");
 const deviceRouter = require("./devices");
+const checkToken = require("../autentification").checkToken;
 
 let router = express.Router();
 module.exports = router;
@@ -46,6 +47,26 @@ router.post('/users/', function (req, res, next) {
     } catch (err) {
         next(new error.error(400, "Wrong format", err.message));
     }
+});
+
+router.use('/users/:username\*',checkToken , function (req, res, next) {
+    let username = req.params.username;
+    let decodedUsername = req.decodedUsername;
+    req.SERVER['username'] = username;
+    users.getUserByUsername(username)
+        .then(user => {
+            if (user === undefined) {
+                next(new error.error(404, "User not found"));
+            }else if(user.username !== decodedUsername){
+                next(new error.error(403,"Forbidden","You are not allowed to access to this user data"));
+            }
+            else {
+                next();
+            }
+        })
+        .catch(err => {
+            next(err)
+        });
 });
 
 router.get('/users/:username', function (req, res, next) {
@@ -118,20 +139,6 @@ router.delete('/users/:username', function (req, res, next) {
         })
 });
 
-router.use('/users/:username/\*', function (req, res, next) {
-    let username = req.params.username;
-    req.SERVER['username'] = username;
-    users.getUserByUsername(username)
-        .then(user => {
-            if (user === undefined) {
-                next(new error.error(404, "User not found"));
-            } else {
-                next();
-            }
-        })
-        .catch(err => {
-            next(err)
-        });
-});
+
 
 router.use('/users/:username/', deviceRouter);

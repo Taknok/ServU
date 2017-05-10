@@ -2,6 +2,7 @@ const express = require('express');
 const devices = require("../../database/devices");
 const error = require("../../error");
 const users = require("../../database/users");
+const checkToken = require("../autentification").checkToken;
 
 const probesRouter = require("./probes");
 const actionsAvailableRouter = require("./actionsAvailable");
@@ -10,55 +11,60 @@ const actionsRouter = require("./actions");
 let router = express.Router();
 module.exports = router;
 
-router.post('/phones', function (req, res, next) {
+router.post('/phones', checkToken ,function (req, res, next) {
     // ==> Il faut vérifier que le owner du device est bien l'utilisateur authentifié
+    let decodedUsername = req.decodedUsername;
     let _device = req.body;
     try {
         let device = devices.validateDevice(_device);
-        users.getUserByUsername(device.owner)
-            .then(user => {
-                return new Promise((resolve, reject) => {
-                    if (user === undefined) {
-                        reject(new error.error(400, "Owner not found"));
-                    } else {
-                        resolve();
-                    }
+        if(decodedUsername !== device.owner){
+            next(new error.error(403,"Forbidden","You are not allowed to access to this user data"))
+        }else{
+            users.getUserByUsername(device.owner)
+                .then(user => {
+                    return new Promise((resolve, reject) => {
+                        if (user === undefined) {
+                            reject(new error.error(400, "Owner not found"));
+                        } else {
+                            resolve();
+                        }
+                    })
                 })
-            })
-            .then(() => devices.getDeviceByUuid(device.uuid))
-            .then(deviceReturned => {
-                return new Promise((resolve, reject) => {
-                    if (deviceReturned !== undefined) {
-                        reject(new error.error(409, "Another device has the same uuid"));
-                    } else {
-                        resolve();
-                    }
+                .then(() => devices.getDeviceByUuid(device.uuid))
+                .then(deviceReturned => {
+                    return new Promise((resolve, reject) => {
+                        if (deviceReturned !== undefined) {
+                            reject(new error.error(409, "Another device has the same uuid"));
+                        } else {
+                            resolve();
+                        }
+                    })
                 })
-            })
-            .then(() => devices.addDevice(device))
-            .then(() => {
-                res.status(201).end()
-            })
-            .catch(err => {
-                next(err)
-            });
+                .then(() => devices.addDevice(device))
+                .then(() => {
+                    res.status(201).end()
+                })
+                .catch(err => {
+                    next(err)
+                });
+        }
     } catch (err) {
         next(new error.error(400, "Wrong format", err.message));
     }
 });
 
-router.use('/phones/:uuid\*', function (req, res, next) {
+router.use('/phones/:uuid\*',checkToken, function (req, res, next) {
     // ==> Il faut vérifier que le device appartient bien à l'utilisateur authentifié
+    let decodedUsername = req.decodedUsername;
     let uuid = req.params.uuid;
     req.SERVER.uuid = uuid;
-    req.SERVER.username = "";
-    devices.getOwnerOfDeviceByUuid(uuid) //==> Ajouter username en 2ème param
+    req.SERVER.username = decodedUsername;
+    devices.getDeviceByUuid(uuid,decodedUsername) //==> Ajouter username en 2ème param
         .then(owner => {
             if (owner === undefined) {
                 next(new error.error(404, "Device not found"));
             }
             else {
-                req.SERVER.username = owner;
                 next();
             }
         })
