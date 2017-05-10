@@ -8,7 +8,7 @@ const error = require("./error");
 const jwt = require('jsonwebtoken');
 
 let app = express();
-const port = 8080;
+const port = 3000;
 
 //Handle cross-origin requests
 app.use(cors());
