@@ -49,6 +49,30 @@ exports.addUser = function (user) {
     return usersCollection.addOneElement(user);
 };
 
+exports.logIn = function (username, password) {
+    filter = {};
+    filter.username = username;
+    return db.mongo(usersCollection.name)
+        .then(collection => collection.find(filter).toArray())
+        .then(users => {
+            return new Promise((resolve, reject) => {
+                if (users.length > 1) {
+                    reject("DB Error : Two users have the same email")
+                } else {
+                    resolve(users[0]);
+                }
+            })
+        })
+        .then(user => {
+            if (user !== undefined) {
+                let hash = encryption.sha512(password, user.salt);
+                if (hash === user.password) {
+                    return true;
+                }
+            }
+        })
+};
+
 exports.updateUser = function (username, user2) {
     let filter = {};
     let update = {};
@@ -57,6 +81,13 @@ exports.updateUser = function (username, user2) {
     let updated = false;
     return new Promise((resolve, reject) => {
         db.mongo(usersCollection.name)
+            .then(collection => collection.find(filter).toArray())
+            .then(users => {
+                if (users[0] !== undefined && user2.password !== undefined) {
+                    user2.password = encryption.sha512(user2.password, users[0].salt);
+                }
+            })
+            .then(() => db.mongo(usersCollection.name))
             .then(collection => collection.updateOne(filter, update))
             .then(res => {
                 if (res.matchedCount === 1) updated = true;

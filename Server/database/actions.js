@@ -5,14 +5,15 @@ const ObjectId = require('mongodb').ObjectID;
 
 const actionsProperties = [
     new cm.Property("type", "string", undefined),
-    new cm.Property("name", "string", undefined),
+    new cm.Property("label", "string", undefined),
+    new cm.Property("description", "string", undefined),
     new cm.Property("parameters", "object", undefined)
 ];
 
 let actionsCollection = mongoCommon.createCollection(
     "Actions",
     {"creator_username": 0, "device_uuid": 0},
-    "name"
+    "id"
 );
 
 const STATUS = ["pending", "in progress", "done"];
