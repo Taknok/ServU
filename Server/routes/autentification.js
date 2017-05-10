@@ -17,14 +17,18 @@ function checkToken(req, res, next) {
     // verifies secret and checks exp
     //utilisé le salt comme clé secrete et utiliser décode avant verify afin de recuperer le salt dans la base de donnée.
     jwt.verify(token, config.secret, function(err, decoded) {
-      if (err) {
-				console.log("Fail token  -- > Error de décryptage");
-        next(new error.error(401, 'error token identification'));
-      } else {
+      if(!err){
         // if everything is good, save to request for use in other routes
         req.decoded = decoded;
         next();
       }
+      else if (err.name == 'TokenExpiredError') {
+        next(new error.error(401, 'TokenExpiredError', err.expiredAt));
+      }
+      else{
+        next(new error.error(401, 'JsonWebTokenError', err.message));
+      }
+      else
     });
 
   } else {
