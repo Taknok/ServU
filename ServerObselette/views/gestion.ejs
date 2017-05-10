@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" ng-app="root" ng-controller="gestion">
 <head>
 
     <meta charset="utf-8">
@@ -52,7 +51,7 @@
 
 </head>
 
-<body ng-app="root">
+<body>
 
 <!-- Navigation 2-->
 <a id="menu-toggle" href="#" class="btn btn-dark btn-lg toggle"><i class="fa fa-bars"></i></a>
@@ -100,7 +99,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel-body" id="togglee" ng-if="isFirstElementVisible">
+                    <div class="panel-body" id="togglee">
                         <div class="row">
                             <div class="col-lg-3 col-lg-offset-1"><p class="lead">
                                     Pseudo : <%= username %><br>
@@ -377,7 +376,11 @@
 <script type="text/javascript" src="../../js/persoJS/themeBootstrap.js" ></script>
 
 <!-- Personnal Script PITI -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+
 <script type="text/javascript" src="../../js/persoJS/controlConnection.js" ></script>
+<script src="../js/persoJS/controller.js"></script>
 
 <script>document.title = '<%= username%> - ' + document.title;</script>
 
