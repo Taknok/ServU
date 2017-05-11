@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="root" ng-controller="gestion">
+<html lang="en">
 <head>
 
     <meta charset="utf-8">
@@ -26,6 +26,7 @@
     <link href="../../css/persoCSS/colorOrange.css" rel="stylesheet">
 
     <link href="../../css/persoCSS/custom.css" rel="stylesheet">
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.min.css" rel="stylesheet">
     <style>
         .correct {
             border-color: rgba(68, 191, 68, 0.75);
@@ -51,7 +52,7 @@
 
 </head>
 
-<body>
+<body ng-app="root" ng-controller="gestion">
 
 <!-- Navigation 2-->
 <a id="menu-toggle" href="#" class="btn btn-dark btn-lg toggle"><i class="fa fa-bars"></i></a>
@@ -78,7 +79,8 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center">
-                <h2 class="fontAmethyst">Profile</h2>
+                <h2 class="fontAmethyst">Profile {{message}}</h2>
+                <button class="btn btn-xs btn-info" ng-click="open('lg')"><i class="glyphicon glyphicon-plus"></i></button>
                 <hr class="small">
             </div>
         </div>
@@ -359,6 +361,10 @@
 <script src="../../js/jquery.js"></script>
 
 <!-- Bootstrap Core JavaScript -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+
+<script src="../js/persoJS/controller.js"></script>
 <script src="../../js/bootstrap.min.js"></script>
 <script src="../../js/persoJS/devicesController.js"></script>
 <script src="../../js/persoJS/templates.js"></script>
@@ -376,11 +382,9 @@
 <script type="text/javascript" src="../../js/persoJS/themeBootstrap.js" ></script>
 
 <!-- Personnal Script PITI -->
-
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-
 <script type="text/javascript" src="../../js/persoJS/controlConnection.js" ></script>
-<script src="../js/persoJS/controller.js"></script>
+<script src="../js/persoJS/ui-bootstrap-tpls-2.5.0.min.js"></script>
+
 
 <script>document.title = '<%= username%> - ' + document.title;</script>
 

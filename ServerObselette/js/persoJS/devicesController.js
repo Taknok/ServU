@@ -3,6 +3,8 @@ var nbPhone;
 var nbTablet;
 var username;
 
+
+
 // Function to post requests
 function post(path, params, method) {
     $.ajax({
@@ -157,7 +159,7 @@ function loadDeviceInfo(device) {
         getDevicePanelFooterTemplate(username,id) +
         '</div>' +
         '</div>' +
-        '<div class="col-md-6">' +
+        '<div class="col-md-6" id="angular_module">' +
         '<div class="panel panel-primary">' +
         '<div class="panel-heading">' +
         '<div class="row">' +
@@ -165,7 +167,7 @@ function loadDeviceInfo(device) {
         '<div class="panel-title">Events of '+name +'</div>' +
         '</div>' +
         '<div class="col-md-2">' +
-        '<button class="btn btn-xs btn-info"><i class="glyphicon glyphicon-plus"></i></button>' +
+        '<button class="btn btn-xs btn-info" set-on-click id='+id+'><i class="glyphicon glyphicon-plus"></i></button>' +
         '</div>' +
         '</div>' +
         '</div>' +
@@ -173,6 +175,10 @@ function loadDeviceInfo(device) {
         '</div>' +
         '</div>' +
         '</div>');
+
+        var $scope = angular.element('#angular_module').scope();
+        $scope.addNewButton('#'+id);
+
 		}).catch(function() {
 		// An error occurred
 	});
