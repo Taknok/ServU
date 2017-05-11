@@ -535,6 +535,50 @@ angular.module('ServU')
 		// getOthersSensors();			
 	// };
 	
+	var constructVect = async function(){
+		names = [
+			"network",
+			"bluetooth",
+			// "localisation",
+			"battery",
+			"screen_orientation",
+			"flashlight",
+			"sim",
+			"device"
+		];
+		
+		actives = [
+			network.active,
+			bluetooth.active,
+			// localisation.active,
+			battery.active,
+			screen_orientation.active,
+			flashlight.active,
+			sim.active,
+			device.active
+		];
+		
+		values = [
+			network.value,
+			bluetooth.value,
+			// localisation.value,
+			battery.value,
+			screen_orientation.value,
+			flashlight.value,
+			sim.value,
+			device.value
+		];
+		
+		res = [];
+		for(var i = 0; i < names.length; i++){
+			res.push({
+				"name": names[i],
+				"active": actives[i],
+				"data": values[i]
+			});
+		}
+		return await res;
+	};
 
 	return {
 		onStart: onStart,
@@ -715,6 +759,7 @@ angular.module('ServU')
 				this.device.getAll()
 			]
 		},
+		constructVect: constructVect,
 		
 		
 	};

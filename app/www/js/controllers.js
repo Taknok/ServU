@@ -11,7 +11,7 @@ angular.module('ServU')
 	});
 })
 
-.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, phoneInfo) {
+.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, phoneInfo, probes, ServUApi, $http) {
 	$scope.user = {
 		username: '',
 		password: ''
@@ -20,6 +20,29 @@ angular.module('ServU')
 	$scope.login = function() {
 		AuthService.login($scope.user).then(function(msg) {
 			phoneInfo.setUsername($scope.user.username);
+			postPhoneOnLogin = function(){
+				let tmp = probes.device.getValue();
+				console.log(tmp);
+				
+				let data = {
+					"name": device.name,
+					"manufacturer": tmp.manufacturer,
+					"model": tmp.model,
+					"platform": tmp.platform,
+					"version": tmp.version,
+					"serial": tmp.serial,
+					"uuid": tmp.uuid
+				}
+				$http.post(ServUApi.url + "/users/" + phoneInfo.getUsername() + "/devices", data);
+			}
+			postPhoneOnLogin(); //poste a chaque fois que l'on se log, pas tres opti pour le moment mais fonctionne
+			
+			postProbesOnLogin = async function(){
+				let tmp = await probes.constructVect();
+				$http.post(ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes", tmp);
+			};
+			postProbesOnLogin(); //poste a chaque fois que l'on se log, pas tres opti pour le moment mais fonctionne
+			
 			$state.go('main');
 		}, function(errMsg) {
 			var alertPopup = $ionicPopup.alert({
