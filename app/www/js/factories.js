@@ -89,7 +89,17 @@ angular.module('ServU')
 		flashlight.active = ('true' == permanentStorage.getItem("flashlight.active"));
 		screen_orientation.active = ('true' == permanentStorage.getItem("screen_orientation.active"));
 		device.active = ('true' == permanentStorage.getItem("device.active"));
-
+		
+		localisation.posted = ('true' == permanentStorage.getItem("localisation.posted"));
+		battery.posted = ('true' == permanentStorage.getItem("battery.posted"));
+		// orientation.posted = ('true' == permanentStorage.getItem("orientation.posted"));
+		// globalization.posted = ('true' == permanentStorage.getItem("globalization.posted"));
+		network.posted = ('true' == permanentStorage.getItem("network.posted"));
+		bluetooth.posted = ('true' == permanentStorage.getItem("bluetooth.posted"));
+		sim.posted = ('true' == permanentStorage.getItem("sim.posted"));
+		flashlight.posted = ('true' == permanentStorage.getItem("flashlight.posted"));
+		screen_orientation.posted = ('true' == permanentStorage.getItem("screen_orientation.posted"));
+		device.posted = ('true' == permanentStorage.getItem("device.posted"));
 	}
 	load();
 	
@@ -194,6 +204,66 @@ angular.module('ServU')
 				break;
 			default:
 				throw("Unknow probe setAvailable");
+		}
+	}
+	
+	// available is detected by phone if this probe is availabl on this phone (change)
+	localisation.posted = false;
+	battery.posted = false;
+	// orientation.posted = false;
+	// globalization.posted = false;
+	network.posted = false;
+	bluetooth.posted = false;
+	sim.posted = false;
+	flashlight.posted = false;
+	screen_orientation.posted = false;
+	device.posted = false;
+	
+	function setPosted(probe, bool){
+		checkBool(bool);
+		switch(probe){
+			case "localisation":
+				localisation.posted = bool;
+				permanentStorage.setItem("localisation.posted", localisation.posted);
+				break;
+			case "battery":
+				battery.posted = bool;
+				permanentStorage.setItem("battery.posted", battery.posted);
+				break;
+			// case "orientation":
+				// orientation.posted = bool;
+				// permanentStorage.setItem("orientation.posted", orientation.posted);
+				// break;
+			// case "globalization":
+				// globalization.posted = bool;
+				// permanentStorage.setItem("globalization.posted", globalization.posted);
+				// break;
+			case "network":
+				network.posted = bool;
+				permanentStorage.setItem("network.posted", network.posted);
+				break;
+			case "bluetooth":
+				bluetooth.posted = bool;
+				permanentStorage.setItem("bluetooth.posted", bluetooth.posted);
+				break;
+			case "sim":
+				sim.posted = bool;
+				permanentStorage.setItem("sim.posted", sim.posted);
+				break;
+			case "flashlight":
+				flashlight.posted = bool;
+				permanentStorage.setItem("flashlight.posted", flashlight.posted);
+				break;
+			case "screen_orientation":
+				screen_orientation.posted = bool;
+				permanentStorage.setItem("screen_orientation.posted", screen_orientation.posted);
+				break;
+			case "device":
+				device.posted = bool;
+				permanentStorage.setItem("device.posted", device.posted);
+				break;
+			default:
+				throw("Unknow probe setPosted");
 		}
 	}
 	
@@ -474,11 +544,14 @@ angular.module('ServU')
 			getActive: function(){return localisation.active;},
 			setAvailable: function(bool){setAvailable("localisation", bool)},
 			getAvailable: function(){return localisation.available;},
+			setPosted: function(bool){setPosted("flashlight", bool)},
+			getPosted: function(){return flashlight.posted;},
 			getAll: function(){
 				var tmp = {};
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
+				tmp.posted = this.getPosted();
 				
 				return tmp;
 			}
@@ -489,11 +562,14 @@ angular.module('ServU')
 			getActive: function(){return battery.active;},
 			setAvailable: function(bool){setAvailable("battery", bool)},
 			getAvailable: function(){return battery.available;},
+			setPosted: function(bool){setPosted("battery", bool)},
+			getPosted: function(){return battery.posted;},
 			getAll: function(){
 				var tmp = {};
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
+				tmp.posted = this.getPosted();
 				
 				return tmp;
 			}
@@ -503,14 +579,18 @@ angular.module('ServU')
 			// setActive: function(bool){setActive("orientation", bool)},
 			// getActive: function(){return orientation.active;},
 			// setAvailable: function(bool){setAvailable("orientation", bool)},
-			// getAvailable: function(){return orientation.available;}
+			// getAvailable: function(){return orientation.available;},
+			// setPosted: function(bool){setPosted("orientation", bool)},
+			// getPosted: function(){return orientation.Posted;}
 		// },
 		// globalization : {
 			// getValue: getGlobalization(),
 			// setActive: function(bool){setActive("globalization", bool)},
 			// getActive: function(){return globalization.active;},
 			// setAvailable: function(bool){setAvailable("globalization", bool)},
-			// getAvailable: function(){return globalization.available;}
+			// getAvailable: function(){return globalization.available;},
+			// setPosted: function(bool){setPosted("globalization", bool)},
+			// getPosted: function(){return globalization.Posted;}
 		// },
 		network : {
 			getValue: getNetwork,
@@ -518,11 +598,14 @@ angular.module('ServU')
 			getActive: function(){return network.active;},
 			setAvailable: function(bool){setAvailable("network", bool)},
 			getAvailable: function(){return network.available;},
+			setPosted: function(bool){setPosted("network", bool)},
+			getPosted: function(){return network.posted;},
 			getAll: function(){
 				var tmp = {};
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
+				tmp.posted = this.getPosted();
 				
 				return tmp;
 			}
@@ -533,11 +616,14 @@ angular.module('ServU')
 			getActive: function(){return bluetooth.active;},
 			setAvailable: function(bool){setAvailable("bluetooth", bool)},
 			getAvailable: function(){return bluetooth.available;},
+			setPosted: function(bool){setPosted("bluetooth", bool)},
+			getPosted: function(){return bluetooth.posted;},
 			getAll: function(){
 				var tmp = {};
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
+				tmp.posted = this.getPosted();
 				
 				return tmp;
 			}
@@ -548,11 +634,14 @@ angular.module('ServU')
 			getActive: function(){return sim.active;},
 			setAvailable: function(bool){setAvailable("sim", bool)},
 			getAvailable: function(){return sim.available;},
+			setPosted: function(bool){setPosted("sim", bool)},
+			getPosted: function(){return sim.posted;},
 			getAll: function(){
 				var tmp = {};
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
+				tmp.posted = this.getPosted();
 				
 				return tmp;
 			}
@@ -563,11 +652,14 @@ angular.module('ServU')
 			getActive: function(){return flashlight.active;},
 			setAvailable: function(bool){setAvailable("flashlight", bool)},
 			getAvailable: function(){return flashlight.available;},
+			setPosted: function(bool){setPosted("flashlight", bool)},
+			getPosted: function(){return flashlight.posted;},
 			getAll: function(){
 				var tmp = {};
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
+				tmp.posted = this.getPosted();
 				
 				return tmp;
 			}
@@ -578,11 +670,14 @@ angular.module('ServU')
 			getActive: function(){return screen_orientation.active;},
 			setAvailable: function(bool){setAvailable("screen_orientation", bool)},
 			getAvailable: function(){return screen_orientation.available;},
+			setPosted: function(bool){setPosted("screen_orientation", bool)},
+			getPosted: function(){return screen_orientation.posted;},
 			getAll: function(){
 				var tmp = {};
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
+				tmp.posted = this.getPosted();
 				
 				return tmp;
 			}
@@ -593,16 +688,34 @@ angular.module('ServU')
 			getActive: function(){return device.active;},
 			setAvailable: function(bool){setAvailable("device", bool)},
 			getAvailable: function(){return device.available;},
+			setPosted: function(bool){setPosted("device", bool)},
+			getPosted: function(){return device.posted;},
 			getAll: function(){
 				var tmp = {};
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
+				tmp.posted = this.getPosted();
 				
 				return tmp;
 			}
 		},
-		setActive : setActive,
+		setActive : setActive, //repetition de getactive avec les probes
+		getAll: function(){
+			return [
+				this.localisation.getAll(),
+				this.battery.getAll(),
+				// this.orientation.getAll(),
+				// this.globalization.getAll(),
+				this.network.getAll(),
+				this.bluetooth.getAll(),
+				this.sim.getAll(),
+				this.flashlight.getAll(),
+				this.screen_orientation.getAll(),
+				this.device.getAll()
+			]
+		},
+		
 		
 	};
 

@@ -102,6 +102,39 @@ angular.module('ServU')
 		$http.delete(url2);
 	}
 	
+	function checkPosted(){ //inutilisée pour le moment
+		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes";
+		$http.get(url).success(function(probes) {
+			
+		});
+	}
+	
+	function upSendProbes(){
+		var localProbes = probes.getAll();
+		var probesToPost = [];
+		var probesToPut = [];
+		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes";
+		
+		for(var i = 0; i < localProbes.length; i++){
+			var localProbe = localProbes[i];
+			if (localProbe.posted){
+				probesToPut.push(localProbe);
+			} else {
+				probesToPost.push(localProbe);
+			}
+		}
+		
+		if (probesToPost.length != 0){
+			$http.post(url, probesToPost).success(function(probes) {
+				console.log(probes);
+			});
+		}
+		if (probesToPut.length != 0){
+			$http.put(url, probesToPost).success(function(probes) {
+				console.log(probes);
+			});
+		}
+	}
 	
 	function getActions() {
 		var items = [];
