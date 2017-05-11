@@ -19,11 +19,11 @@ router.get('/eventSkeletons', checkToken, function (req, res, next) {
 router.get('/eventSkeletons/:id', checkToken, function (req, res, next) {
     let id = req.params.id;
     eventSkeletons.getEventSkeletonById(id)
-        .then(docs => {
-            if (docs.length === 0) {
+        .then(event => {
+            if (event === undefined) {
                 next(error.error(404, "eventSkeleton not found"));
             } else {
-                res.status(200).json(docs);
+                res.status(200).json(event);
             }
         })
         .catch(err => {
