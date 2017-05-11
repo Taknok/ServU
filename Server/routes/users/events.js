@@ -23,6 +23,7 @@ router.post('/events', function (req, res, next) {
     try {
       events.addEventBySkeletonId(skeletonId, deviceUuid, username)
             .then(created => {
+              console.log("coucou");
                 res.status(201).json(created);
             })
             .catch(err => next(err));

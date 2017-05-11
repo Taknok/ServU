@@ -15,11 +15,12 @@ let eventsCollection = mongoCommon.createCollection(
 );
 
 exports.addEventBySkeletonId = function (skeletonId, deviceUuid, username) {
+  return new Promise((resolve, reject) => {
     eventSkeleton.getEventSkeletonById(skeletonId)
         .then(skeleton => {
             return new Promise((resolve, reject) => {
                 if (skeleton === undefined) {
-                    reject(new error.error(500, "DB Error : Skeleton does not exist"));
+                    reject(new error.error(404,"Not found", "Skeleton does not exist"));
                 } else {
                     resolve(skeleton);
                 }
@@ -33,7 +34,17 @@ exports.addEventBySkeletonId = function (skeletonId, deviceUuid, username) {
                 description: skeleton.description,
                 code: skeleton.code
             };
-          return eventsCollection.addOneElement(event);
+
+            eventsCollection.addOneElement(event).then(event => {
+                resolve(cm.changeIdName(event));
+            })
+            .catch(err => {
+                reject(err);
+            })
+        })
+        .catch(err => {
+            reject(err);
+        })
         })
 };
 
