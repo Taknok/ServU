@@ -167,7 +167,7 @@ function loadDeviceInfo(device) {
         '<div class="panel-title">Events of '+name +'</div>' +
         '</div>' +
         '<div class="col-md-2">' +
-        '<button class="btn btn-xs btn-info" set-on-click id='+id+'><i class="glyphicon glyphicon-plus"></i></button>' +
+        '<button class="btn btn-xs btn-info" onclick="changeCreateEventModal('+id+')" data-toggle="modal" data-target="#createEventModal"><i class="glyphicon glyphicon-plus"></i></button>' +
         '</div>' +
         '</div>' +
         '</div>' +
@@ -288,6 +288,109 @@ function changeActionModal(username,id,action) {
         "<button class='btn btn-secondary' data-dismiss='modal'>Cancel</button>"+
         "<button class='btn btn-primary' data-dismiss='modal' onclick='postAction(\""+path+"\","+ stringParams +",\"post\",\""+id+"\",\""+action+"\");'>Confirm</button>"
     )
+
+}
+
+function changeCreateEventModalFooter(ifEvent, thenEvent) {
+
+    if(ifEvent != null) {
+        $("#createEventModalFooterIf > p").remove();
+        $("#createEventModalFooterIf").append(
+            '<p><u>IF</u> <b>'+ifEvent+'</b></p>'
+        );
+    }
+    if(thenEvent != null) {
+        $("#createEventModalFooterThen > p").remove();
+        $("#createEventModalFooterThen").append(
+            '<p><u>THEN</u> <b>'+thenEvent+'</b></p>'
+        );
+    }
+}
+
+function changeCreateEventModal(id) {
+
+    device = getDeviceById(id);
+
+    $("#createEventModalHeader > p").remove();
+    $("#createEventModalBody > ").remove();
+    $("#createEventModalFooterIf > p").remove();
+    $("#createEventModalFooterThen > p").remove();
+
+    $("#createEventModalHeader").append(
+        '<p>Create a new event for the device <b>' + device.name +'</b></p>'
+    );
+    $("#createEventModalBody").append(
+        '<div class="row">' +
+            '<div class="col-md-4"><h1 class="text-center"><b>IF</b></h1></div>' +
+            '<div class="col-md-8" style="margin-bottom: 5%;">' +
+                '<div class="btn-group-vertical" style="width: 100%;">' +
+                    '<div class="btn-group">' +
+                        '<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="ion ion-wifi pull-left"></i>Wifi<span class="caret pull-right"></span></button>' +
+                        '<ul class="dropdown-menu" role="menu">' +
+                            '<li><a onclick="changeCreateEventModalFooter(\'Wifi is turned on\',null);">Turns <b>on</b></a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(\'Wifi is turned off\',null);">Turns <b>off</b></a></li>' +
+                        '</ul>' +
+                    '</div>' +
+                    '<div class="btn-group">' +
+                        '<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="ion ion-bluetooth pull-left"></i>Bluetooth<span class="caret pull-right"></span></button>' +
+                        '<ul class="dropdown-menu" role="menu">' +
+                            '<li><a onclick="changeCreateEventModalFooter(\'Bluetooth is turned on\',null);">Turns <b>on</b></a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(\'Bluetooth is turned off\',null);">Turns <b>off</b></a></li>' +
+                        '</ul>' +
+                    '</div>' +
+                    '<div class="btn-group">' +
+                        '<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="ion ion-battery-full pull-left"></i>Battery<span class="caret pull-right"></span></button>' +
+                        '<ul class="dropdown-menu" role="menu">' +
+                            '<li class="dropdown-header">Gets Over</li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(\'Battery gets over 20%\',null);">20%</a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(\'Battery gets over 40%\',null);">40%</a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(\'Battery gets over 60%\',null);">60%</a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(\'Battery gets over 80%\',null);">80%</a></li>' +
+                            '<li class="divider"></li>' +
+                            '<li class="dropdown-header">Gets under</li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(\'Battery gets under 20%\',null);">20%</a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(\'Battery gets under 40%\',null);">40%</a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(\'Battery gets under 60%\',null);">60%</a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(\'Battery gets under 80%\',null);">80%</a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(\'Battery gets under 100%\',null);">100%</a></li>' +
+                        '</ul>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+        '<div class="row">' +
+            '<div class="col-md-4"><h1 class="text-center"><b>THEN</b></h1></div>' +
+            '<div class="col-md-8">' +
+                '<div class="btn-group-vertical" style="width: 100%;">' +
+                    '<div class="btn-group">' +
+                        '<button class=" btn btn-warning dropdown-toggle" data-toggle="dropdown"><i class="ion ion-ios-bell pull-left"></i>Ring<span class="caret pull-right"></span></button>' +
+                        '<ul class="dropdown-menu" role="menu">' +
+                            '<li><a onclick="changeCreateEventModalFooter(null,\'Ring for 2 sec\');">for 2 sec</a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(null,\'Ring for 5 sec\');">for 5 sec</a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(null,\'Ring for 10 sec\');">for 10 sec</a></li>' +
+                        '</ul>' +
+                    '</div>' +
+                    '<div class="btn-group">' +
+                        '<button class=" btn btn-warning dropdown-toggle" data-toggle="dropdown"><i class="ion ion-radio-waves pull-left"></i>Vibrate<span class="caret pull-right"></span></button>' +
+                        '<ul class="dropdown-menu" role="menu">' +
+                            '<li><a onclick="changeCreateEventModalFooter(null,\'Vibrate for 2 sec\');">for 2 sec</a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(null,\'Vibrate for 5 sec\');">for 5 sec</a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(null,\'Vibrate for 10 sec\');">for 10 sec</a></li>' +
+                        '</ul>' +
+                    '</div>' +
+                    '<div class="btn-group">' +
+                        '<button class=" btn btn-warning dropdown-toggle" data-toggle="dropdown"><i class="ion ion-flash pull-left"></i>Flash<span class="caret pull-right"></span></button>' +
+                        '<ul class="dropdown-menu" role="menu">' +
+                            '<li><a onclick="changeCreateEventModalFooter(null,\'Flash for 2 sec\');">for 2 sec</a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(null,\'Flash for 5 sec\');">for 5 sec</a></li>' +
+                            '<li><a onclick="changeCreateEventModalFooter(null,\'Flash for 10 sec\');">for 10 sec</a></li>' +
+                        '</ul>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>'
+    )
+
 
 }
 

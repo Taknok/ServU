@@ -1,6 +1,3 @@
-/**
- * Created by alexa on 10/05/2017.
- */
 
 angular.module('root', ['ui.bootstrap'])
     .controller("gestion", ['$scope', '$log','$uibModal', '$compile', function($scope, $log, $uibModal, $compile) {
@@ -10,7 +7,7 @@ angular.module('root', ['ui.bootstrap'])
         };
         var $ctrl = this;
         $ctrl.items = [{name : 'Wifi', icon : "ion-wifi"},{name : 'Battery', icon : "ion-battery-full"},
-            {name : 'Bluethooth', icon : "ion-bluetooth"}];
+            {name : 'Bluetooth', icon : "ion-bluetooth"}];
         $ctrl.animationsEnabled = true;
         $scope.open = function (size, parentSelector) {
             $log.log('diozadoiza');
@@ -19,15 +16,10 @@ angular.module('root', ['ui.bootstrap'])
                 ariaLabelledBy: 'modal-title',
                 ariaDescribedBy: 'modal-body',
                 template: '<div class="modal-header ">' +
-                '<h3 class="modal-title" id="modal-title">Creation Event Page</h3>' +
+                '<h3 class="modal-title" id="modal-title">Create a new event</h3>' +
                 '</div>' +
                 '<div class="modal-body container form-group" id="modal-body">' +
-                '<label class="col-xs-3 control-label">Choose A Condition</label>' +
-                '<select class="selectpicker col-xs-3 control-label" data-style="btn-primary" data-width="auto" style="display: none;">' +
-                '<option data-icon="glyphicon glyphicon-music">Mustard>' +
-                '<option data-icon="glyphicon glyphicon-star">Ketchup>' +
-                '<option data-icon="glyphicon glyphicon-heart">Relish>' +
-                '</select>' +
+                '<label class="col-xs-3 control-label">When</label>' +
                 '<div class="col-xs-5 selectContainer">' +
                 '<select name="repeatSelect" class="form-control" ng-model="selectedCondition" ng-change="$ctrl.condition_update(selectedCondition)">'+
                 '<option ng-repeat="item in $ctrl.items" data-icon="glyphicon glyphicon-eye-open" >' +
