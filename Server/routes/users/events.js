@@ -19,14 +19,16 @@ router.get('/events', function (req, res, next) {
 router.post('/events', function (req, res, next) {
     let username = req.SERVER.username;
     let deviceUuid = req.SERVER.uuid;
-    let skeletonId = req.body.idEventSkeleton;
+    let _event = req.body;
     try {
-      events.addEventBySkeletonId(skeletonId, deviceUuid, username)
+        let event = events.validateEvent(_event);
+        events.addEventBySkeletonId(event.idEventSkeleton, deviceUuid, username)
             .then(created => {
-              console.log("coucou");
                 res.status(201).json(created);
             })
-            .catch(err => next(err));
+            .catch(err => {
+                next(err)
+            });
     } catch (err) {
         next(new error.error(400, "Wrong format", err.message));
     }

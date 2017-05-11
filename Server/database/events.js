@@ -14,13 +14,16 @@ let eventsCollection = mongoCommon.createCollection(
     "id"
 );
 
+exports.validateEvent = function (object) {
+    return cm.propertiesVerificationForCreation(object, eventSkeletonProperties);
+};
+
 exports.addEventBySkeletonId = function (skeletonId, deviceUuid, username) {
-  return new Promise((resolve, reject) => {
-    eventSkeleton.getEventSkeletonById(skeletonId)
+    return eventSkeleton.getEventSkeletonById(skeletonId)
         .then(skeleton => {
             return new Promise((resolve, reject) => {
                 if (skeleton === undefined) {
-                    reject(new error.error(404,"Not found", "Skeleton does not exist"));
+                    reject(new error.error(404, "Not found", "Skeleton does not exist"));
                 } else {
                     resolve(skeleton);
                 }
@@ -34,18 +37,9 @@ exports.addEventBySkeletonId = function (skeletonId, deviceUuid, username) {
                 description: skeleton.description,
                 code: skeleton.code
             };
-
-            eventsCollection.addOneElement(event).then(event => {
-                resolve(cm.changeIdName(event));
-            })
-            .catch(err => {
-                reject(err);
-            })
+            return eventsCollection.addOneElement(event)
         })
-        .catch(err => {
-            reject(err);
-        })
-        })
+        .then(event => cm.changeIdName(event))
 };
 
 exports.getEventsByDeviceUuid = function (uuid) {
@@ -54,7 +48,7 @@ exports.getEventsByDeviceUuid = function (uuid) {
     return eventsCollection.getElementsByQuery(query);
 };
 
-exports.deleteEventById = function (id,username,uuid) {
+exports.deleteEventById = function (id, username, uuid) {
     let filter = {};
     filter.owner = username;
     filter.device = uuid;
