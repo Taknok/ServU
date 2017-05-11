@@ -33,7 +33,7 @@ exports.addEventBySkeletonId = function (skeletonId, deviceUuid, username) {
                 description: skeleton.description,
                 code: skeleton.code
             };
-            return eventsCollection.addOneElement(event);
+          return eventsCollection.addOneElement(event);
         })
 };
 

@@ -476,10 +476,10 @@ paths:
         "404":
           description: Event or Username or Device not found
 
-  /eventSkeleton:
+  /eventSkeletons:
     get:
       tags:
-      - eventSkeleton
+      - eventSkeletons
       description: Returns all Events usable for the user
       responses:
         "200":
@@ -491,10 +491,10 @@ paths:
         "401":
           description: Unauthorized
 
-  /eventSkeleton/{idEventSkeleton}:
+  /eventSkeletons/{idEventSkeleton}:
     get:
       tags:
-      - eventSkeleton
+      - eventSkeletons
       description: Returns the event from his id
       parameters:
         - $ref: "#/parameters/idEventSkeleton"
