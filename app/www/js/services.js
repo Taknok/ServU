@@ -46,8 +46,8 @@ angular.module('ServU')
 
 	var login = function(user) {
 		return $q(function(resolve, reject) {
-			$http.post(ServUApi.url + '/users/login', user).then(function(result) {
-				if (result.status == 201) {
+			$http.post(ServUApi.url + '/login', user).then(function(result) {
+				if (result.status == 200) {
 					storeUserCredentials(result.data.token);
 					resolve(result.data.msg);
 				} else {
