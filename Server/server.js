@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 
 let app = express();
 const port = 3000;
+const serv_addr = "192.168.43.37";
 
 //Handle cross-origin requests
 app.use(cors());
@@ -50,7 +51,7 @@ app.use(function (err, req, res, next) {
 db.connectMongo()
     .then(() => {
         console.log("Connected to MongoDB");
-        app.listen(port, () => {
+        app.listen(port, serv_addr, 511, () => {
             console.log("Server listening on port " + port);
         });
     })
