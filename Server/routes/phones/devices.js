@@ -2,7 +2,7 @@ const express = require('express');
 const devices = require("../../database/devices");
 const error = require("../../error");
 const users = require("../../database/users");
-const checkToken = require("../autentification").checkToken;
+const checkToken = require("../authentication").checkToken;
 
 const probesRouter = require("./probes");
 const actionsAvailableRouter = require("./actionsAvailable");

@@ -1,3 +1,5 @@
+const ObjectId = require('mongodb').ObjectID;
+
 function isDefined(variable) {
     return variable !== undefined && variable !== null;
 }
@@ -43,9 +45,29 @@ function propertiesVerificationForUpdate(object, properties) {
     }
 }
 
+function changeIdName(object) {
+    if (object !== undefined) {
+        object.id = object._id;
+        delete object._id;
+    }
+    return object;
+}
+
+function getIdObject(id) {
+    return new Promise((resolve, reject) => {
+        if (typeof id === 'string' && id.length === 24) {
+            resolve(new ObjectId(id));
+        } else {
+            reject(new Error("id must be a string of 24 characters"));
+        }
+    });
+}
+
 module.exports = {
     isDefined,
     Property,
     propertiesVerificationForCreation,
-    propertiesVerificationForUpdate
+    propertiesVerificationForUpdate,
+    changeIdName,
+    getIdObject
 };

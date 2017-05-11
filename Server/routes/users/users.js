@@ -2,7 +2,7 @@ const express = require('express');
 const users = require("../../database/users");
 const error = require("../../error");
 const deviceRouter = require("./devices");
-const checkToken = require("../autentification").checkToken;
+const checkToken = require("../authentication").checkToken;
 
 let router = express.Router();
 module.exports = router;

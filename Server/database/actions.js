@@ -1,7 +1,7 @@
 const db = require("./database");
 const cm = require("./common");
 const mongoCommon = require("./mongoCommon");
-const ObjectId = require('mongodb').ObjectID;
+
 
 const actionsProperties = [
     new cm.Property("type", "string", undefined),
@@ -17,24 +17,6 @@ let actionsCollection = mongoCommon.createCollection(
 );
 
 const STATUS = ["pending", "in progress", "done"];
-
-function changeIdName(action) {
-    if (action !== undefined) {
-        action.id = action._id;
-        delete action._id;
-    }
-    return action;
-}
-
-function getIdObject(id) {
-    return new Promise((resolve, reject) => {
-        if (typeof id === 'string' && id.length === 24) {
-            resolve(new ObjectId(id));
-        } else {
-            reject(new Error("id must be a string of 24 characters"));
-        }
-    });
-}
 
 exports.validateAction = function (object) {
     return cm.propertiesVerificationForCreation(object, actionsProperties);
@@ -60,7 +42,7 @@ exports.getAllActionsByUuidAndCreator = function (uuid, creatorUsername) {
     return actionsCollection.getElementsByQuery(query)
         .then(actions => {
             actions.forEach(action => {
-                changeIdName(action)
+                cm.changeIdName(action)
             });
             return actions;
         })
@@ -71,13 +53,13 @@ exports.getOneActionById = function (id, creator, deviceUuid) {
     let query = {};
     query.creator_username = creator;
     query.device_uuid = deviceUuid;
-    return getIdObject(id)
+    return cm.getIdObject(id)
         .then(id => {
             query._id = id;
             return query;
         })
         .then(query => actionsCollection.getOneElementByQuery(query))
-        .then(action => changeIdName(action))
+        .then(action => cm.changeIdName(action))
 };
 
 exports.getOldestActionPendingByDevice = function (uuid) {
@@ -90,7 +72,7 @@ exports.getOldestActionPendingByDevice = function (uuid) {
         db.mongo(actionsCollection.name)
             .then(collection => collection.find(query).sort(sortObj).project(actionsCollection.projection).toArray())
             .then(docs => {
-                resolve(changeIdName(docs[0]));
+                resolve(cm.changeIdName(docs[0]));
             })
             .catch(err => {
                 reject(err);
@@ -103,14 +85,14 @@ exports.addAction = function (action, creator, deviceUuid) {
     action.status = STATUS[0];
     action.creator_username = creator;
     action.device_uuid = deviceUuid;
-    return actionsCollection.addOneElement(action).then(action => changeIdName(action));
+    return actionsCollection.addOneElement(action).then(action => cm.changeIdName(action));
 };
 
 exports.updateOneActionById = function (id, creator, deviceUuid, action2) {
     let filter = {};
     filter.creator_username = creator;
     filter.device_uuid = deviceUuid;
-    return getIdObject(id)
+    return cm.getIdObject(id)
         .then(id => {
             filter._id = id;
             return filter;
@@ -131,7 +113,7 @@ exports.deleteActionById = function (id, creator, deviceUuid) {
     let filter = {};
     filter.creator_username = creator;
     filter.device_uuid = deviceUuid;
-    return getIdObject(id)
+    return cm.getIdObject(id)
         .then(id => {
             filter._id = id;
             return filter;

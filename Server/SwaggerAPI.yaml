@@ -490,11 +490,6 @@ paths:
               $ref: '#/definitions/eventSkeleton'
         "401":
           description: Unauthorized
-        "403":
-          description: Forbidden
-        "404":
-          description: User or device not found
-
 
   /eventSkeleton/{idEventSkeleton}:
     get:
@@ -512,10 +507,8 @@ paths:
               $ref: '#/definitions/eventSkeleton'
         "401":
           description: Unauthorized
-        "403":
-          description: Forbidden
         "404":
-          description: User or device not found
+          description: Event not found
 
   /phones:
     post:

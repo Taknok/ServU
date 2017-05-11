@@ -4,7 +4,7 @@ const cors = require('cors');
 const db = require("./database/database");
 const userRoute = require("./routes/users/users");
 const phoneRoute = require("./routes/phones/devices");
-const loginRoute = require("./routes/autentification").router;
+const loginRoute = require("./routes/authentication").router;
 const error = require("./error");
 const jwt = require('jsonwebtoken');
 

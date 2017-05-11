@@ -5,6 +5,7 @@ const mongoCommon = require("./mongoCommon");
 const probes = require("./probes");
 const actionsAvailable = require("./actionsAvailable");
 const actions = require("./actions");
+const events = require("./events");
 
 const devicesProperties = [
     new cm.Property("name", "string", undefined),
@@ -77,7 +78,8 @@ exports.deleteOneDevice = function (owner, uuid) {
                     return Promise.all([
                         probes.deleteProbesByUuid(uuid),
                         actionsAvailable.deleteActionsByUuid(uuid),
-                        actions.deleteActionsAttachedToDevice(uuid)
+                        actions.deleteActionsAttachedToDevice(uuid),
+                        events.deleteEventsAttachedToDevice(uuid)
                     ]);
                 } else {
                     resolve(false);
