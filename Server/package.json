@@ -1,35 +1,20 @@
 {
-  "name": "test",
-  "version": "0.0.1",
-  "private": true,
-  "description": "New Swagger API Project",
-  "keywords": [],
-  "author": "",
-  "license": "",
-  "main": "app.js",
-  "dependencies": {
-    "body-parser": "~1.16.0",
-    "connect": "^3.2.0",
-    "cookie-parser": "~1.4.3",
-    "debug": "~2.6.0",
-    "ejs": "~2.5.5",
-    "express": "~4.14.1",
-    "express-session": "1.15.2",
-    "js-yaml": "^3.3.0",
-    "method-override": "2.3.8",
-    "mongodb": "^2.2.25",
-    "morgan": "~1.7.0",
-    "request": "^2.81.0",
-    "serve-favicon": "~2.3.2",
-    "swagger-express-mw": "^0.1.0",
-    "swagger-tools": "0.10.1"
-  },
-  "devDependencies": {
-    "should": "^7.1.0",
-    "supertest": "^1.0.0"
-  },
+  "name": "server",
+  "version": "1.0.0",
+  "description": "ServU Server",
+  "main": "server.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "swagger project test"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jsonwebtoken": "^7.4.0",
+    "body-parser": "^1.17.1",
+    "cors": "^2.8.3",
+    "crypto": "0.0.3",
+    "express": "^4.15.2",
+    "mongodb": "^2.2.25"
   }
 }

@@ -72,13 +72,17 @@ function getDevicePanelFooterTemplate(username,id){
 }
 
 // Function that returns the html for an element of the more modal
-function getMoreModalElementTemplate(name,data) {
-    return(
-        "<div class='col-sm-3'>" +
-            "<div class='panel panel-primary'>" +
-                "<div class='panel-heading'>"+name+"</div>" +
-                "<div class='panel-body'>"+data+"</div>" +
-            "</div>" +
+function getMoreModalElementTemplate(icon,name,data) {
+    return (
+        "<div class='panel panel-primary'>" +
+        "<div class='panel-heading'>" +
+        "<button class='btn btn-block btn-info pull-left' data-parent='#accordion' data-toggle='collapse' data-target='#collapse"+name+"'>" +
+        "<i class='glyphicon glyphicon-menu-down pull-left'></i>" +
+        "<i class='ion-"+icon+"'></i>  "+name+
+        "</button>" +
+        "<div class='clearfix'></div>" +
+        "</div>" +
+        "<div class='panel-body collapse' id='collapse"+name+"'>"+data+"</div>" +
         "</div>"
     );
 }
