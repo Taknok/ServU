@@ -10,7 +10,7 @@
 		<li class="item item-icon-left item-toggle">
 			<i class="icon ion-wifi"></i>{{"Network" | translate}}
 			<label class="toggle toggle-balenced">
-				<input type="checkbox" ng-model="network.active" ng-change="changeActive('network')">
+				<input type="checkbox" ng-model="network.active">
 				<div class="track">
 					<div class="handle"></div>
 				</div>
@@ -19,7 +19,7 @@
 		<li class="item item-icon-left item-toggle">
 			<i class="icon ion-bluetooth"></i>{{"Bluetooh" | translate}}
 			<label class="toggle toggle-balenced">
-				<input type="checkbox" ng-model="bluetooth.active" ng-change="changeActive('bluetooth')">
+				<input type="checkbox" ng-model="bluetooth.active">
 				<div class="track">
 					<div class="handle"></div>
 				</div>
@@ -28,7 +28,7 @@
 		<li class="item item-icon-left item-toggle">
 			<i class="icon ion-navigate"></i>{{"GPS" | translate}}
 			<label class="toggle toggle-balenced">
-				<input type="checkbox">
+				<input type="checkbox" ng-model="localisation.active">
 				<div class="track">
 					<div class="handle"></div>
 				</div>
@@ -37,7 +37,7 @@
 		<li class="item item-icon-left item-toggle">
 			<i class="icon ion-battery-charging"></i>{{"Battery" | translate}}
 			<label class="toggle toggle-balenced">
-				<input type="checkbox" ng-model="battery.active" ng-change="changeActive('battery')">
+				<input type="checkbox" ng-model="battery.active">
 				<div class="track">
 					<div class="handle"></div>
 				</div>
@@ -82,7 +82,7 @@
 		<li class="item item-icon-left item-toggle">
 			<i class="icon ion-monitor"></i>{{"Screen Orientation" | translate}}
 			<label class="toggle toggle-balenced">
-				<input type="checkbox" ng-model="screen_orientation.active" ng-change="changeActive('screen_orientation')">
+				<input type="checkbox" ng-model="screen_orientation.active">
 				<div class="track">
 					<div class="handle"></div>
 				</div>
@@ -91,7 +91,7 @@
 		<li class="item item-icon-left item-toggle">
 			<i class="icon ion-lightbulb"></i>{{"FlashLight" | translate}}
 			<label class="toggle toggle-balenced">
-				<input type="checkbox" ng-model="flashlight.active" ng-change="changeActive('flashlight')">
+				<input type="checkbox" ng-model="flashlight.active">
 				<div class="track">
 					<div class="handle"></div>
 				</div>
@@ -100,7 +100,7 @@
 		<li class="item item-icon-left item-toggle">
 			<i class="icon ion-document"></i>{{"Sim Cards" | translate}}
 			<label class="toggle toggle-balenced">
-				<input type="checkbox" ng-model="sim.active" ng-change="changeActive('sim')">
+				<input type="checkbox" ng-model="sim.active">
 				<div class="track">
 					<div class="handle"></div>
 				</div>

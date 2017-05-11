@@ -218,9 +218,30 @@ angular.module('ServU')
 	$scope.screen_orientation = probes.screen_orientation.getAll();
 	$scope.device = probes.device.getAll();
 	
-	$scope.changeActive = function(probe){
-		probes.setActive(probe, $scope.network.active);
-	}
+	$scope.$watch("network.active", function(){
+		probes.network.setActive($scope.network.active);
+	})
+	$scope.$watch("bluetooth.active", function(){
+		probes.bluetooth.setActive($scope.bluetooth.active);
+	})
+	// $scope.$watch("localisation.active", function(){
+		// probes.localisation.setActive($scope.localisation.active);
+	// })
+	$scope.$watch("battery.active", function(){
+		probes.battery.setActive($scope.battery.active);
+	})
+	$scope.$watch("sim.active", function(){
+		probes.sim.setActive($scope.sim.active);
+	})
+	$scope.$watch("flashlight.active", function(){
+		probes.flashlight.setActive($scope.flashlight.active);
+	})
+	$scope.$watch("screen_orientation.active", function(){
+		probes.screen_orientation.setActive($scope.screen_orientation.active);
+	})
+	$scope.$watch("device.active", function(){
+		probes.device.setActive($scope.device.active);
+	})
 	
 	$scope.refreshProbes = function(){
 		$scope.network = probes.network.getValue();
