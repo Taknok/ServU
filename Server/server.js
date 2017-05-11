@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 
 let app = express();
 const port = 3000;
-const serv_addr = "192.168.43.37";
+const serv_addr = "127.0.0.1";
 
 //Handle cross-origin requests
 app.use(cors());
