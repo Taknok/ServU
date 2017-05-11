@@ -67,6 +67,7 @@ exports.logIn = function (username, password) {
             if (user !== undefined) {
                 let hash = encryption.sha512(password, user.salt);
                 if (hash === user.password) {
+
                     return true;
                 }
             }
