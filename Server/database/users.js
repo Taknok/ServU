@@ -4,6 +4,7 @@ const devices = require("./devices");
 const probes = require("./probes");
 const actionsAvailables = require("./actionsAvailable");
 const actions = require("./actions");
+const events = require("./events");
 const mongoCommon = require("./mongoCommon");
 const encryption = require("./encryption");
 
@@ -67,6 +68,7 @@ exports.logIn = function (username, password) {
             if (user !== undefined) {
                 let hash = encryption.sha512(password, user.salt);
                 if (hash === user.password) {
+
                     return true;
                 }
             }
@@ -96,7 +98,8 @@ exports.updateUser = function (username, user2) {
                         devices.updateOwnerOfDevices(username, user2.username),
                         probes.updateOwnerOfProbes(username, user2.username),
                         actionsAvailables.updateOwnerOfActions(username, user2.username),
-                        actions.updateCreatorOfManyActions(username, user2.username)
+                        actions.updateCreatorOfManyActions(username, user2.username),
+                        events.updateOwnerOfManyEvents(username,user2.username)
                     ]);
                 }
             })
@@ -121,7 +124,8 @@ exports.deleteUser = function (username) {
                         devices.deleteDevicesByOwner(username),
                         probes.deleteProbesByOwner(username),
                         actionsAvailables.deleteActionsByOwner(username),
-                        actions.deleteActionsOfCreator(username)
+                        actions.deleteActionsOfCreator(username),
+                        events.deleteEventsByOwner(username)
                     ]);
                 } else {
                     resolve(false);

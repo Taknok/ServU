@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="root" ng-controller="gestion">
+<html lang="en">
 <head>
 
     <meta charset="utf-8">
@@ -26,6 +26,7 @@
     <link href="../../css/persoCSS/colorOrange.css" rel="stylesheet">
 
     <link href="../../css/persoCSS/custom.css" rel="stylesheet">
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.min.css" rel="stylesheet">
     <style>
         .correct {
             border-color: rgba(68, 191, 68, 0.75);
@@ -51,7 +52,7 @@
 
 </head>
 
-<body>
+<body ng-app="root" ng-controller="gestion">
 
 <!-- Navigation 2-->
 <a id="menu-toggle" href="#" class="btn btn-dark btn-lg toggle"><i class="fa fa-bars"></i></a>
@@ -77,95 +78,107 @@
 <section id="profile" class="profile">
     <div class="container">
         <div class="row">
-            <div class="col-lg-12 text-center">
+            <div class="col-md-12 col-xs-12 text-center">
                 <h2 class="fontAmethyst">Profile</h2>
+                <button class="btn btn-xs btn-info" ng-click="open('lg')"><i class="glyphicon glyphicon-plus"></i></button>
                 <hr class="small">
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-10 col-lg-offset-1">
+            <div class="col-md-10 col-xs-10 col-md-offset-1 col-xs-offset-1">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-md-2">
-                                <h1><i class="glyphicon glyphicon-user"></i></h1>
-                            </div>
-                            <div class="col-md-7">
-                                <div class="panel-title pseudo_profil"><h1 id="pseudo"><%= username %></h1></div>
-                            </div>
-                            <div class="col-md-1 text-vertical-center">
-                                <br>
-                                <input type="button" class="btn btn-default text-right" id="toggler" value="Hide information" onClick="action();" />
+                        <div class="panel-title">
+                            <div class="row">
+                                <div class="col-md-1 col-sm-1 col-xs-2">
+                                    <h1><i class="glyphicon glyphicon-user"></i></h1>
+                                </div>
+                                <div class="col-md-8 col-sm-8 col-xs-10">
+                                    <div class="pseudo_profil"><h1 class="fontAmethyst" id="pseudo"><%= username %></h1></div>
+                                </div>
+                                <div class="col-md-1 col-sm-1 col-xs-12 text-vertical-center">
+                                    <br>
+                                    <input type="button" class="btn btn-warning text-right" id="toggler" value="Hide information" onClick="action();"/>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="panel-body" id="togglee">
                         <div class="row">
-                            <div class="col-lg-3 col-lg-offset-1"><p class="lead">
+                            <div class="col-md-4 col-sm-10 col-xs-10">
+                                <p class="lead">
                                     Pseudo : <%= username %><br>
-                                First name : <%= firstname %><br>
-                                 Last name : <%= lastname %><br></p>
+                                    First name : <%= firstname %><br>
+                                    Last name : <%= lastname %><br>
+                                </p>
                             </div>
-                            <div class="col-lg-6 col-lg-offset-1">
-                                <div class="col-lg-11">
-                                    <div class="text-center lead">Modify your profile information</div>
-                                </div>
-                                <div class="col-lg-1">
-                                    <button type="button" class="btn btn-default" onClick="modif_info();"><i class="glyphicon glyphicon-pencil"></i></button>
-                                </div>
-                                <form action="<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_info">
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-6" for="text">Change first name :</label>
-                                        <div class="col-sm-6">
-                                            <input type="text" class="form-control" id="change_prenom" name="firstname" placeholder="Enter new first name">
-                                            <span class="erreur_info alert-danger">At least 2 characters must be entered !</span>
-                                        </div>
+                            <div class="col-md-8 col-sm-12 col-xs-12">
+                                <div class="row">
+                                    <div class="col-md-10 col-sm-10 col-xs-10">
+                                        <div class="text-center lead">Modify your profile information</div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 col-xs-2">
+                                        <button type="button" class="btn btn-primary" onClick="modif_info();"><i class="glyphicon glyphicon-pencil"></i></button>
+                                    </div>
+                                    <div class="row">
+                                        <form action="<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_info">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="text">Change first name :</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
+                                                    <input type="text" class="form-control" id="change_prenom" name="firstname" placeholder="Enter new first name">
+                                                    <span class="erreur_info alert-danger">At least 2 characters must be entered !</span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="text">Change last name :</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
+                                                    <input type="text" class="form-control" id="change_nom" name="lastname" placeholder="Enter new last name">
+                                                    <span class="erreur_info alert-danger">At least 2 characters must be entered !</span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group text-center">
+                                                <button type="submit" class="btn btn-primary">Confirm</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <hr>
+                                    <div class="col-md-10 col-sm-10 col-xs-10">
+                                        <div class="text-center lead">Modify password</div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 col-xs-2">
+                                        <button type="button" class="btn btn-primary" onClick="modif_mdp();"><i class="glyphicon glyphicon-pencil"></i></button>
+                                    </div>
+                                    <div class="row">
+                                        <form action="/api/users/<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_mdp">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="text">New password :</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
+                                                    <input type="password" class="form-control" name="password" id="password" placeholder="Enter your new password">
+                                                    <span class="erreur_info alert-danger">At least 6 characters must be entered !</span>
+                                                </div>
 
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="pwd">Confirm password :</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
+                                                    <input type="password" class="form-control" name="password2" id="password2" placeholder="Confirm password">
+                                                    <span class="erreur_info alert-danger">Passwords don't match, please enter them again</span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group text-center">
+                                                <button type="submit" class="btn btn-primary">Confirm</button>
+                                            </div>
+                                        </form>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-6" for="text">Change last name :</label>
-                                        <div class="col-sm-6">
-                                            <input type="text" class="form-control" id="change_nom" name="lastname" placeholder="Enter new last name">
-                                            <span class="erreur_info alert-danger">At least 2 characters must be entered !</span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group text-center">
-                                        <button type="submit" class="btn btn-default">Confirm</button>
-                                    </div>
-                                </form>
-                                <div class="col-lg-11">
-                                    <div class="text-center lead">Modify password</div>
                                 </div>
-                                <div class="col-lg-1">
-                                    <button type="button" class="btn btn-default" onClick="modif_mdp();"><i class="glyphicon glyphicon-pencil"></i></button>
-                                </div>
-                                <form action="/api/users/<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_mdp">
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-6" for="text">New password :</label>
-                                        <div class="col-sm-6">
-                                            <input type="password" class="form-control" name="password" id="password" placeholder="Enter your new password">
-                                            <span class="erreur_info alert-danger">At least 6 characters must be entered !</span>
-                                        </div>
-
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-sm-6" for="pwd">Confirm password :</label>
-                                        <div class="col-sm-6">
-                                            <input type="password" class="form-control" name="password2" id="password2" placeholder="Confirm password">
-                                            <span class="erreur_info alert-danger">Passwords don't match, please enter them again</span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group text-center">
-                                        <button type="submit" class="btn btn-default">Confirm</button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-        </div><!-- /.row -->
+        </div><!— /.row —>
     </div><!-- /.container -->
 </section>
 
@@ -173,25 +186,25 @@
 <section id="devices" class="devices bg-primary">
     <div class="container">
         <div class="row">
-            <div class="col-lg-10 col-lg-offset-1 text-center">
+            <div class="col-md-12 col-md-offset-0 col-sm-12 col-sm-offset-0 col-xs-12 col-xs-offset-0 text-center">
                 <div class="panel panel-primary" style="border: none">
                     <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-md-1">
+                        <div class="row gutter-10">
+                            <div class="col-md-1 col-sm-1 col-xs-1 gutter-10 pull-left">
                                 <div class='well well-sm well-warning' data-toggle='tooltip' data-placement='bottom' title='Number of phones' id='nbPhones'>
-                                    <!-- nb of phones -->
+                                    <!— nb of phones —>
                                 </div>
                             </div>
-                            <div class="col-md-1">
+                            <div class="col-md-1 col-sm-1 col-xs-1 gutter-10 pull-left">
                                 <div class='well well-sm well-warning' data-toggle='tooltip' data-placement='bottom' title='Number of tablets' id='nbTablets'>
-                                    <!-- nb of tablets -->
+                                    <!— nb of tablets —>
                                 </div>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-8 col-sm-8 col-xs-8 gutter-10">
                                 <h2 class="fontAmethyst">Available devices</h2>
                                 <hr class="small">
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-2 col-sm-2 col-xs-2 gutter-10">
                                 <div class="btn-group" style="margin-top: 25%; margin-bottom: 25%">
                                     <button class="btn btn-warning" data-toggle="modal" data-target='#addModal'>
                                 <span data-toggle="tooltip" title="Add device" data-placement="top">
@@ -301,6 +314,26 @@
     </div>
 </section>
 
+<!-- Choose event modal -->
+<section>
+    <div class='modal fade' id='chooseEventModal' tabindex='-1' role='dialog' aria-labelledby='chooseEventModalLabel'>
+        <div class='modal-dialog' role='document'>
+            <div class='modal-content'>
+                <div class='modal-header' id="chooseEventModalHeader">
+                    Available events
+                    <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+                </div>
+                <div class='modal-body' id="chooseEventModalBody">
+
+                </div>
+                <div class='modal-footer' id="chooseEventModalFooter">
+                    <button class="btn btn-warning" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Action modal -->
 <section>
     <div class='modal fade' id='actionModal' tabindex='-1' role='dialog' aria-labelledby='actionModalLabel'>
@@ -359,6 +392,12 @@
 <script src="../../js/jquery.js"></script>
 
 <!-- Bootstrap Core JavaScript -->
+
+<script src="http://maps.google.com/maps/api/js?key=AIzaSyCDnP1bkcDq7KKvVBZfss5B1EfM99T7Bvc"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+
+<script src="../js/persoJS/controller.js"></script>
 <script src="../../js/bootstrap.min.js"></script>
 <script src="../../js/persoJS/devicesController.js"></script>
 <script src="../../js/persoJS/templates.js"></script>
@@ -376,11 +415,9 @@
 <script type="text/javascript" src="../../js/persoJS/themeBootstrap.js" ></script>
 
 <!-- Personnal Script PITI -->
-
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-
 <script type="text/javascript" src="../../js/persoJS/controlConnection.js" ></script>
-<script src="../js/persoJS/controller.js"></script>
+<script src="../js/persoJS/ui-bootstrap-tpls-2.5.0.min.js"></script>
+
 
 <script>document.title = '<%= username%> - ' + document.title;</script>
 

@@ -4,6 +4,7 @@ const error = require("../../error");
 const probesRouter = require("./probes");
 const actionsAvailableRouter = require("./actionsAvailable");
 const actionsRouter = require("./actions");
+const events = require("./events");
 
 let router = express.Router();
 module.exports = router;
@@ -93,3 +94,4 @@ router.put('/devices/:uuid/name', function (req, res, next) {
 router.use('/devices/:uuid/', probesRouter);
 router.use('/devices/:uuid/', actionsAvailableRouter);
 router.use('/devices/:uuid/', actionsRouter);
+router.use('/devices/:uuid/', events);

@@ -4,7 +4,8 @@ const cors = require('cors');
 const db = require("./database/database");
 const userRoute = require("./routes/users/users");
 const phoneRoute = require("./routes/phones/devices");
-const loginRoute = require("./routes/autentification").router;
+const eventSkeletonsRoute = require("./routes/eventSkeletons");
+const loginRoute = require("./routes/authentication").router;
 const error = require("./error");
 const jwt = require('jsonwebtoken');
 
@@ -36,6 +37,7 @@ app.use(function (err, req, res, next) {
 app.use("/api/", userRoute);
 app.use("/api/", phoneRoute);
 app.use("/api/", loginRoute);
+app.use("/api/", eventSkeletonsRoute);
 
 //Final error handler
 app.use(function (err, req, res, next) {

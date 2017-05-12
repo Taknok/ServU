@@ -52,7 +52,7 @@ router.post('/login', function (req, res, next) {
                     };
                     res.status(200).json(token);
                 } else {
-                    next(new error.error(401, "Unauthorized"));
+                    next(new error.error(404, "Unauthorized"));
                 }
             })
             .catch(err => {
