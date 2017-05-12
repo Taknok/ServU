@@ -180,8 +180,6 @@ paths:
         "200":
           description: Success
           schema:
-            type: array
-            items:
               $ref: '#/definitions/eventSkeleton'
         "400":
           description: Wrong format
@@ -210,8 +208,6 @@ paths:
         "201":
           description: Success
           schema:
-            type: array
-            items:
               $ref: '#/definitions/eventSkeleton'
         "400":
           description: Wrong format
@@ -235,8 +231,6 @@ paths:
         "200":
           description: Success
           schema:
-            type: array
-            items:
               $ref: '#/definitions/eventSkeleton'
         "400":
           description: Wrong format
@@ -996,8 +990,6 @@ definitions:
     properties:
       id:
         type: string
-      status:
-        type: boolean
       label:
         type: string
       description:
@@ -1037,8 +1029,6 @@ definitions:
     type: object
     properties:
       label:
-        type: string
-      creator:
         type: string
       description:
         type: string
