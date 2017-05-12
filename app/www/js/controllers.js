@@ -33,9 +33,9 @@ angular.module('ServU')
 					"serial": tmp.serial,
 					"uuid": tmp.uuid
 				}
-				$http.post(ServUApi.url + "/users/" + phoneInfo.getUsername() + "/devices", data);
+				$http.post(ServUApi.url + "/phones", data);
 			}
-			postPhoneOnLogin(); //poste a chaque fois que l'on se log, pas tres opti pour le moment mais fonctionne
+			// postPhoneOnLogin(); //poste a chaque fois que l'on se log, pas tres opti pour le moment mais fonctionne
 			
 			postProbesOnLogin = async function(){
 				let tmp = await probes.constructVect();
@@ -112,9 +112,8 @@ angular.module('ServU')
 	
 	function upSendAction(action){
 		
-		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/actions_user";
+		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/actionUser/" + action.actionId;
 		var data = [{
-			"actionId" : action.actionId,
 			"status" : action.status
 		}]
 		// $http.put(url, data);
@@ -161,7 +160,7 @@ angular.module('ServU')
 	
 	function getActions() {
 		var items = [];
-		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/actions_user";
+		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/actionUserToDo";
 		$http.get(url).success(function(actions) {
 			
 			for(var i = 0; i < actions.length; i++){
@@ -211,7 +210,7 @@ angular.module('ServU')
 	});
 })
 
-.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader) {
+.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader, actions) {
 	$scope.destroySession = function() {
 		AuthService.logout();
 	};

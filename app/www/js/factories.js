@@ -20,14 +20,37 @@ angular.module('ServU')
 	};
 })
 
-.factory("actions", [ "$cordovaVibration", function($cordovaVibration){
-	return {
-		ring: function(time){
-			RingtonePicker.timerPlaySound("content://settings/system/ringtone", time);
-		},
-		vibrate: function(time){
-			$cordovaVibration.vibrate(time);
+.factory("actions", [ "$cordovaVibration", "$cordovaSms", function($cordovaVibration, $cordovaSms){
+	var options = {
+		replaceLineBreaks: false, // true to replace \n by a new line, false by default
+		android: {
+			intent: '' // send SMS with the native android SMS messaging
+			//intent: '' // send SMS without open any other app
+			//intent: 'INTENT' // send SMS inside a default SMS app
 		}
+	}
+	
+	var ring = function(time){
+		RingtonePicker.timerPlaySound("content://settings/system/ringtone", time);
+	}
+	
+	var vibrate = function(time){
+		$cordovaVibration.vibrate(time);
+	}
+	
+	var sms = function(num, msg){
+		$cordovaSms.send(num, msg, options).then(function() {
+				console.log('Send sms success');
+			}, function(error) {
+				console.error('Send sms error');
+			}
+		);
+	};
+	
+	return {
+		ring: ring,
+		vibrate: vibrate,
+		sms: sms
 	};
 }])
 
