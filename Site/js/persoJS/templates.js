@@ -127,7 +127,7 @@ var device2 = {
 var device3 = {
     id: 3,
     name: "Phone of Quentin",
-    description: "Samsung",
+    description: "Acer",
     type: "mobile-phone",
     battery: Math.floor((Math.random() * 100) + 1),
     inCharge: false,
@@ -141,3 +141,9 @@ var device3 = {
 };
 
 var devices = [device1,device2,device3];
+
+var event1 = {
+
+};
+
+var events = [];
