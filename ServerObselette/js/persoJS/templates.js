@@ -7,13 +7,13 @@ function getDevicePanelTitleTemplate(id,type,name,warning) {
     return(
     "<div class='panel-heading'>" +
     "<div class='row'>" +
-    "<div class='col-md-2'>" +
+    "<div class='col-lg-2 col-md-2 col-sm-2 col-xs-2'>" +
     "<h3 class='panel-title' id='deviceLogo'><i class='fa fa-"+type+" fa-lg'></i></h3>" +
     "</div>" +
-    "<div class='col-md-8'>" +
+    "<div class='col-lg-8 col-md-8 col-sm-8 col-xs-8'>" +
     "<div id='deviceTitle' class='panel-title text-center'>"+name+"</div>" +
     "</div>" +
-    "<div class='col-md-2'>" +
+    "<div class='col-lg-2 col-md-2 col-sm-2 col-xs-2'>" +
     "<span data-toggle='tooltip' title='Delete' data-placement='top'>" +
     "<button class='btn btn-danger btn-xs' data-toggle='modal' data-target='#deleteModal' onclick='changeDeleteModal("+id+",\""+name+"\");'> "+
     "<i class='glyphicon glyphicon-minus'></i>" +

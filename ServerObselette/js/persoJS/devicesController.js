@@ -55,13 +55,6 @@ function refresh() {
         $("#items").append("<h2 style='color: black;'>No devices yet... Click on the plus to add one</h2>");
     }
 
-    $("#nbPhones").append(
-        "<span><i class='fa fa-mobile-phone'></i> "+nbPhone+"</span>"
-    );
-    $("#nbTablets").append(
-        "<span><i class='fa fa-tablet'></i> "+nbTablet+"</span>"
-    );
-
 }
 
 
@@ -94,13 +87,7 @@ function loadDeviceInfo(device) {
 				id = data[key].uuid;
 			}
 		}
-		
-		console.log(id); //id du dernier tel pour le moment
-		
-	
 
-	
-	//device.id = id;
 	
     id = device.id;
     name = device.name;
@@ -110,8 +97,18 @@ function loadDeviceInfo(device) {
     inCharge = device.inCharge;
     connection = device.connection;
 
-    if(type=="mobile-phone"){nbPhone++};
-    if(type=="tablet"){nbTablet++};
+    if(type=='mobile-phone'){nbPhone++;
+        $("#nbPhones > span").remove();
+        $("#nbPhones").append(
+            "<span><i class='fa fa-mobile-phone'></i> "+nbPhone+"</span>"
+        );
+    };
+    if(type=='tablet'){nbTablet++;
+        $("#nbTablets > span").remove();
+        $("#nbTablets").append(
+            "<span><i class='fa fa-tablet'></i> "+nbTablet+"</span>"
+        );
+    };
 
     inCharge?animationToogle="progress-bar-striped active":animationToogle="";
     warning = false;
@@ -134,7 +131,7 @@ function loadDeviceInfo(device) {
 
     $("#items").append(
         '<div class="row">' +
-        '<div class="col-md-6">' +
+        '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">' +
         '<div class="panel panel-warning panel-warning-dark">' +
         getDevicePanelTitleTemplate(id,type,name,warning) +
         "<div class='panel-body'>" +
@@ -159,7 +156,7 @@ function loadDeviceInfo(device) {
         getDevicePanelFooterTemplate(username,id) +
         '</div>' +
         '</div>' +
-        '<div class="col-md-6" id="angular_module">' +
+        '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="angular_module">' +
         '<div class="panel panel-primary">' +
         '<div class="panel-heading">' +
         '<div class="row">' +
@@ -167,7 +164,7 @@ function loadDeviceInfo(device) {
         '<div class="panel-title">Events of '+name +'</div>' +
         '</div>' +
         '<div class="col-md-2">' +
-        '<button class="btn btn-xs btn-info" onclick="changeCreateEventModal('+id+')" data-toggle="modal" data-target="#createEventModal"><i class="glyphicon glyphicon-plus"></i></button>' +
+        "<button class='btn btn-xs btn-info'><i class='glyphicon glyphicon-plus'></i></button>" +
         '</div>' +
         '</div>' +
         '</div>' +
@@ -176,11 +173,12 @@ function loadDeviceInfo(device) {
         '</div>' +
         '</div>');
 
+        /*
         var $scope = angular.element('#angular_module').scope();
         $scope.addNewButton('#'+id);
 
 		}).catch(function() {
-		// An error occurred
+		// An error occurred*/
 	});
 
 }

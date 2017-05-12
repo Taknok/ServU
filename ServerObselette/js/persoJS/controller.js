@@ -4,7 +4,7 @@
 
 angular.module('root', ['ui.bootstrap'])
     .controller("gestion", ['$scope', '$log','$uibModal', '$compile', function($scope, $log, $uibModal, $compile) {
-        $scope.message = 'Hello World!';
+        //$scope.message = 'Hello World!';
         $scope.addNewButton = function(element){
             $compile(element)($scope);
         };
@@ -17,7 +17,7 @@ angular.module('root', ['ui.bootstrap'])
                 ariaLabelledBy: 'modal-title',
                 ariaDescribedBy: 'modal-body',
                 template: '<div class="modal-header">' +
-                '<h2 class="modal-title" id="modal-title">Creation Event Page</h2>' +
+                '<h2 class="modal-title" id="modal-title">Event creation</h2>' +
                 '</div>' +
                 '<div class="modal-body container form-group" id="modal-body">' +
                 '<div class="row">' +
@@ -49,7 +49,7 @@ angular.module('root', ['ui.bootstrap'])
                 '</div>',
                 controller: 'ModalInstanceCtrl',
                 controllerAs: '$ctrl',
-                keybord : true,
+                keyboard : true,
                 size: size,
                 resolve: {
                     items: function () {
