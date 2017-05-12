@@ -14,4 +14,5 @@
 |:---	      |:---	    |:---   |
 |ring   	  |time     |`int`  |
 |vibrate    |time     |`int`  |
+|sms		|dest <br> msg | `string` <br> `string` |
 
