@@ -2,6 +2,7 @@ const express = require('express');
 const users = require("../../database/users");
 const error = require("../../error");
 const deviceRouter = require("./devices");
+const eventSkeletonRouter = require("./eventSkeletons");
 const checkToken = require("../authentication").checkToken;
 
 let router = express.Router();
@@ -142,3 +143,4 @@ router.delete('/users/:username', function (req, res, next) {
 
 
 router.use('/users/:username/', deviceRouter);
+router.use('/users/:username/', eventSkeletonRouter);

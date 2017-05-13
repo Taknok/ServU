@@ -14,8 +14,9 @@ let eventSkeletonCollection = mongoCommon.createCollection(
     "id"
 );
 
-exports.getAllEventSkeletons = function () {
+exports.getAllEventSkeletons = function (username) {
     let query = {};
+    query.creator = username;
     return eventSkeletonCollection.getElementsByQuery(query);
 };
 
@@ -27,4 +28,18 @@ exports.getEventSkeletonById = function (id) {
             return query;
         })
         .then(query => eventSkeletonCollection.getOneElementByQuery(query))
+};
+
+exports.addEventSkeleton = function (eventSkeleton) {
+    return eventSkeletonCollection.addOneElement(eventSkeleton);
+};
+
+
+exports.deleteEventSkeletonByid = function (id) {
+    let filter = {};
+    return cm.getIdObject(id)
+        .then(id => {
+            filter._id = id;
+        })
+        .then(() => eventSkeletonCollection.deleteOneElement(filter));
 };
