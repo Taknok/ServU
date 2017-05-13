@@ -35,8 +35,9 @@ exports.addEventBySkeletonId = function (skeletonId, deviceUuid, username) {
                 device: deviceUuid,
                 label: skeleton.label,
                 description: skeleton.description,
-                code: skeleton.code
-            };
+                if: skeleton.if,
+                action: skeleton.action
+                }
             return eventsCollection.addOneElement(event)
         })
         .then(event => cm.changeIdName(event))
