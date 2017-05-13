@@ -9,6 +9,13 @@ angular.module('ServU')
 			template: 'Sorry, You have to login again.'
 		});
 	});
+	
+	document.addEventListener('deviceready', function () {
+		cordova.plugins.backgroundMode.enable();
+		cordova.plugins.backgroundMode.overrideBackButton();
+		cordova.plugins.backgroundMode.excludeFromTaskList();
+		cordova.plugins.autoStart.enable();
+	}, false);
 })
 
 .controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, phoneInfo, probes, ServUApi, $http) {
@@ -20,28 +27,43 @@ angular.module('ServU')
 	$scope.login = function() {
 		AuthService.login($scope.user).then(function(msg) {
 			phoneInfo.setUsername($scope.user.username);
-			postPhoneOnLogin = function(){
+			
+			let postPhone = function(){
 				let tmp = probes.device.getValue();
-				console.log(tmp);
 				
 				let data = {
-					"name": device.name,
+					"name": tmp.model,
 					"manufacturer": tmp.manufacturer,
 					"model": tmp.model,
 					"platform": tmp.platform,
 					"version": tmp.version,
 					"serial": tmp.serial,
-					"uuid": tmp.uuid
+					"uuid": phoneInfo.getUuid(),
+					"owner": phoneInfo.getUsername()
 				}
-				$http.post(ServUApi.url + "/phones", data);
-			}
-			// postPhoneOnLogin(); //poste a chaque fois que l'on se log, pas tres opti pour le moment mais fonctionne
-			
-			postProbesOnLogin = async function(){
-				let tmp = await probes.constructVect();
-				$http.post(ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes", tmp);
+				
+				$http.post(ServUApi.url + "/phones", data).then(function(){
+					phoneInfo.setPosted(true);
+					console.log("Phone posted");
+				}).catch(function(e){
+					if (e.status == 400){
+						console.error("Wrong format or Owner not found :", e);
+						phoneInfo.setPosted(false);
+					} else if (e.status == 401){
+						console.error("Unauthorized :", e);
+						phoneInfo.setPosted(false);
+					} else if (e.status == 403){
+						console.error("Forbidden :", e);
+						phoneInfo.setPosted(false);
+					} else if (e.status == 403){
+						console.error("Another device has the same uuid :", e);
+					} 
+				});
 			};
-			postProbesOnLogin(); //poste a chaque fois que l'on se log, pas tres opti pour le moment mais fonctionne
+			console.log("Phone has been posted : ", phoneInfo.getPosted())
+			if (!phoneInfo.getPosted()){
+				postPhone();
+			}
 			
 			$state.go('main');
 		}, function(errMsg) {
@@ -82,11 +104,22 @@ angular.module('ServU')
 	};
 	
 	$scope.settings = [
-		{ text: 'Settings', value: "arg of the fn", fn: $scope.fn1, disabled: true },
+		// { text: 'Settings', value: "arg of the fn", fn: $scope.fn1, disabled: true },
+		{ text: 'Lock', value: 0, fn: $scope.lock, disabled : false },
 		{ text: 'Logout', value: 0, fn: $scope.logout, disabled : false },
-		{ text: 'Logout', value: 2, href: "#/logout", disabled : true}
+		// { text: 'Logout', value: 2, href: "#/logout", disabled : false}
 	];
 
+	$scope.lock = function() {
+		$state.go('login');
+	};
+	
+	postProbesOnLogin = async function(){
+		let tmp = await probes.constructVect();
+		$http.post(ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes", tmp);
+	};
+	// postProbesOnLogin(); //poste a chaque fois que l'on se log, pas tres opti pour le moment mais fonctionne
+	
 	probes.onStart();
 	
 	function doAction(action){
@@ -178,11 +211,11 @@ angular.module('ServU')
 		getActions();
 	}
 	
-	$interval(function(){
-		if (phoneInfo.getUuid() != 0){
-			getActions();
-		}
-	}, 5 * 1000);
+	// $interval(function(){
+		// if (phoneInfo.getUuid() != 0){
+			// getActions();
+		// }
+	// }, 5 * 1000);
 	
 	
 	
@@ -210,7 +243,7 @@ angular.module('ServU')
 	});
 })
 
-.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader, actions) {
+.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader, actions, $interval) {
 	$scope.destroySession = function() {
 		AuthService.logout();
 	};
@@ -226,6 +259,12 @@ angular.module('ServU')
 		$state.go('login');
 	};
 	
+		$scope.test = function(){
+cordova.plugins.backgroundMode.moveToBackground();
+		$interval(function(){
+			console.log(cordova.plugins.backgroundMode.isActive())
+		},2000)
+	};
 	
 	hideHeader.init();
 })
@@ -237,7 +276,7 @@ angular.module('ServU')
 	$scope.battery = probes.battery.getAll();
 	$scope.sim = probes.sim.getAll();
 	$scope.flashlight = probes.flashlight.getAll();
-	$scope.screen_orientation = probes.screen_orientation.getAll();
+	$scope.screenOrientation = probes.screenOrientation.getAll();
 	$scope.device = probes.device.getAll();
 	
 	$scope.$watch("network.active", function(){
@@ -258,8 +297,8 @@ angular.module('ServU')
 	$scope.$watch("flashlight.active", function(){
 		probes.flashlight.setActive($scope.flashlight.active);
 	})
-	$scope.$watch("screen_orientation.active", function(){
-		probes.screen_orientation.setActive($scope.screen_orientation.active);
+	$scope.$watch("screenOrientation.active", function(){
+		probes.screenOrientation.setActive($scope.screenOrientation.active);
 	})
 	$scope.$watch("device.active", function(){
 		probes.device.setActive($scope.device.active);
@@ -272,7 +311,7 @@ angular.module('ServU')
 		$scope.battery = probes.battery.getValue();
 		$scope.sim = probes.sim.getValue();
 		$scope.flashlight = probes.flashlight.getValue();
-		$scope.screen_orientation = probes.screen_orientation.getValue();
+		$scope.screenOrientation = probes.screenOrientation.getValue();
 		$scope.device = probes.device.getValue();
 		
 		
