@@ -43,37 +43,46 @@
 				</div>
 			</label>
 		</li>
+		<!-- <li class="item item-icon-left item-toggle"> -->
+			<!-- <i class="icon ion-arrow-move"></i>{{"Accelerometer" | translate}} -->
+			<!-- <label class="toggle toggle-balenced"> -->
+				<!-- <input type="checkbox"> -->
+				<!-- <div class="track"> -->
+					<!-- <div class="handle"></div> -->
+				<!-- </div> -->
+			<!-- </label> -->
+		<!-- </li> -->
+		<!-- <li class="item item-icon-left item-toggle"> -->
+			<!-- <i class="icon ion-compass"></i>{{"Orientation" | translate}} -->
+			<!-- <label class="toggle toggle-balenced"> -->
+				<!-- <input type="checkbox"> -->
+				<!-- <div class="track"> -->
+					<!-- <div class="handle"></div> -->
+				<!-- </div> -->
+			<!-- </label> -->
+		<!-- </li> -->
+		<!-- <li class="item item-icon-left item-toggle"> -->
+			<!-- <i class="icon ion-radio-waves"></i>{{"Proximity" | translate}} -->
+			<!-- <label class="toggle toggle-balenced"> -->
+				<!-- <input type="checkbox"> -->
+				<!-- <div class="track"> -->
+					<!-- <div class="handle"></div> -->
+				<!-- </div> -->
+			<!-- </label> -->
+		<!-- </li> -->
+		<!-- <li class="item item-icon-left item-toggle"> -->
+			<!-- <i class="icon ion-contrast"></i>{{"Light" | translate}} -->
+			<!-- <label class="toggle toggle-balenced"> -->
+				<!-- <input type="checkbox"> -->
+				<!-- <div class="track"> -->
+					<!-- <div class="handle"></div> -->
+				<!-- </div> -->
+			<!-- </label> -->
+		<!-- </li> -->
 		<li class="item item-icon-left item-toggle">
-			<i class="icon ion-arrow-move"></i>{{"Accelerometer" | translate}}
+			<i class="icon ion-lightbulb"></i>{{"FlashLight" | translate}}
 			<label class="toggle toggle-balenced">
-				<input type="checkbox">
-				<div class="track">
-					<div class="handle"></div>
-				</div>
-			</label>
-		</li>
-		<li class="item item-icon-left item-toggle">
-			<i class="icon ion-compass"></i>{{"Orientation" | translate}}
-			<label class="toggle toggle-balenced">
-				<input type="checkbox">
-				<div class="track">
-					<div class="handle"></div>
-				</div>
-			</label>
-		</li>
-		<li class="item item-icon-left item-toggle">
-			<i class="icon ion-radio-waves"></i>{{"Proximity" | translate}}
-			<label class="toggle toggle-balenced">
-				<input type="checkbox">
-				<div class="track">
-					<div class="handle"></div>
-				</div>
-			</label>
-		</li>
-		<li class="item item-icon-left item-toggle">
-			<i class="icon ion-contrast"></i>{{"Light" | translate}}
-			<label class="toggle toggle-balenced">
-				<input type="checkbox">
+				<input type="checkbox" ng-model="flashlight.active">
 				<div class="track">
 					<div class="handle"></div>
 				</div>
@@ -83,15 +92,6 @@
 			<i class="icon ion-monitor"></i>{{"Screen Orientation" | translate}}
 			<label class="toggle toggle-balenced">
 				<input type="checkbox" ng-model="screen_orientation.active">
-				<div class="track">
-					<div class="handle"></div>
-				</div>
-			</label>
-		</li>
-		<li class="item item-icon-left item-toggle">
-			<i class="icon ion-lightbulb"></i>{{"FlashLight" | translate}}
-			<label class="toggle toggle-balenced">
-				<input type="checkbox" ng-model="flashlight.active">
 				<div class="track">
 					<div class="handle"></div>
 				</div>
@@ -193,9 +193,7 @@
 		</ion-list>
     <br/>
 	
-	<input ng-model="username.value"></input>
-	<button class="button" ng-click="userSet()">{{'username' | translate}}</button>
-	<button class="button" ng-click="createPhone()">{{'createPhone' | translate}}</button>
+	
 	
 	
 	<br/>

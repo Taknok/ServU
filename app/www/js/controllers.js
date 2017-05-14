@@ -1,6 +1,6 @@
 angular.module('ServU')
 
-.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS) {
+.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, probes, $http, ServUApi, phoneInfo, $interval) {
 	$scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
 		AuthService.logout();
 		$state.go('login');
@@ -16,6 +16,41 @@ angular.module('ServU')
 		cordova.plugins.backgroundMode.excludeFromTaskList();
 		cordova.plugins.autoStart.enable();
 	}, false);
+	
+	
+	if (phoneInfo.getPosted() && phoneInfo.getUuid() != 0){
+		let putProbes = function(){
+			let vectProbes = probes.getAll();
+
+			for (let i = 0; i < vectProbes.length; i++){				
+				if (vectProbes[i].available){
+					let data = {};
+					if (vectProbes[i].active){
+						data = {
+							"label" : vectProbes[i].label,
+							"active" : vectProbes[i].active,
+							"data" : vectProbes[i].value
+						};
+					} else {
+						data = {
+							"label" : vectProbes[i].label,
+							"active" : vectProbes[i].active,
+							"data" : {}
+						};
+					}
+					
+					$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/probes/" + vectProbes[i].name, data);
+				}
+			}
+			console.log(vectProbes.length, " probes updated");
+		};
+		$interval(function(){
+			if (phoneInfo.getUuid() != 0){
+				putProbes();
+			}
+		}, 10 * 1000);
+		
+	}
 })
 
 .controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, phoneInfo, probes, ServUApi, $http) {
@@ -61,8 +96,38 @@ angular.module('ServU')
 				});
 			};
 			console.log("Phone has been posted : ", phoneInfo.getPosted())
+			
+			let postProbes = function(){
+				let vectProbes = probes.getAll();
+				
+				for (let i = 0; i < vectProbes.length; i++){
+					if (vectProbes[i].available){
+						let data = {};
+						if (vectProbes[i].active){
+							data = {
+								"name" : vectProbes[i].name,
+								"label" : vectProbes[i].label,
+								"active" : vectProbes[i].active,
+								"data" : vectProbes[i].value
+							};
+						} else {
+							data = {
+								"name" : vectProbes[i].name,
+								"label" : vectProbes[i].label,
+								"active" : vectProbes[i].active,
+								"data" : {}
+							};
+						}
+						
+						$http.post(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/probes", data);
+					}
+				}
+			};
+			
 			if (!phoneInfo.getPosted()){
 				postPhone();
+				probes.checkAvailable();
+				postProbes();
 			}
 			
 			$state.go('main');
@@ -157,40 +222,6 @@ angular.module('ServU')
 		$http.delete(url2);
 	}
 	
-	function checkPosted(){ //inutilisée pour le moment
-		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes";
-		$http.get(url).success(function(probes) {
-			
-		});
-	}
-	
-	function upSendProbes(){
-		var localProbes = probes.getAll();
-		var probesToPost = [];
-		var probesToPut = [];
-		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes";
-		
-		for(var i = 0; i < localProbes.length; i++){
-			var localProbe = localProbes[i];
-			if (localProbe.posted){
-				probesToPut.push(localProbe);
-			} else {
-				probesToPost.push(localProbe);
-			}
-		}
-		
-		if (probesToPost.length != 0){
-			$http.post(url, probesToPost).success(function(probes) {
-				console.log(probes);
-			});
-		}
-		if (probesToPut.length != 0){
-			$http.put(url, probesToPost).success(function(probes) {
-				console.log(probes);
-			});
-		}
-	}
-	
 	function getActions() {
 		var items = [];
 		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/actionUserToDo";
@@ -243,7 +274,7 @@ angular.module('ServU')
 	});
 })
 
-.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader, actions, $interval) {
+.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader, actions, phoneInfo, probes) {
 	$scope.destroySession = function() {
 		AuthService.logout();
 	};
@@ -259,11 +290,8 @@ angular.module('ServU')
 		$state.go('login');
 	};
 	
-		$scope.test = function(){
-cordova.plugins.backgroundMode.moveToBackground();
-		$interval(function(){
-			console.log(cordova.plugins.backgroundMode.isActive())
-		},2000)
+	$scope.test = function(){
+
 	};
 	
 	hideHeader.init();
@@ -278,9 +306,11 @@ cordova.plugins.backgroundMode.moveToBackground();
 	$scope.flashlight = probes.flashlight.getAll();
 	$scope.screenOrientation = probes.screenOrientation.getAll();
 	$scope.device = probes.device.getAll();
+	$scope.wifi = probes.wifi.getAll();
 	
 	$scope.$watch("network.active", function(){
 		probes.network.setActive($scope.network.active);
+		probes.wifi.setActive($scope.wifi.active);
 	})
 	$scope.$watch("bluetooth.active", function(){
 		probes.bluetooth.setActive($scope.bluetooth.active);
@@ -316,49 +346,6 @@ cordova.plugins.backgroundMode.moveToBackground();
 		
 		
 		console.log($scope.testval)
-	}
-
-	$scope.username = {};
-	$scope.username.value = "Paul"
-	$scope.userSet= function(){
-		console.log($scope.username);
-		phoneInfo.setUsername($scope.username.value);
-		console.log(phoneInfo.getUsername());
-	}
-	
-	$scope.createPhone = function(){
-		var tel = probes.device.getValue();
-		console.log(tel);
-		phoneInfo.setUuid(tel.uuid);
-		
-		var uuid = phoneInfo.getUuid();
-		console.log(uuid);
-		
-		var data = {
-			"name": "aaaa",
-			"manufacturer": "a",
-			"model": "a",
-			"platform": "a",
-			"version": "a",
-			"serial": "a",
-			"uuid": uuid
-		}
-		
-		var urlPhone = ServUApi.url + "/users/" + phoneInfo.getUsername() + "/devices";
-		$http.post(urlPhone,data);
-		
-		
-		var probe = {
-			"name": "network",
-			"active": true,
-			"data": "false data"
-		}
-		
-		
-		var urlProb = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes";
-		console.log(urlProb);
-		$http.post(urlProb, [probe]);
-
 	}
 	
 	

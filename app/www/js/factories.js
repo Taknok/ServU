@@ -418,7 +418,28 @@ angular.module('ServU')
 		}
 	}
 	
-	var requireAuthorization
+	var checkAvailable = function(){
+		// bluetooth
+		cordova.plugins.diagnostic.hasBluetoothSupport(function(supported){
+			setAvailable("bluetooth", (true == supported));
+		}, function(error){
+			console.error("The following error occurred: "+error);
+		});
+		// localisation
+		cordova.plugins.diagnostic.isGpsLocationAvailable(function(available){
+			setAvailable("localisation", (true == available));
+		}, function(error){
+			console.error("The following error occurred: "+error);
+		});
+		
+		window.plugins.flashlight.available(function(isAvailable) {
+			if (isAvailable) {
+				setAvailable("flashlight", true);
+			} else {
+				setAvailable("flashlight", false);
+			}
+		});
+	};
 	
 	
 	
@@ -568,7 +589,8 @@ angular.module('ServU')
 	var getscreenOrientation = function(){
 		return screenOrientation.value;
 	}
-	
+
+
 	var getWifi = function() {
 		cordova.plugins.diagnostic.isWifiEnabled(function(enabled){
 			wifi.value.isEnable = ( true == enabled );
@@ -698,8 +720,11 @@ angular.module('ServU')
 	return {
 		onStart: onStart,
 		setActive : setActive,
+		checkAvailable: checkAvailable,
 		network : {
 			getValue: getNetwork,
+			getName: function(){return network.name;},
+			getLabel: function(){return network.label;},
 			setActive: function(bool){setActive("network", bool)},
 			getActive: function(){return network.active;},
 			setAvailable: function(bool){setAvailable("network", bool)},
@@ -708,6 +733,8 @@ angular.module('ServU')
 			getPosted: function(){return network.posted;},
 			getAll: function(){
 				var tmp = {};
+				tmp.name = this.getName();
+				tmp.label = this.getLabel();
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
@@ -718,6 +745,8 @@ angular.module('ServU')
 		},
 		bluetooth : {
 			getValue: getBluetooth,
+			getName: function(){return bluetooth.name;},
+			getLabel: function(){return bluetooth.label;},
 			setActive: function(bool){setActive("bluetooth", bool)},
 			getActive: function(){return bluetooth.active;},
 			setAvailable: function(bool){setAvailable("bluetooth", bool)},
@@ -726,6 +755,8 @@ angular.module('ServU')
 			getPosted: function(){return bluetooth.posted;},
 			getAll: function(){
 				var tmp = {};
+				tmp.name = this.getName();
+				tmp.label = this.getLabel();
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
@@ -736,6 +767,8 @@ angular.module('ServU')
 		},
 		localisation : {
 			getValue: getLocalisation,
+			getName: function(){return localisation.name;},
+			getLabel: function(){return localisation.label;},
 			setActive: function(bool){setActive("localisation", bool)},
 			getActive: function(){return localisation.active;},
 			setAvailable: function(bool){setAvailable("localisation", bool)},
@@ -744,6 +777,8 @@ angular.module('ServU')
 			getPosted: function(){return flashlight.posted;},
 			getAll: function(){
 				var tmp = {};
+				tmp.name = this.getName();
+				tmp.label = this.getLabel();
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
@@ -754,6 +789,8 @@ angular.module('ServU')
 		},
 		battery : {
 			getValue: getBattery,
+			getName: function(){return battery.name;},
+			getLabel: function(){return battery.label;},
 			setActive: function(bool){setActive("battery", bool)},
 			getActive: function(){return battery.active;},
 			setAvailable: function(bool){setAvailable("battery", bool)},
@@ -762,6 +799,8 @@ angular.module('ServU')
 			getPosted: function(){return battery.posted;},
 			getAll: function(){
 				var tmp = {};
+				tmp.name = this.getName();
+				tmp.label = this.getLabel();
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
@@ -772,6 +811,8 @@ angular.module('ServU')
 		},
 		flashlight : {
 			getValue: getFlashlight,
+			getName: function(){return flashlight.name;},
+			getLabel: function(){return flashlight.label;},
 			setActive: function(bool){setActive("flashlight", bool)},
 			getActive: function(){return flashlight.active;},
 			setAvailable: function(bool){setAvailable("flashlight", bool)},
@@ -780,6 +821,8 @@ angular.module('ServU')
 			getPosted: function(){return flashlight.posted;},
 			getAll: function(){
 				var tmp = {};
+				tmp.name = this.getName();
+				tmp.label = this.getLabel();
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
@@ -790,6 +833,8 @@ angular.module('ServU')
 		},
 		device : {
 			getValue: getDevice,
+			getName: function(){return device.name;},
+			getLabel: function(){return device.label;},
 			setActive: function(bool){setActive("device", bool)},
 			getActive: function(){return device.active;},
 			setAvailable: function(bool){setAvailable("device", bool)},
@@ -798,6 +843,8 @@ angular.module('ServU')
 			getPosted: function(){return device.posted;},
 			getAll: function(){
 				var tmp = {};
+				tmp.name = this.getName();
+				tmp.label = this.getLabel();
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
@@ -808,6 +855,8 @@ angular.module('ServU')
 		},
 		sim : {
 			getValue: getSim,
+			getName: function(){return sim.name;},
+			getLabel: function(){return sim.label;},
 			setActive: function(bool){setActive("sim", bool)},
 			getActive: function(){return sim.active;},
 			setAvailable: function(bool){setAvailable("sim", bool)},
@@ -816,6 +865,8 @@ angular.module('ServU')
 			getPosted: function(){return sim.posted;},
 			getAll: function(){
 				var tmp = {};
+				tmp.name = this.getName();
+				tmp.label = this.getLabel();
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
@@ -826,6 +877,8 @@ angular.module('ServU')
 		},
 		screenOrientation : {
 			getValue: getscreenOrientation,
+			getName: function(){return screenOrientation.name;},
+			getLabel: function(){return screenOrientation.label;},
 			setActive: function(bool){setActive("screenOrientation", bool)},
 			getActive: function(){return screenOrientation.active;},
 			setAvailable: function(bool){setAvailable("screenOrientation", bool)},
@@ -834,6 +887,8 @@ angular.module('ServU')
 			getPosted: function(){return screenOrientation.posted;},
 			getAll: function(){
 				var tmp = {};
+				tmp.name = this.getName();
+				tmp.label = this.getLabel();
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
@@ -844,6 +899,8 @@ angular.module('ServU')
 		},
 		wifi : {
 			getValue: getWifi,
+			getName: function(){return wifi.name;},
+			getLabel: function(){return wifi.label;},
 			setActive: function(bool){setActive("wifi", bool)},
 			getActive: function(){return wifi.active;},
 			setAvailable: function(bool){setAvailable("wifi", bool)},
@@ -852,6 +909,8 @@ angular.module('ServU')
 			getPosted: function(){return wifi.posted;},
 			getAll: function(){
 				var tmp = {};
+				tmp.name = this.getName();
+				tmp.label = this.getLabel();
 				tmp.value = this.getValue();
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
@@ -893,6 +952,7 @@ angular.module('ServU')
 				this.device.getAll(),
 				this.sim.getAll(),
 				this.screenOrientation.getAll(),
+				this.wifi.getAll(),
 				
 				// this.orientation.getAll(),
 				// this.globalization.getAll(),
