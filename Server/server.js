@@ -52,7 +52,7 @@ db.connectMongo()
     .then(() => {
         console.log("Connected to MongoDB");
         app.listen(port, serv_addr, 511, () => {
-            console.log("Server listening on port " + port);
+            console.log("Server listening on port " + serv_addr + ":" + port);
         });
     })
     .catch(err => {

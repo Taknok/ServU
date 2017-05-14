@@ -22,7 +22,7 @@ angular.module('ServU')
 		authToken = token;
 
 		// Set the token as header for your requests!
-		$http.defaults.headers.common.Authorization = authToken;
+		$http.defaults.headers.common['X-Access-Token'] = authToken;
 	}
 
 	function destroyUserCredentials() {
@@ -61,6 +61,7 @@ angular.module('ServU')
 
 	var logout = function() {
 		destroyUserCredentials();
+		window.localStorage.removeItem(username);
 	};
 
 	loadUserCredentials();
