@@ -158,8 +158,14 @@ angular.module('ServU')
 	screenOrientation.available = true;
 	screenOrientation.value = {};
 	
-	
-	
+	// WIFI
+	var wifi = {};
+	wifi.name = "wifi";
+	wifi.label = "Wifi";
+	wifi.active = false;
+	wifi.posted = false;
+	wifi.available = true;
+	wifi.value = {};
 	
 	
 	
@@ -182,6 +188,7 @@ angular.module('ServU')
 		device.active = ('true' == permanentStorage.getItem("device.active"));
 		sim.active = ('true' == permanentStorage.getItem("sim.active"));
 		screenOrientation.active = ('true' == permanentStorage.getItem("screenOrientation.active"));
+		wifi.active = ('true' == permanentStorage.getItem("wifi.active"));
 		
 		// orientation.active = ('true' == permanentStorage.getItem("orientation.active"));
 		// globalization.active = ('true' == permanentStorage.getItem("globalization.active"));
@@ -195,6 +202,7 @@ angular.module('ServU')
 		device.posted = ('true' == permanentStorage.getItem("device.posted"));
 		sim.posted = ('true' == permanentStorage.getItem("sim.posted"));
 		screenOrientation.posted = ('true' == permanentStorage.getItem("screenOrientation.posted"));
+		wifi.posted = ('true' == permanentStorage.getItem("wifi.posted"));
 		
 		// orientation.posted = ('true' == permanentStorage.getItem("orientation.posted"));
 		// globalization.posted = ('true' == permanentStorage.getItem("globalization.posted"));
@@ -244,6 +252,10 @@ angular.module('ServU')
 			case "screenOrientation":
 				screenOrientation.active = bool;
 				permanentStorage.setItem("screenOrientation.active", screenOrientation.active);
+				break;
+			case "wifi":
+				wifi.active = bool;
+				permanentStorage.setItem("wifi.active", wifi.active);
 				break;
 			
 			// case "orientation":
@@ -296,6 +308,10 @@ angular.module('ServU')
 				screenOrientation.posted = bool;
 				permanentStorage.setItem("screenOrientation.posted", screenOrientation.posted);
 				break;
+			case "wifi":
+				wifi.posted = bool;
+				permanentStorage.setItem("wifi.posted", wifi.posted);
+				break;
 				
 			// case "orientation":
 				// orientation.posted = bool;
@@ -338,6 +354,9 @@ angular.module('ServU')
 				break;
 			case "screenOrientation":
 				screenOrientation.available = bool;
+				break;
+			case "wifi":
+				wifi.available = bool;
 				break;
 				
 			// case "orientation":
@@ -398,6 +417,8 @@ angular.module('ServU')
 			console.log("onStart Probes done");
 		}
 	}
+	
+	var requireAuthorization
 	
 	
 	
@@ -547,6 +568,17 @@ angular.module('ServU')
 	var getscreenOrientation = function(){
 		return screenOrientation.value;
 	}
+	
+	var getWifi = function() {
+		cordova.plugins.diagnostic.isWifiEnabled(function(enabled){
+			wifi.value.isEnable = ( true == enabled );
+			
+		}, function(error){
+			console.error("Wifi : The following error occurred: "+error);
+		});
+		
+		return wifi.value;
+	};
 	
 	
 	
@@ -800,6 +832,24 @@ angular.module('ServU')
 			getAvailable: function(){return screenOrientation.available;},
 			setPosted: function(bool){setPosted("screenOrientation", bool)},
 			getPosted: function(){return screenOrientation.posted;},
+			getAll: function(){
+				var tmp = {};
+				tmp.value = this.getValue();
+				tmp.active = this.getActive();
+				tmp.available = this.getAvailable();
+				tmp.posted = this.getPosted();
+				
+				return tmp;
+			}
+		},
+		wifi : {
+			getValue: getWifi,
+			setActive: function(bool){setActive("wifi", bool)},
+			getActive: function(){return wifi.active;},
+			setAvailable: function(bool){setAvailable("wifi", bool)},
+			getAvailable: function(){return wifi.available;},
+			setPosted: function(bool){setPosted("wifi", bool)},
+			getPosted: function(){return wifi.posted;},
 			getAll: function(){
 				var tmp = {};
 				tmp.value = this.getValue();
