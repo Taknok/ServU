@@ -20,7 +20,112 @@ angular.module('ServU')
 	};
 })
 
-.factory("actions", [ "$cordovaVibration", "$cordovaSms", function($cordovaVibration, $cordovaSms){
+.factory("actions", [ "$cordovaVibration", "$cordovaSms", "$http", "ServUApi", "phoneInfo", function($cordovaVibration, $cordovaSms, $http, ServUApi, phoneInfo){
+	var permanentStorage = window.localStorage;
+	
+	// ######### DECLARATION #########
+	
+	var ring = {};
+	ring.name = "ring";
+	ring.label = "Ring";
+	ring.enable = false;
+	ring.authorized = true; // true pour le moment
+	ring.description = "Allow to ring durinc X sec";
+	
+	var vibrate = {};
+	vibrate.name = "vibrate";
+	vibrate.label = "Vibrate";
+	vibrate.enable = false;
+	vibrate.authorized = true;
+	vibrate.description = "Allow to ring durinc X sec";
+	
+	var sms = {};
+	sms.name = "sms";
+	sms.label = "Sms";
+	sms.enable = false;
+	sms.authorized = true;
+	sms.description = "Allow to send sms to custom destionation with custom text";
+	
+	// USEFULL FUNCTIONS
+	
+	function load(){
+		ring.enable = ('true' == permanentStorage.getItem("ring.enable"));
+		vibrate.active = ('true' == permanentStorage.getItem("vibrate.active"));
+		sms.active = ('true' == permanentStorage.getItem("sms.active"));
+	}
+	load();
+	
+	function checkBool(bool){
+		if(typeof(bool) != "boolean"){
+		  throw("Set not boolean");
+		}
+	}
+	
+	var put = function(action){
+		let data = {
+			"label": action.label,
+			"enabled": action.enable,
+			"description": action.description
+		};
+		$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsAvailable/" + action.name, data);
+	};
+	
+	var trigger = function(action){
+		var params = action.parameters;
+		switch(action.type){ //l'api renvoie un type a la place du name, mais c'est la meme ...
+			case ring.name:
+				ring.trigger(parseInt(params.time));
+				action.status = "done";
+				break;
+			case vibrate.name:
+				vibrate.trigger(parseInt(params.time));
+				action.status = "done";
+				break;
+			case sms.name:
+				sms.trigger(params.dest, params.msg);
+				action.status = "done";
+				break;
+			default:
+				console.log("unknow action " + action.name);
+		}
+		return action;
+	};
+	
+	var setActive = function(action, bool){
+		checkBool(bool);
+		switch(action){
+			case ring.name:
+				ring.enable = bool;
+				permanentStorage.setItem("ring.enable", ring.enable);
+				break;
+			case vibrate.name:
+				vibrate.enable = bool;
+				permanentStorage.setItem("vibrate.enable", vibrate.enable);
+				break;
+			case sms.name:
+				sms.enable = bool;
+				permanentStorage.setItem("sms.enable", sms.enable);
+				break;
+			
+			default:
+				throw("Unknow action action");
+		}
+	}
+	
+	ring.setActive = function(bool){
+		setActive(ring.name, bool);
+	};
+	
+	vibrate.setActive = function(bool){
+		setActive(vibrate.name, bool);
+	};
+	
+	sms.setActive = function(bool){
+		setActive(sms.name, bool);
+	};
+	
+	// ############## DO THE ACTION ##############
+	
 	var options = {
 		replaceLineBreaks: false, // true to replace \n by a new line, false by default
 		android: {
@@ -30,15 +135,15 @@ angular.module('ServU')
 		}
 	}
 	
-	var ring = function(time){
+	ring.trigger = function(time){
 		RingtonePicker.timerPlaySound("content://settings/system/ringtone", time);
 	}
 	
-	var vibrate = function(time){
+	vibrate.trigger = function(time){
 		$cordovaVibration.vibrate(time);
 	}
 	
-	var sms = function(num, msg){
+	sms.trigger = function(num, msg){
 		$cordovaSms.send(num, msg, options).then(function() {
 				console.log('Send sms success');
 			}, function(error) {
@@ -48,9 +153,19 @@ angular.module('ServU')
 	};
 	
 	return {
+		setActive: setActive,
 		ring: ring,
 		vibrate: vibrate,
-		sms: sms
+		sms: sms,
+		getAll: function(){
+			return [
+				this.ring,
+				this.vibrate,
+				this.sms
+			]
+		},
+		put: put,
+		triger: trigger,
 	};
 }])
 

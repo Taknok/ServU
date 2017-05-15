@@ -2,9 +2,9 @@
   <ion-content scroll-watch>
 	<ul class="list">
 		<li class="item item-icon-left item-toggle">
-			<i class="icon ion-lightbulb"></i><div on-double-tap="testFlashlight()">{{"FlashLight" | translate}}</div>
+			<i class="icon ion-music-note"></i><div on-double-tap="testRing()">{{"Ring" | translate}}</div>
 			<label class="toggle toggle-balenced">
-				<input type="checkbox">
+				<input type="checkbox" ng-model="ring.enable">
 				<div class="track">
 					<div class="handle"></div>
 				</div>
@@ -13,16 +13,16 @@
 		<li class="item item-icon-left item-toggle">
 			<i class="icon ion-radio-waves"></i><div on-double-tap="testVibrate()">{{"Vibrate" | translate}}</div>
 			<label class="toggle toggle-balenced">
-				<input type="checkbox">
+				<input type="checkbox" ng-model="vibrate.enable">
 				<div class="track">
 					<div class="handle"></div>
 				</div>
 			</label>
 		</li>
 		<li class="item item-icon-left item-toggle">
-			<i class="icon ion-music-note"></i><div on-double-tap="testRing()">{{"Ring" | translate}}</div>
+			<i class="icon ion-android-textsms"></i><div on-double-tap="testSms()">{{"Sms" | translate}}</div>
 			<label class="toggle toggle-balenced">
-				<input type="checkbox">
+				<input type="checkbox" ng-model="sms.enable">
 				<div class="track">
 					<div class="handle"></div>
 				</div>

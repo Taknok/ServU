@@ -1,6 +1,6 @@
 angular.module('ServU')
 
-.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, probes, $http, ServUApi, phoneInfo, $interval) {
+.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, probes, actions, $http, ServUApi, phoneInfo, $interval) {
 	$scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
 		AuthService.logout();
 		$state.go('login');
@@ -17,43 +17,60 @@ angular.module('ServU')
 		cordova.plugins.autoStart.enable();
 	}, false);
 	
-	
-	if (phoneInfo.getPosted() && phoneInfo.getUuid() != 0){
-		let putProbes = function(){
-			let vectProbes = probes.getAll();
-
-			for (let i = 0; i < vectProbes.length; i++){				
-				if (vectProbes[i].available){
-					let data = {};
-					if (vectProbes[i].active){
-						data = {
-							"label" : vectProbes[i].label,
-							"active" : vectProbes[i].active,
-							"data" : vectProbes[i].value
-						};
-					} else {
-						data = {
-							"label" : vectProbes[i].label,
-							"active" : vectProbes[i].active,
-							"data" : {}
-						};
-					}
-					
-					$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/probes/" + vectProbes[i].name, data);
-				}
-			}
-			console.log(vectProbes.length, " probes updated");
-		};
-		$interval(function(){
-			if (phoneInfo.getUuid() != 0){
-				putProbes();
-			}
-		}, 10 * 1000);
 		
+	// PROBES
+	
+	let putProbes = function(){
+		let vectProbes = probes.getAll();
+
+		for (let i = 0; i < vectProbes.length; i++){				
+			if (vectProbes[i].available){
+				let data = {};
+				if (vectProbes[i].active){
+					data = {
+						"label" : vectProbes[i].label,
+						"active" : vectProbes[i].active,
+						"data" : vectProbes[i].value
+					};
+				} else {
+					data = {
+						"label" : vectProbes[i].label,
+						"active" : vectProbes[i].active,
+						"data" : {}
+					};
+				}
+				
+				$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/probes/" + vectProbes[i].name, data);
+			}
+		}
+		console.log(vectProbes.length, " probes updated");
+	};
+	
+	// ACTIONS
+	function actionHandler(){
+		console.log("Start actionHandler")
+		var url = ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionUserToDo";
+		$http.get(url).success(function(action) {
+			if (action.status === "pending"){
+				let actionUpdated = action.trigger(action);
+				console.log(action);
+				$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsUser/" + actionUpdated.id, {"status" : actionUpdated.status});
+			}
+		});
 	}
+	
+	$interval(function(){
+		console.log(phoneInfo.getPosted(), phoneInfo.getUuid() != 0)
+		if (phoneInfo.getUuid() != 0 && phoneInfo.getPosted()){
+			putProbes();
+			actionHandler();
+		}
+		console.log(">>>> 10s loop <<<<")
+	}, 10 * 1000);
+		
 })
 
-.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, phoneInfo, probes, ServUApi, $http) {
+.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, phoneInfo, probes, actions, ServUApi, $http) {
 	$scope.user = {
 		username: '',
 		password: ''
@@ -90,12 +107,16 @@ angular.module('ServU')
 					} else if (e.status == 403){
 						console.error("Forbidden :", e);
 						phoneInfo.setPosted(false);
-					} else if (e.status == 403){
+					} else if (e.status == 409){
 						console.error("Another device has the same uuid :", e);
+						phoneInfo.setPosted(true);
 					} 
 				});
 			};
+			
 			console.log("Phone has been posted : ", phoneInfo.getPosted())
+			
+			// PROBES POST
 			
 			let postProbes = function(){
 				let vectProbes = probes.getAll();
@@ -124,11 +145,35 @@ angular.module('ServU')
 				}
 			};
 			
+			// ACTIONS AVAILABLE POST
+			
+			let postActionAvailable = function(){
+				let vectActionsAvailable = actions.getAll();
+				
+				for (let i = 0; i < vectActionsAvailable.length; i++){
+					let data = {
+						"name" : vectActionsAvailable[i].name,
+						"label": vectActionsAvailable[i].label,
+						"enabled": (vectActionsAvailable[i].enable && vectActionsAvailable[i].authorized),
+						"description": vectActionsAvailable[i].description,
+					};
+					
+					$http.post(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsAvailable", data);
+
+				}
+			};
+			
+			
 			if (!phoneInfo.getPosted()){
 				postPhone();
 				probes.checkAvailable();
 				postProbes();
+				postActionAvailable();
 			}
+			
+			
+			
+			
 			
 			$state.go('main');
 		}, function(errMsg) {
@@ -183,72 +228,8 @@ angular.module('ServU')
 		let tmp = await probes.constructVect();
 		$http.post(ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes", tmp);
 	};
-	// postProbesOnLogin(); //poste a chaque fois que l'on se log, pas tres opti pour le moment mais fonctionne
 	
 	probes.onStart();
-	
-	function doAction(action){
-		var params = action.data;
-		console.log(action);
-		switch(action.name){
-			case "flashlight":
-			
-				break;
-			case "vibrate":
-				actions.vibrate(parseInt(params.time));
-				action.status = "done";
-				//action.timestamp =
-				break;
-			case "ring":
-				actions.ring(parseInt(params.time));
-				action.status = "done";
-				break;
-			default:
-				console.log("unknow action " + action.name);
-		}
-	}
-	
-	function upSendAction(action){
-		
-		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/actionUser/" + action.actionId;
-		var data = [{
-			"status" : action.status
-		}]
-		// $http.put(url, data);
-		
-		//supprime l'action, garder car pour le moment il y a une seule action (action id fixé a 1)
-		var url2 = ServUApi.url + "/users/" + phoneInfo.getUsername() +"/devices/" + phoneInfo.getUuid() + "/actions/1";
-		console.log(url2);
-		$http.delete(url2);
-	}
-	
-	function getActions() {
-		var items = [];
-		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/actionUserToDo";
-		$http.get(url).success(function(actions) {
-			
-			for(var i = 0; i < actions.length; i++){
-				var action = actions[i];
-				if (action.status === "pending"){
-					doAction(action);
-					console.log(action);
-					upSendAction(action);
-				}
-			}
-		});
-	}
-	
-	$scope.up = function(){
-		getActions();
-	}
-	
-	// $interval(function(){
-		// if (phoneInfo.getUuid() != 0){
-			// getActions();
-		// }
-	// }, 5 * 1000);
-	
-	
 	
 	
 	$scope.$on('tab:updated', function(event, index){
@@ -291,7 +272,22 @@ angular.module('ServU')
 	};
 	
 	$scope.test = function(){
+		function successCallback(result) {
+		  console.log(result);
+		}
 
+		function errorCallback(error) {
+		  console.log(error);
+		}
+		function hasReadPermission() {
+			window.plugins.sim.hasReadPermission(successCallback, errorCallback);
+		}
+		function requestReadPermission() {
+			window.plugins.sim.requestReadPermission(successCallback, errorCallback);
+		}
+		hasReadPermission();
+		requestReadPermission();
+		console.log(">>>>>>>>>", probes.sim.getAll())
 	};
 	
 	hideHeader.init();
@@ -352,19 +348,54 @@ angular.module('ServU')
 	hideHeader.init();
 })
 
-.controller('ActionsCtrl', function($scope, $http, $cordovaVibration, $cordovaMedia, hideHeader) {
-	$scope.testFlashlight = function(){
-		window.plugins.flashlight.toggle();
-	}
+.controller('ActionsCtrl', function($scope, $http, $cordovaVibration, $cordovaMedia, hideHeader, actions, $ionicPopup) {
+	
+	$scope.ring = actions.ring;
+	$scope.vibrate = actions.vibrate;
+	$scope.sms = actions.sms;
+
+	
+	// Demonstration on 2 tap
 	
 	$scope.testVibrate = function(){
 		$cordovaVibration.vibrate(500);
 	}
 	
-	$scope.testRing = function(){	
-		console.log('1');
+	$scope.testRing = function(){
 		RingtonePicker.timerPlaySound("content://settings/system/ringtone", 2000);
 	}
+	
+	$scope.testSms = function(){
+		$ionicPopup.prompt({
+			title: 'Phone Number',
+			template: ' ',
+			inputType: 'tel',
+			inputPlaceholder: ' '
+		}).then(function(res) {
+			actions.sms.trigger(res, "Test msg from ServU ! <3")
+		});
+
+
+	};
+	
+	$scope.testFlashlight = function(){
+		window.plugins.flashlight.toggle();
+	}
+	
+	// watch the switch
+	
+	$scope.$watch("ring.enable", function(){
+		actions.ring.setActive($scope.ring.enable);
+		actions.put($scope.ring);
+	})
+	$scope.$watch("vibrate.enable", function(){
+		actions.vibrate.setActive($scope.vibrate.enable);
+		actions.put($scope.vibrate);
+	})
+	$scope.$watch("sms.active", function(){
+		actions.sms.setActive($scope.sms.enable);
+		actions.put($scope.sms);
+	})
 	
 	hideHeader.init();
 })
