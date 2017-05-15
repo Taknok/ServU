@@ -70,3 +70,124 @@
 .store {
     height: 50px;
 }
+
+.bg-white {
+    background-color: #FFFFFF;
+}
+
+.text-blue-jeans {
+    color: #5D9CEC;
+}
+.text-aqua {
+    color: #4FC1E9;
+}
+.text-mint {
+    color: #48CFAD;
+}
+.text-grass {
+    color: #A0D468;
+}
+.text-sunflower {
+    color: #FFCE54;
+}
+.text-bittersweet {
+    color: #FC6E51;
+}
+.text-grapefruit {
+    color: #ED5565;
+}
+.text-lavender {
+    color: #AC92EC;
+}
+.text-pink-rose {
+    color: #EC87C0;
+}
+.text-light-gray {
+    color: #F5F7FA;
+}
+.text-medium-gray {
+    color: #CCD1D9;
+}
+.text-dark-gray {
+    color: #656D78;
+}
+
+@font-face {
+    font-family: "Amethyst";
+    src: url('../../fonts/persoFonts/Amethyst.ttf');
+}
+
+@font-face {
+    font-family: "Counter-Strike";
+    src: url('../../fonts/persoFonts/cs_regular.ttf')
+}
+
+.fontAmethyst {
+    font-family: "Amethyst";
+}
+
+.fontCounter {
+    font-family: "Counter-Strike";
+}
+
+.text-white {
+    color: white;
+}
+
+.gutter-20.row {
+    margin-right: -10px;
+    margin-left: -10px;
+}
+
+.gutter-20 > [class^="col-"], .gutter-20 > [class^=" col-"] {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.gutter-10.row {
+    margin-right: -5px;
+    margin-left: -5px;
+}
+.gutter-10 > [class^="col-"], .gutter-10 > [class^=" col-"] {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.gutter-0.row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.gutter-0 > [class^="col-"], .gutter-0 > [class^=" col-"]{
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.gutter-20.row {
+    margin-right: -10px;
+    margin-left: -10px;
+}
+
+.gutter-20 > [class^="col-"], .gutter-20 > [class^=" col-"] {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.gutter-10.row {
+    margin-right: -5px;
+    margin-left: -5px;
+}
+.gutter-10 > [class^="col-"], .gutter-10 > [class^=" col-"] {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.gutter-0.row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.gutter-0 > [class^="col-"], .gutter-0 > [class^=" col-"]{
+    padding-right: 0;
+    padding-left: 0;
+}
