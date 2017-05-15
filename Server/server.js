@@ -17,6 +17,7 @@ app.use(cors());
 
 //Log all request which are received
 app.use(function (req, res, next) {
+    console.log(req.body);
     req.SERVER = {};
     console.log("Request : " + req.method + " " + req.originalUrl);
     next();

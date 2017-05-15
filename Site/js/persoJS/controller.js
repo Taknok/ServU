@@ -3,7 +3,7 @@
  */
 
 angular.module('root', ['ui.bootstrap'])
-    .controller("gestion", ['$scope', '$log','$uibModal', '$compile', function($scope, $log, $uibModal, $compile) {
+    .controller("gestion", ['$scope', '$log','$uibModal', '$compile','$http', function($scope, $log, $uibModal, $compile, $http) {
         //$scope.message = 'Hello World!';
         $scope.addNewButton = function(element){
             $compile(element)($scope);
@@ -11,7 +11,6 @@ angular.module('root', ['ui.bootstrap'])
         var $ctrl = this;
         $ctrl.animationsEnabled = true;
         $scope.open = function (size, parentSelector) {
-            $log.log('diozadoiza');
             var modalInstance = $uibModal.open({
                 animation: $ctrl.animationsEnabled,
                 ariaLabelledBy: 'modal-title',
@@ -20,6 +19,12 @@ angular.module('root', ['ui.bootstrap'])
                 '<h2 class="modal-title" id="modal-title">Event creation</h2>' +
                 '</div>' +
                 '<div class="modal-body container form-group" id="modal-body">' +
+                '<div class="row"><h5 class="col-xs-2 control-label">DESCRIPTION : </h5>' +
+                '<div class="col-xs-8 selectContainer">'+
+                '<form class="form-inline">' +
+                '<div class="input"><input style="width:80%;" class="form-control" placeholder="Enter a description" type="text" required>' +
+                '</div></form>' +
+                '</div></div>' +
                 '<div class="row">' +
                 '<h5 class="col-xs-2 control-label">IF</h5>' +
                 '<div class="dropdown col-xs-2 selectContainer">' +
@@ -68,23 +73,23 @@ angular.module('root', ['ui.bootstrap'])
     // Please note that $uibModalInstance represents a modal window (instance) dependency.
     // It is not the same as the $uibModal service used above.
 
-    .controller('ModalInstanceCtrl', function ($scope, $compile,$uibModalInstance, $log) {
+    .controller('ModalInstanceCtrl', function ($scope, $compile,$uibModalInstance, $log, $http) {
         window.onload=function(){
             $('.selectpicker').selectpicker();
         };
         var $ctrl = this;
         $ctrl.items = [
-            {name : 'Wifi', icon : "ion-wifi"},
-            {name : 'Battery', icon : "ion-battery-full"},
-            {name : 'Bluetooth', icon : "ion-bluetooth"},
-            {name : 'Localisation', icon : ""}];
+            {name : 'Wifi', icon : "icon ion-wifi"},
+            {name : 'Battery', icon : "icon ion-battery-full"},
+            {name : 'Bluetooth', icon : "icon ion-bluetooth"},
+            {name : 'Localisation', icon : "icon glyphicon glyphicon-map-marker"}];
         $ctrl.actions = [
             {name : 'Ring', icon : 'icon ion-ios-bell'},
             {name : 'Vibrate', icon : 'icon ion-radio-waves'},
             {name : 'Flash' , icon : 'glyphicon glyphicon-flash'},
-            {name : 'Ligthness', icon : ''},
-            {name : 'Wifi', icon : "ion-wifi"},
-            {name : 'Bluetooth', icon : "ion-bluetooth"}];
+            {name : 'Ligthness', icon : 'icon ion-ios-sunny'},
+            {name : 'Wifi', icon : "icon ion-wifi"},
+            {name : 'Bluetooth', icon : "icon ion-bluetooth"}];
 
         $ctrl.ok = function () {
             $log.log(JSON.stringify($scope.dataCondition));
@@ -104,7 +109,7 @@ angular.module('root', ['ui.bootstrap'])
                 center: Enseirb_position,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 disableDefaultUI: false,
-                zoom: 15,
+                zoom: 14,
                 zoomControl: true,
                 mapTypeControl: false,
                 scaleControl: true,
@@ -114,8 +119,20 @@ angular.module('root', ['ui.bootstrap'])
 
             //Creation de la carte
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-            var survId = navigator.geolocation.watchPosition(function (pos) {
+            $scope.radius = 1000;
+            var radiusRange = new google.maps.Circle({
+                strokeColor: '#a3afff',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#86f3ff',
+                fillOpacity: 0.10,
+                clickable : false,
+                draggable : false,
+                map: map,
+                center: map.center,
+                radius: $scope.radius
+            });
+            var survId = navigator.geolocation.getCurrentPosition(function (pos) {
                 map.setCenter({lat : pos.coords.latitude, lng : pos.coords.longitude});
             }, function(){},{maximumAge: 10000, timeout:0});
             map.addListener('click', function(e) {
@@ -127,7 +144,26 @@ angular.module('root', ['ui.bootstrap'])
                     position: $scope.dataCondition.position,
                     map: map
                 });
+                map.setCenter(marker.getPosition());
+                radiusRange.setCenter(marker.getPosition());
+                $scope.dataCondition = {lat : marker.getPosition().lat(), lng : marker.getPosition().lng(), radius : $scope.radius }
             });
+
+            $scope.setRadius = function(filtre_rayon){
+                var valeur_rayon = parseFloat(filtre_rayon);
+                if (valeur_rayon < 75)
+                    map.setZoom(18);
+                else if (valeur_rayon >= 75 && valeur_rayon < 150)
+                    map.setZoom(17);
+                else if (valeur_rayon >= 150 && valeur_rayon < 300)
+                    map.setZoom(16);
+                else if (valeur_rayon >= 300 && valeur_rayon < 500)
+                    map.setZoom(15);
+                else if(valeur_rayon >= 500 && valeur_rayon < 1000)
+                    map.setZoom(14);
+                else if(valeur_rayon >= 1000 && valeur_rayon <= 2000)
+                    map.setZoom(13);
+            };
         };
 
         $ctrl.condition_update = function (item) {
@@ -174,9 +210,11 @@ angular.module('root', ['ui.bootstrap'])
             }
             else if (item.name == "Localisation"){
                 myEl.html(
-                    '<form class="form-inline"><div class="form-group">' +
-                    '<div class="input-group">' +
-                    '<div class="input-group-addon">Localisation : </div></div></div><div id="map"></div>' +
+                    '<form class="form-inline">' +
+                    '<div id="map"></div>' +
+                    '<button type="submit" class="btn btn-default">Select the range :</button>' +
+                    '<input class="form-control" type="range" min="1" max="3000" ng-model="radius" ng-change="setRadius(radius)" required>' +
+                    '<button type="submit" class="btn btn-default">{{radius}}</button>' +
                     '</form>'
                 );
 
@@ -200,7 +238,7 @@ angular.module('root', ['ui.bootstrap'])
                     ' <div class="input-group-addon">Seconds</div></div></form>'
                 );
             }
-            else if (action.name = "Vibrate"){
+            else if (action.name == "Vibrate"){
                 $scope.dataAction.time = 1;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -210,7 +248,7 @@ angular.module('root', ['ui.bootstrap'])
                     ' <div class="input-group-addon">Seconds</div></div></form>'
                 );
             }
-            else if (action.name = "Flash"){
+            else if (action.name == "Flash"){
                 $scope.dataAction.enable = true;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -220,38 +258,34 @@ angular.module('root', ['ui.bootstrap'])
                     '</div></form>'
                 );
             }
-            else if (action.name = "Wifi"){
+            else if (action.name == "Wifi"){
                 $scope.dataAction.enable = true;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataCondition.enable != dataCondition.enable">{{dataCondition.enable}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataCondition.enable != dataCondition.enable">{{dataAction.enable}}</button>' +
                     '</div></form>'
                 );
             }
-            else if (action.name = "Bluetooth"){
+            else if (action.name == "Bluetooth"){
                 $scope.dataAction.enable = true;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataCondition.enable != dataCondition.enable">{{dataCondition.enable}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataCondition.enable != dataCondition.enable">{{dataAction.enable}}</button>' +
                     '</div></form>'
                 );
             }
-            else if (action.name = "Ligthness"){
+            else if (action.name == "Ligthness"){
                 $scope.dataAction.level = 50;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Level of ligthness : </div>' +
                     '<input class="form-control" id="lightnessLevel" placeholder="%" min="1" max="100" type="number" required ng-model="dataAction.level">' +
-                    '</div></form>'+
-                    '<div class = "item range range-positive">' +
-                    '30<input id="selector_range" type= "range" min="30" max="2001">' +
-                    '<i class="icon ion-ios-infinite"></i>' +
-                    '</div>'
+                    '</div></form>'
                 );
             }
             $compile(myEl)($scope);
