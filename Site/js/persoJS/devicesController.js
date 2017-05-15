@@ -131,47 +131,49 @@ function loadDeviceInfo(device) {
 
     $("#items").append(
         '<div class="row">' +
-        '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">' +
-        '<div class="panel panel-warning panel-warning-dark">' +
-        getDevicePanelTitleTemplate(id,type,name,warning) +
-        "<div class='panel-body'>" +
-        "<div class='row'>"+
-        "<div class='col-md-2'><i class='fa fa-info'></i></div>"+
-        "<div class='col-md-6'>"+description+"</div>"+
-        "<div class='col-md-1'><i class='glyphicon glyphicon-signal'></i></div>"+
-        "<div class='col-md-1'>"+connection+"</div>"+
-        "</div>"+
-        "<div class='row'>"+
-        "<div class='col-md-2' id='deviceCharge'><i class='ion-"+batteryType+"'></i></div>"+
-        "<div class='col-md-10'>"+
-        "<div class='progress'>"+
-        "<div class='progress-bar progress-bar-"+barType+" "+animationToogle+"' role='progressbar' aria-valuenow='"+battery+
-        "' aria-valuemin='0' aria-valuemax='100' style='width: "+battery+"%'>"+
-        "<span id='deviceChargeBar'>"+batteryDisplay+"</span>"+
-        "</div>"+
-        "</div>"+
-        "</div>"+
-        "</div>" +
-        "</div>" +
-        getDevicePanelFooterTemplate(username,id) +
+            '<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">' +
+                '<div class="panel panel-warning panel-warning-dark">' +
+                    getDevicePanelTitleTemplate(id,type,name,warning) +
+                    "<div class='panel-body'>" +
+                        "<div class='row'>"+
+                            "<div class='col-md-2'><i class='fa fa-info'></i></div>"+
+                            "<div class='col-md-6'>"+description+"</div>"+
+                            "<div class='col-md-1'><i class='glyphicon glyphicon-signal'></i></div>"+
+                            "<div class='col-md-1'>"+connection+"</div>"+
+                        "</div>"+
+                        "<div class='row'>"+
+                            "<div class='col-md-2' id='deviceCharge'><i class='ion-"+batteryType+"'></i></div>"+
+                            "<div class='col-md-10'>"+
+                                "<div class='progress'>"+
+                                    "<div class='progress-bar progress-bar-"+barType+" "+animationToogle+"' role='progressbar' aria-valuenow='"+battery+
+                                        "' aria-valuemin='0' aria-valuemax='100' style='width: "+battery+"%'>"+
+                                        "<span id='deviceChargeBar'>"+batteryDisplay+"</span>"+
+                                    "</div>"+
+                                "</div>"+
+                            "</div>"+
+                        "</div>" +
+                    "</div>" +
+                    getDevicePanelFooterTemplate(username,id) +
+                '</div>' +
+            '</div>' +
+            '<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" id="angular_module">' +
+                '<div class="panel panel-primary">' +
+                    '<div class="panel-heading">' +
+                        '<div class="row">' +
+                            '<div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8 col-xs-offset-2 col-xs-8 text-center">' +
+                                '<div class="panel-title">Events of '+name +'</div>' +
+                            '</div>' +
+                            '<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 pull-right">' +
+                                "<button class='btn btn-xs btn-info' data-toggle='modal' data-target='#chooseEventModal' onclick='changeChooseEventModal("+id+")'><i class='glyphicon glyphicon-plus'></i></button>" +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="panel-body" style="color:black"><b>No events yet</b></div>' +
+                '</div>' +
+            '</div>' +
+            '<span class="clearfix"></span>' +
         '</div>' +
-        '</div>' +
-        '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="angular_module">' +
-        '<div class="panel panel-primary">' +
-        '<div class="panel-heading">' +
-        '<div class="row">' +
-        '<div class="col-md-offset-2 col-md-8 text-center">' +
-        '<div class="panel-title">Events of '+name +'</div>' +
-        '</div>' +
-        '<div class="col-md-2">' +
-        "<button class='btn btn-xs btn-info' data-toggle='modal' data-target='#chooseEventModal' onclick='changeChooseEventModal("+id+")'><i class='glyphicon glyphicon-plus'></i></button>" +
-        '</div>' +
-        '</div>' +
-        '</div>' +
-        '<div class="panel-body" style="color:black"><b>No events yet</b></div>' +
-        '</div>' +
-        '</div>' +
-        '</div>');
+        '<hr>');
 
         /*
         var $scope = angular.element('#angular_module').scope();
