@@ -8,7 +8,7 @@ module.exports = router;
 
 router.get('/eventSkeletons', checkToken, function (req, res, next) {
     let username = req.SERVER.username;
-    eventSkeletons.getAllEventSkeletons(username)
+    eventSkeletons.getEventSkeletonsByUser(username)
         .then(docs => {
             res.status(200).json(docs);
         })
@@ -19,10 +19,10 @@ router.get('/eventSkeletons', checkToken, function (req, res, next) {
 
 router.post('/eventSkeletons', function (req, res, next) {
     let username = req.SERVER.username;
-    let event = req.body;
-    event.creator=username;
+    let _eventSkeleton = req.body;
     try {
-      eventSkeletons.addEventSkeleton(event)
+        let eventSkeleton = eventSkeletons.validateEventSkeleton(_eventSkeleton);
+        eventSkeletons.addEventSkeleton(eventSkeleton, username)
             .then(created => {
                 res.status(201).json(created);
             })
@@ -34,7 +34,8 @@ router.post('/eventSkeletons', function (req, res, next) {
 
 router.get('/eventSkeletons/:id', checkToken, function (req, res, next) {
     let id = req.params.id;
-    eventSkeletons.getEventSkeletonById(id)
+    let username = req.SERVER.username;
+    eventSkeletons.getEventSkeletonByIdAndUsername(id, username)
         .then(event => {
             if (event === undefined) {
                 next(error.error(404, "eventSkeleton not found"));
@@ -49,7 +50,8 @@ router.get('/eventSkeletons/:id', checkToken, function (req, res, next) {
 
 router.delete('/eventSkeletons/:id', function (req, res, next) {
     let id = req.params.id;
-    eventSkeletons.deleteEventSkeletonByid(id)
+    let username = req.SERVER.username;
+    eventSkeletons.deleteEventSkeletonById(id, username)
         .then(deleted => {
             if (deleted) {
                 res.status(204).end();

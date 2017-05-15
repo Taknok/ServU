@@ -180,7 +180,7 @@ paths:
         "200":
           description: Success
           schema:
-              $ref: '#/definitions/eventSkeleton'
+              $ref: '#/definitions/event'
         "400":
           description: Wrong format
         "401":
@@ -202,13 +202,13 @@ paths:
           description: EventSkeleton's informations
           required: true
           schema:
-            $ref: "#/definitions/eventSkeleton_post"
+            $ref: "#/definitions/eventPost"
       description: Returns all events available for the user
       responses:
         "201":
           description: Success
           schema:
-              $ref: '#/definitions/eventSkeleton'
+              $ref: '#/definitions/event'
         "400":
           description: Wrong format
         "401":
@@ -231,7 +231,7 @@ paths:
         "200":
           description: Success
           schema:
-              $ref: '#/definitions/eventSkeleton'
+              $ref: '#/definitions/event'
         "400":
           description: Wrong format
         "401":
@@ -554,7 +554,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/event_post'
+            $ref: '#/definitions/eventPost'
       responses:
           "201":
             description: Success
@@ -994,38 +994,12 @@ definitions:
         type: string
       description:
         type: string
-      owner:
-        type: string
-      device:
-        type: string
       if:
         type: object
       action:
         type: object
 
-  event_post:
-    type: object
-    properties:
-      idEventSkeleton:
-        type: string
-
-  eventSkeleton:
-    type: object
-    properties:
-      id:
-        type: string
-      label:
-        type: string
-      creator:
-        type: string
-      description:
-        type: string
-      if:
-        type: object
-      action:
-        type: object
-
-  eventSkeleton_post:
+  eventPost:
     type: object
     properties:
       label:

@@ -2,6 +2,7 @@ const express = require("express");
 const error = require("../../error");
 const actions = require("../../database/actions");
 const actionsAvailable = require("../../database/actionsAvailable");
+const validator = require("../../contentVerification/validator");
 
 let router = express.Router();
 module.exports = router;
@@ -24,18 +25,7 @@ router.post('/actionsUser', function (req, res, next) {
     let _action = req.body;
     try {
         let action = actions.validateAction(_action);
-        actionsAvailable.getOneAction(device_uuid,action.type)
-            .then((actionAvailable) => {
-                return new Promise((resolve, reject) => {
-                    if (actionAvailable === undefined) {
-                        reject(new error.error(400,"This action is not available on this device"));
-                    }else if(!actionAvailable.enable){
-                        reject(new error.error(400,"This action is disabled on this device"));
-                    }else{
-                        resolve();
-                    }
-                })
-            })
+        validator.validateAction(action.type, device_uuid, action.parameters)
             .then(() => actions.addAction(action, creator_username, device_uuid))
             .then(created => {
                 res.status(201).json(created);

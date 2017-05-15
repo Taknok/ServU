@@ -1,6 +1,7 @@
 const express = require('express');
 const error = require('../../error');
 const probes = require('../../database/probes');
+const eventsManager = require("../../eventsManager");
 
 let router = express.Router();
 module.exports = router;
@@ -53,6 +54,7 @@ router.put('/probes/:name', function (req, res, next) {
             .then(updated => {
                 if (updated) {
                     res.status(204).end();
+                    eventsManager.onProbeUpdate(name,uuid);
                 } else {
                     next(new error.error(500, "Error : Probe not updated"));
                 }
