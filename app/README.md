@@ -8,10 +8,12 @@
 |localisation   	| lat <br> long <br> timestamp  	| `float` <br> `float` <br> `int` | <, >, = <br> <, >, = <br> <, >, =	|
 |battery   	| level <br> isPlugged  	| 0 < `int` < 100 <br> `true`-`false`| <, >, = <br> =	|
 |flashlight   	| isActivated  	| `true`-`false`|  =	|
+|wifi   	| isEnable  	| `true`-`false`|  =	|
 
 ## Tableau des Actions
 |Action     |  data 	|type   |
 |:---	      |:---	    |:---   |
 |ring   	  |time     |`int`  |
 |vibrate    |time     |`int`  |
+|sms		|dest <br> msg | `string` <br> `string` |
 

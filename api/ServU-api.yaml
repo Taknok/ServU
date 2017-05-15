@@ -168,6 +168,97 @@ paths:
         "404":
           description: User not found
 
+  /users/{username}/eventSkeletons:
+    get:
+      tags:
+      - User
+      parameters:
+        - $ref: "#/parameters/token"
+        - $ref: "#/parameters/username"
+      description: Returns all events available for the user
+      responses:
+        "200":
+          description: Success
+          schema:
+              $ref: '#/definitions/event'
+        "400":
+          description: Wrong format
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: This user does not exist
+
+
+    post:
+      tags:
+      - User
+      parameters:
+        - $ref: "#/parameters/token"
+        - $ref: "#/parameters/username"
+        - name: eventSkeleton
+          in: body
+          description: EventSkeleton's informations
+          required: true
+          schema:
+            $ref: "#/definitions/eventPost"
+      description: Returns all events available for the user
+      responses:
+        "201":
+          description: Success
+          schema:
+              $ref: '#/definitions/event'
+        "400":
+          description: Wrong format
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: This user does not exist
+
+  /users/{username}/eventSkeletons/{idEventSkeleton}:
+    get:
+      tags:
+      - User
+      description: Returns an eventSkeleton by its id
+      parameters:
+        - $ref: "#/parameters/token"
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/idEventSkeleton"
+      responses:
+        "200":
+          description: Success
+          schema:
+              $ref: '#/definitions/event'
+        "400":
+          description: Wrong format
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: eventSkeleton or user not found
+
+    delete:
+      tags:
+      - User
+      description: Delete a eventSkeleton
+      parameters:
+        - $ref: "#/parameters/token"
+        - $ref: "#/parameters/username"
+        - $ref: "#/parameters/idEventSkeleton"
+      responses:
+        "204":
+          description: Success
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: User or EventSkeleton not found
+
   /users/{username}/devices:
     get:
       tags:
@@ -463,7 +554,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/event_post'
+            $ref: '#/definitions/eventPost'
       responses:
           "201":
             description: Success
@@ -497,42 +588,6 @@ paths:
         "404":
           description: Event or Username or Device not found
 
-  /eventSkeletons:
-    get:
-      tags:
-      - User
-      parameters:
-        - $ref: "#/parameters/token"
-      description: Returns all events available for the user
-      responses:
-        "200":
-          description: Success
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/eventSkeleton'
-        "401":
-          description: Unauthorized
-
-  /eventSkeletons/{idEventSkeleton}:
-    get:
-      tags:
-      - User
-      description: Returns an eventSkeleton by its id
-      parameters:
-        - $ref: "#/parameters/token"
-        - $ref: "#/parameters/idEventSkeleton"
-      responses:
-        "200":
-          description: Success
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/eventSkeleton'
-        "401":
-          description: Unauthorized
-        "404":
-          description: eventSkeleton not found
 
   /phones:
     post:
@@ -939,29 +994,21 @@ definitions:
         type: string
       description:
         type: string
-      owner:
-        type: string
-      device:
-        type: string
-      code:
+      if:
+        type: object
+      action:
         type: object
 
-  event_post:
+  eventPost:
     type: object
     properties:
-      idEventSkeleton:
-        type: string
-
-  eventSkeleton:
-    type: object
-    properties:
-      id:
-        type: string
       label:
         type: string
       description:
         type: string
-      code:
+      if:
+        type: object
+      action:
         type: object
 
   action_status:

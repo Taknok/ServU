@@ -1,6 +1,6 @@
 angular.module('ServU')
 
-.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS) {
+.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, probes, $http, ServUApi, phoneInfo, $interval) {
 	$scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
 		AuthService.logout();
 		$state.go('login');
@@ -9,6 +9,48 @@ angular.module('ServU')
 			template: 'Sorry, You have to login again.'
 		});
 	});
+	
+	document.addEventListener('deviceready', function () {
+		cordova.plugins.backgroundMode.enable();
+		cordova.plugins.backgroundMode.overrideBackButton();
+		cordova.plugins.backgroundMode.excludeFromTaskList();
+		cordova.plugins.autoStart.enable();
+	}, false);
+	
+	
+	if (phoneInfo.getPosted() && phoneInfo.getUuid() != 0){
+		let putProbes = function(){
+			let vectProbes = probes.getAll();
+
+			for (let i = 0; i < vectProbes.length; i++){				
+				if (vectProbes[i].available){
+					let data = {};
+					if (vectProbes[i].active){
+						data = {
+							"label" : vectProbes[i].label,
+							"active" : vectProbes[i].active,
+							"data" : vectProbes[i].value
+						};
+					} else {
+						data = {
+							"label" : vectProbes[i].label,
+							"active" : vectProbes[i].active,
+							"data" : {}
+						};
+					}
+					
+					$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/probes/" + vectProbes[i].name, data);
+				}
+			}
+			console.log(vectProbes.length, " probes updated");
+		};
+		$interval(function(){
+			if (phoneInfo.getUuid() != 0){
+				putProbes();
+			}
+		}, 10 * 1000);
+		
+	}
 })
 
 .controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, phoneInfo, probes, ServUApi, $http) {
@@ -20,28 +62,73 @@ angular.module('ServU')
 	$scope.login = function() {
 		AuthService.login($scope.user).then(function(msg) {
 			phoneInfo.setUsername($scope.user.username);
-			postPhoneOnLogin = function(){
+			
+			let postPhone = function(){
 				let tmp = probes.device.getValue();
-				console.log(tmp);
 				
 				let data = {
-					"name": device.name,
+					"name": tmp.model,
 					"manufacturer": tmp.manufacturer,
 					"model": tmp.model,
 					"platform": tmp.platform,
 					"version": tmp.version,
 					"serial": tmp.serial,
-					"uuid": tmp.uuid
+					"uuid": phoneInfo.getUuid(),
+					"owner": phoneInfo.getUsername()
 				}
-				$http.post(ServUApi.url + "/users/" + phoneInfo.getUsername() + "/devices", data);
-			}
-			postPhoneOnLogin(); //poste a chaque fois que l'on se log, pas tres opti pour le moment mais fonctionne
-			
-			postProbesOnLogin = async function(){
-				let tmp = await probes.constructVect();
-				$http.post(ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes", tmp);
+				
+				$http.post(ServUApi.url + "/phones", data).then(function(){
+					phoneInfo.setPosted(true);
+					console.log("Phone posted");
+				}).catch(function(e){
+					if (e.status == 400){
+						console.error("Wrong format or Owner not found :", e);
+						phoneInfo.setPosted(false);
+					} else if (e.status == 401){
+						console.error("Unauthorized :", e);
+						phoneInfo.setPosted(false);
+					} else if (e.status == 403){
+						console.error("Forbidden :", e);
+						phoneInfo.setPosted(false);
+					} else if (e.status == 403){
+						console.error("Another device has the same uuid :", e);
+					} 
+				});
 			};
-			postProbesOnLogin(); //poste a chaque fois que l'on se log, pas tres opti pour le moment mais fonctionne
+			console.log("Phone has been posted : ", phoneInfo.getPosted())
+			
+			let postProbes = function(){
+				let vectProbes = probes.getAll();
+				
+				for (let i = 0; i < vectProbes.length; i++){
+					if (vectProbes[i].available){
+						let data = {};
+						if (vectProbes[i].active){
+							data = {
+								"name" : vectProbes[i].name,
+								"label" : vectProbes[i].label,
+								"active" : vectProbes[i].active,
+								"data" : vectProbes[i].value
+							};
+						} else {
+							data = {
+								"name" : vectProbes[i].name,
+								"label" : vectProbes[i].label,
+								"active" : vectProbes[i].active,
+								"data" : {}
+							};
+						}
+						
+						$http.post(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/probes", data);
+					}
+				}
+			};
+			
+			if (!phoneInfo.getPosted()){
+				postPhone();
+				probes.checkAvailable();
+				postProbes();
+			}
 			
 			$state.go('main');
 		}, function(errMsg) {
@@ -82,11 +169,22 @@ angular.module('ServU')
 	};
 	
 	$scope.settings = [
-		{ text: 'Settings', value: "arg of the fn", fn: $scope.fn1, disabled: true },
+		// { text: 'Settings', value: "arg of the fn", fn: $scope.fn1, disabled: true },
+		{ text: 'Lock', value: 0, fn: $scope.lock, disabled : false },
 		{ text: 'Logout', value: 0, fn: $scope.logout, disabled : false },
-		{ text: 'Logout', value: 2, href: "#/logout", disabled : true}
+		// { text: 'Logout', value: 2, href: "#/logout", disabled : false}
 	];
 
+	$scope.lock = function() {
+		$state.go('login');
+	};
+	
+	postProbesOnLogin = async function(){
+		let tmp = await probes.constructVect();
+		$http.post(ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes", tmp);
+	};
+	// postProbesOnLogin(); //poste a chaque fois que l'on se log, pas tres opti pour le moment mais fonctionne
+	
 	probes.onStart();
 	
 	function doAction(action){
@@ -112,9 +210,8 @@ angular.module('ServU')
 	
 	function upSendAction(action){
 		
-		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/actions_user";
+		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/actionUser/" + action.actionId;
 		var data = [{
-			"actionId" : action.actionId,
 			"status" : action.status
 		}]
 		// $http.put(url, data);
@@ -125,43 +222,9 @@ angular.module('ServU')
 		$http.delete(url2);
 	}
 	
-	function checkPosted(){ //inutilisée pour le moment
-		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes";
-		$http.get(url).success(function(probes) {
-			
-		});
-	}
-	
-	function upSendProbes(){
-		var localProbes = probes.getAll();
-		var probesToPost = [];
-		var probesToPut = [];
-		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes";
-		
-		for(var i = 0; i < localProbes.length; i++){
-			var localProbe = localProbes[i];
-			if (localProbe.posted){
-				probesToPut.push(localProbe);
-			} else {
-				probesToPost.push(localProbe);
-			}
-		}
-		
-		if (probesToPost.length != 0){
-			$http.post(url, probesToPost).success(function(probes) {
-				console.log(probes);
-			});
-		}
-		if (probesToPut.length != 0){
-			$http.put(url, probesToPost).success(function(probes) {
-				console.log(probes);
-			});
-		}
-	}
-	
 	function getActions() {
 		var items = [];
-		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/actions_user";
+		var url = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/actionUserToDo";
 		$http.get(url).success(function(actions) {
 			
 			for(var i = 0; i < actions.length; i++){
@@ -179,11 +242,11 @@ angular.module('ServU')
 		getActions();
 	}
 	
-	$interval(function(){
-		if (phoneInfo.getUuid() != 0){
-			getActions();
-		}
-	}, 5 * 1000);
+	// $interval(function(){
+		// if (phoneInfo.getUuid() != 0){
+			// getActions();
+		// }
+	// }, 5 * 1000);
 	
 	
 	
@@ -211,7 +274,7 @@ angular.module('ServU')
 	});
 })
 
-.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader) {
+.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader, actions, phoneInfo, probes) {
 	$scope.destroySession = function() {
 		AuthService.logout();
 	};
@@ -227,6 +290,9 @@ angular.module('ServU')
 		$state.go('login');
 	};
 	
+	$scope.test = function(){
+
+	};
 	
 	hideHeader.init();
 })
@@ -238,11 +304,13 @@ angular.module('ServU')
 	$scope.battery = probes.battery.getAll();
 	$scope.sim = probes.sim.getAll();
 	$scope.flashlight = probes.flashlight.getAll();
-	$scope.screen_orientation = probes.screen_orientation.getAll();
+	$scope.screenOrientation = probes.screenOrientation.getAll();
 	$scope.device = probes.device.getAll();
+	$scope.wifi = probes.wifi.getAll();
 	
 	$scope.$watch("network.active", function(){
 		probes.network.setActive($scope.network.active);
+		probes.wifi.setActive($scope.wifi.active);
 	})
 	$scope.$watch("bluetooth.active", function(){
 		probes.bluetooth.setActive($scope.bluetooth.active);
@@ -259,8 +327,8 @@ angular.module('ServU')
 	$scope.$watch("flashlight.active", function(){
 		probes.flashlight.setActive($scope.flashlight.active);
 	})
-	$scope.$watch("screen_orientation.active", function(){
-		probes.screen_orientation.setActive($scope.screen_orientation.active);
+	$scope.$watch("screenOrientation.active", function(){
+		probes.screenOrientation.setActive($scope.screenOrientation.active);
 	})
 	$scope.$watch("device.active", function(){
 		probes.device.setActive($scope.device.active);
@@ -273,54 +341,11 @@ angular.module('ServU')
 		$scope.battery = probes.battery.getValue();
 		$scope.sim = probes.sim.getValue();
 		$scope.flashlight = probes.flashlight.getValue();
-		$scope.screen_orientation = probes.screen_orientation.getValue();
+		$scope.screenOrientation = probes.screenOrientation.getValue();
 		$scope.device = probes.device.getValue();
 		
 		
 		console.log($scope.testval)
-	}
-
-	$scope.username = {};
-	$scope.username.value = "Paul"
-	$scope.userSet= function(){
-		console.log($scope.username);
-		phoneInfo.setUsername($scope.username.value);
-		console.log(phoneInfo.getUsername());
-	}
-	
-	$scope.createPhone = function(){
-		var tel = probes.device.getValue();
-		console.log(tel);
-		phoneInfo.setUuid(tel.uuid);
-		
-		var uuid = phoneInfo.getUuid();
-		console.log(uuid);
-		
-		var data = {
-			"name": "aaaa",
-			"manufacturer": "a",
-			"model": "a",
-			"platform": "a",
-			"version": "a",
-			"serial": "a",
-			"uuid": uuid
-		}
-		
-		var urlPhone = ServUApi.url + "/users/" + phoneInfo.getUsername() + "/devices";
-		$http.post(urlPhone,data);
-		
-		
-		var probe = {
-			"name": "network",
-			"active": true,
-			"data": "false data"
-		}
-		
-		
-		var urlProb = ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes";
-		console.log(urlProb);
-		$http.post(urlProb, [probe]);
-
 	}
 	
 	

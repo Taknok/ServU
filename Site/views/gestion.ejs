@@ -82,6 +82,7 @@
         <div class="row">
             <div class="col-md-12 col-xs-12 text-center">
                 <h2 class="fontAmethyst">Profile</h2>
+                <button class="btn btn-xs btn-info" ng-click="open('lg')"><i class="glyphicon glyphicon-plus"></i></button>
                 <hr class="small">
             </div>
         </div>
@@ -219,19 +220,19 @@
                         </div>
                         <div class="clearfix"></div>
                     </div>
-                    <div class="panel-body"> <!— Devices —>
+                    <div class="panel-body"> <!-- Devices -->
                         <div id="items">
 
                         </div>
-                        <!— ./row ./devices —>
+                        <!-- ./row ./devices -->
                     </div>
-                    <!— ./panel-body —>
+                    <!-- ./panel-body -->
                 </div>
-                <!— ./Main panel —>
+                <!-- ./Main panel -->
             </div>
-            <!— /.col-lg-10 —>
+            <!-- /.col-lg-10 -->
         </div>
-        <!— /.row —>
+        <!-- /.row -->
     </div>
     <!-- /.container -->
 </section>
@@ -314,32 +315,20 @@
     </div>
 </section>
 
-<!-- Create event modal -->
+<!-- Choose event modal -->
 <section>
-    <div class='modal fade' id='createEventModal' tabindex='-1' role='dialog' aria-labelledby='createEventModalLabel'>
+    <div class='modal fade' id='chooseEventModal' tabindex='-1' role='dialog' aria-labelledby='chooseEventModalLabel'>
         <div class='modal-dialog' role='document'>
             <div class='modal-content'>
-                <div class='modal-header' id="createEventModalHeader">
+                <div class='modal-header' id="chooseEventModalHeader">
+                    Available events
                     <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
                 </div>
-                <div class='modal-body' id="createEventModalBody">
+                <div class='modal-body' id="chooseEventModalBody">
 
                 </div>
-                <div class='modal-footer' id="createEventModalFooter">
-                    <div class="row">
-                        <div class="col-md-1">
-                            Event:
-                        </div>
-                        <div class="col-md-4" id="createEventModalFooterIf">
-
-                        </div>
-                        <div class="col-md-4" id="createEventModalFooterThen">
-
-                        </div>
-                        <div class="col-md-3">
-                            <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
-                        </div>
-                    </div>
+                <div class='modal-footer' id="chooseEventModalFooter">
+                    <button class="btn btn-warning" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

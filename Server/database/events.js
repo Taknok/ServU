@@ -2,15 +2,17 @@ const db = require("./database");
 const cm = require("./common");
 const mongoCommon = require("./mongoCommon");
 const error = require("../error");
-const eventSkeleton = require("./eventSkeletons");
 
 const eventSkeletonProperties = [
-    new cm.Property("idEventSkeleton", "string", undefined),
+    new cm.Property("label", "string", undefined),
+    new cm.Property("description", "string", undefined),
+    new cm.Property("if", "object", undefined),
+    new cm.Property("action", "object", undefined)
 ];
 
 let eventsCollection = mongoCommon.createCollection(
     "Events",
-    {},
+    {"device": 0, "owner": 0, "probesRequired": 0, "status": 0},
     "id"
 );
 
@@ -18,34 +20,43 @@ exports.validateEvent = function (object) {
     return cm.propertiesVerificationForCreation(object, eventSkeletonProperties);
 };
 
-exports.addEventBySkeletonId = function (skeletonId, deviceUuid, username) {
-    return eventSkeleton.getEventSkeletonById(skeletonId)
-        .then(skeleton => {
-            return new Promise((resolve, reject) => {
-                if (skeleton === undefined) {
-                    reject(new error.error(404, "Not found", "Skeleton does not exist"));
-                } else {
-                    resolve(skeleton);
-                }
-            })
-        })
-        .then(skeleton => {
-            let event = {
-                owner: username,
-                device: deviceUuid,
-                label: skeleton.label,
-                description: skeleton.description,
-                code: skeleton.code
-            };
-            return eventsCollection.addOneElement(event)
-        })
+exports.addEvent = function (deviceUuid, username, event, probesRequired) {
+    event.owner = username;
+    event.device = deviceUuid;
+    event.probesRequired = probesRequired;
+    event.status = false;
+    return eventsCollection.addOneElement(event)
         .then(event => cm.changeIdName(event))
 };
 
 exports.getEventsByDeviceUuid = function (uuid) {
     let query = {};
     query.device = uuid;
-    return eventsCollection.getElementsByQuery(query);
+    return eventsCollection.getElementsByQuery(query)
+        .then(events => {
+            events.forEach(elt => cm.changeIdName(elt));
+            return events;
+        });
+};
+
+exports.getEventsByUuidAndProbeRequired = function (uuid, probeRequired) {
+    let query = {};
+    query.device = uuid;
+    query.probesRequired = probeRequired;
+    return db.mongo(eventsCollection.name)
+        .then(collection => collection.find(query).toArray())
+        .then(events => {
+            events.forEach(elt => cm.changeIdName(elt));
+            return events;
+        });
+};
+
+exports.updateEventStatusByObjectId = function (id, status) {
+    let event = {};
+    event.status = status;
+    let filter = {};
+    filter._id = id;
+    return eventsCollection.updateOneElement(filter, event)
 };
 
 exports.deleteEventById = function (id, username, uuid) {

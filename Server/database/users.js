@@ -5,6 +5,7 @@ const probes = require("./probes");
 const actionsAvailables = require("./actionsAvailable");
 const actions = require("./actions");
 const events = require("./events");
+const eventSkeletons = require("./eventSkeletons");
 const mongoCommon = require("./mongoCommon");
 const encryption = require("./encryption");
 
@@ -99,7 +100,8 @@ exports.updateUser = function (username, user2) {
                         probes.updateOwnerOfProbes(username, user2.username),
                         actionsAvailables.updateOwnerOfActions(username, user2.username),
                         actions.updateCreatorOfManyActions(username, user2.username),
-                        events.updateOwnerOfManyEvents(username,user2.username)
+                        events.updateOwnerOfManyEvents(username,user2.username),
+                        eventSkeletons.updateOwnerOfManyEventSkeletons(username,user2.username)
                     ]);
                 }
             })
@@ -125,7 +127,8 @@ exports.deleteUser = function (username) {
                         probes.deleteProbesByOwner(username),
                         actionsAvailables.deleteActionsByOwner(username),
                         actions.deleteActionsOfCreator(username),
-                        events.deleteEventsByOwner(username)
+                        events.deleteEventsByOwner(username),
+                        eventSkeletons.deleteEventSkeletonsByOwner(username)
                     ]);
                 } else {
                     resolve(false);

@@ -16,7 +16,7 @@ function propertiesVerificationForCreation(object, properties) {
         if (!isDefined(object[elt.name])) {
             throw Error(`Missing property : ${elt.name}`);
         } else {
-            if (typeof object[elt.name] !== elt.type) {
+            if (elt.type !== undefined && typeof object[elt.name] !== elt.type) {
                 throw Error(`Property ${elt.name} should be ${elt.type} instead of ${typeof object[elt.name]}`);
             }
             verifiedObject[elt.name] = object[elt.name];
@@ -31,7 +31,7 @@ function propertiesVerificationForUpdate(object, properties) {
     let updateProperties = properties.filter(elt => elt.allowUpdate);
     updateProperties.forEach(elt => {
         if (isDefined(object[elt.name])) {
-            if (typeof object[elt.name] !== elt.type) {
+            if (elt.type !== undefined && typeof object[elt.name] !== elt.type) {
                 throw Error(`Property ${elt.name} should be ${elt.type} instead of ${typeof object[elt.name]}`);
             }
             result = true;
