@@ -196,7 +196,7 @@ console.log("Serveur lancé sur", adresse," le port : 3001");
 
 var login = function(req, res){
     request.post({
-        url: 'http://' + adresse + ':' + portApi + '/api/users/login',
+        url: 'http://' + adresse + ':' + portApi + '/api/login',
         json: true,
         body: {
             username: req.body.username,

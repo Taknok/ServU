@@ -31,8 +31,6 @@ router.post('/users/', function (req, res, next) {
         let user = users.validateUser(_user);
         users.getUserByUsername(user.username)
             .then(user => {
-
-            console.log("ok");
         return new Promise((resolve, reject) => {
                 if (user !== undefined) {
             reject(error.error(409, "Another User has the same username"));
