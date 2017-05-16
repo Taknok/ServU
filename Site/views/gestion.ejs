@@ -90,7 +90,7 @@
 
         <div class="row">
             <div class="col-md-12 col-xs-12 text-center">
-                <h2 class="fontAmethyst">Profile</h2>
+                <h2 class="fontAmethyst">Profile {{username}}</h2>
                 <button class="btn btn-xs btn-info" ng-click="open('lg')"><i class="glyphicon glyphicon-plus"></i></button>
                 <hr class="small">
             </div>
@@ -493,7 +493,17 @@
 <script src="../js/persoJS/ui-bootstrap-tpls-2.5.0.min.js"></script>
 
 
-<script>document.title = '<%= username%> - ' + document.title;</script>
+<script>
+    document.title = '<%= username%> - ' + document.title;
+    setCookie('token','<%= token%>',7);
+    setCookie('username','<%= username%>',7);
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+ d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+</script>
 
 </body>
 

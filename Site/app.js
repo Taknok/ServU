@@ -10,6 +10,7 @@ var urlencodedParser =  bodyParser.urlencoded({ extended: false });
 
 // ADRESSE ET PORT DU SERVER
 var adresse = '127.0.0.1';
+var url = 'http://' + adresse;
 var portSite = 3001;
 var portApi = 3000;
 var token;
@@ -61,7 +62,7 @@ app.use(session({
             res.redirect('/');
         }
         request.get({
-            url: 'http://' + adresse + ':' + portApi + '/api/users/' + req.params.username,
+            url: url + ':' + portApi + '/api/users/' + req.params.username,
             headers: {'x-access-token':token},
             json: true,
             body : {username: req.params.username}
@@ -77,7 +78,8 @@ app.use(session({
                     res.render('gestion', {
                         username: req.session.username,
                         lastname: req.session.lastname,
-                        firstname: req.session.firstname
+                        firstname: req.session.firstname,
+                        token : token
                     });
                     break;
                 case 401:
@@ -112,7 +114,7 @@ app.use(session({
             dataChanged = {password : password};
         }
         request.put({
-            url: 'http://' + adresse + ':' + portApi + '/api/users/' + req.params.username,
+            url: url + ':' + portApi + '/api/users/' + req.params.username,
             headers: {'x-access-token':token},
             json: true,
             body : dataChanged}, function (err, response, body) {
@@ -155,7 +157,7 @@ app.use(session({
         console.log(req.body);
         if(req.body.username != undefined && req.body.lastname != undefined && req.body.firstname != undefined && req.body.email != undefined && req.body.password != undefined){
             request.post({
-                url: 'http://' + adresse + ':' + portApi + '/api/users',
+                url: url + ':' + portApi + '/api/users',
                 json: true,
                 body: {
                     username: req.body.username,
@@ -205,7 +207,7 @@ console.log("Serveur lancé sur", adresse," le port : 3001");
 
 var login = function(req, res){
     request.post({
-        url: 'http://' + adresse + ':' + portApi + '/api/login',
+        url: url + ':' + portApi + '/api/login',
         json: true,
         body: {
             username: req.body.username,

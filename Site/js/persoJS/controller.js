@@ -2,7 +2,15 @@
  * Created by alexa on 10/05/2017.
  */
 
+var cookies = document.cookie.split(';');
+var token = cookies[0].substr(6);
+var username = cookies[1].substr(9);
+
 angular.module('root', ['ui.bootstrap'])
+
+    .run(function($http) {
+        $http.defaults.headers.common['x-access-token'] = token;
+    })
     .controller("gestion", ['$scope', '$log','$uibModal', '$compile','$http', function($scope, $log, $uibModal, $compile) {
         $scope.addNewButton = function(element){
             $compile(element)($scope);
@@ -77,7 +85,7 @@ angular.module('root', ['ui.bootstrap'])
             $('.selectpicker').selectpicker();
         };
         var $ctrl = this;
-
+        $scope.username = username;
         //Liste des conditions
         $ctrl.items = [
             {name : 'Wifi', icon : "icon ion-wifi"},
