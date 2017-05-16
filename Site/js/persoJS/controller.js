@@ -7,12 +7,13 @@ var token = cookies[0].substr(6);
 var username = cookies[1].substr(9);
 const url = 'http://127.0.0.1:3000';
 
-angular.module('root', ['ui.bootstrap'])
+var rootApp = angular.module('root', ['ui.bootstrap'])
 
     .run(function($http) {
         $http.defaults.headers.common['x-access-token'] = token;
     })
     .controller("gestion", ['$scope', '$log','$uibModal', '$compile','$http', function($scope, $log, $uibModal, $compile) {
+        //$scope.message = 'Hello World!';
         $scope.addNewButton = function(element){
             $compile(element)($scope);
         };

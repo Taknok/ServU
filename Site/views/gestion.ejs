@@ -202,26 +202,25 @@
                                 <hr class="small">
                             </div>
                         </div>
-                        <div class="row gutter-10">
+                        <div class="row gutter-10" ng-controller="devicesCtrl">
                             <div class="col-md-2 col-sm-2 col-xs-2 gutter-10 pull-left">
                                 <div class='well well-sm well-warning' data-toggle='tooltip' data-placement='bottom' title='Number of phones' id='nbPhones'>
-                                    <!— nb of phones —>
+                                    {{nbPhones}}
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-2 gutter-10 pull-left">
                                 <div class='well well-sm well-warning' data-toggle='tooltip' data-placement='bottom' title='Number of tablets' id='nbTablets'>
-                                    <!— nb of tablets —>
+                                    {{nbTablets}}
                                 </div>
                             </div>
-
                             <div class="col-md-4 col-sm-4 col-xs-4 gutter-10 pull-right">
                                 <div class="btn-group" style="margin-top: 25%; margin-bottom: 25%">
                                     <button class="btn btn-warning" data-toggle="modal" data-target='#addModal'>
-                                <span data-toggle="tooltip" title="Add device" data-placement="top">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                </span>
+                                        <span data-toggle="tooltip" title="Add device" data-placement="top">
+                                            <i class="glyphicon glyphicon-plus"></i>
+                                        </span>
                                     </button>
-                                    <div id="refreshBtn" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Refresh">
+                                    <div class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Refresh" ng-click="refreshDevices()">
                                         <i class="glyphicon glyphicon-refresh"></i>
                                     </div>
                                 </div>
@@ -230,8 +229,85 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="panel-body"> <!-- Devices -->
-                        <div id="items">
+                        <div id="items" ng-controller="devicesCtrl">
+                            <div class="row" ng-repeat="device in devices">
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                    <div class="panel panel-warning panel-warning-dark">
+                                        <div class='panel-heading'>
+                                            <div class='row gutter-10'>
+                                                <div class='col-lg-2 col-md-2 col-sm-2 col-xs-2 gutter-10'>
+                                                    <h3 class='panel-title' id='deviceLogo'><i class='fa fa-{{device.platform}} fa-lg'></i></h3>
+                                                    </div>
+                                                <div class='col-lg-8 col-md-8 col-sm-8 col-xs-8 gutter-10'>
+                                                    <div id='deviceTitle' class='panel-title text-center'>{{device.name}}</div>
+                                                    </div>
+                                                <div class='col-lg-2 col-md-2 col-sm-2 col-xs-2 gutter-10'>
+                                                    <span data-toggle='tooltip' title='Delete' data-placement='top'>
+                                                        <button class='btn btn-danger btn-xs' ng-click="deleteByUuid(device.uuid)">
+                                                             <i class='glyphicon glyphicon-minus'></i>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class='panel-body'>
+                                            <div class='row'>
+                                                <div class='col-md-2'><i class='fa fa-info'></i></div>
+                                                <div class='col-md-6'>{{device.manufacturer}} {{device.model}}</div>
+                                                <div class='col-md-1'><i class='glyphicon glyphicon-signal'></i></div>
+                                                <div class='col-md-1'>{{device.data.connection}}</div>
+                                            </div>
+                                            <div class='row'>
+                                                <div class='col-md-2' id='deviceCharge'><i class='ion' ng-class="{'ion-battery-charging': device.data.inCharge, 'ion-battery-full': !device.data.inCharge}"></i></div>
+                                                <div class='col-md-10'>
+                                                    <div class='progress'>
+                                                        <div class='progress-bar'
+                                                             ng-class="{'progress-bar-primary': getBarTypeClassBoolean(device.data.battery,'primary'),
+                                                             'progress-bar-success': getBarTypeClassBoolean(device.data.battery,'success'),
+                                                             'progress-bar-warning': getBarTypeClassBoolean(device.data.battery,'warning'),
+                                                             'progress-bar-danger': getBarTypeClassBoolean(device.data.battery,'danger'),
+                                                             'progress-bar-striped active': device.data.inCharge }"
+                                                             role='progressbar' aria-valuenow='{{device.data.battery}}'
+                                                             aria-valuemin='0' aria-valuemax='100' style='width: {{device.data.battery}}%'>
+                                                            <span><b>{{device.data.battery}}</b></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class='panel-footer'>
+                                            <div class='row'>
+                                                <div class='btn-group-in-footer btn-group btn-group-justified'>
+                                                    <div class='btn-group'>
+                                                        <button class='btn btn-warning' data-toggle='modal' data-target='#moreModal' ng-click="openMoreModal(device.uuid)">
+                                                            <i class='glyphicon glyphicon-plus-sign'></i>
+                                                            <span class='text-center'>  Show more  </span>
+                                                            <span class='clearfix'></span>
+                                                        </button>
+                                                    </div>
+                                                    <div class='btn-group dropdown'>
+                                                        <button type='button' class='btn btn-warning dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                                                            <i class='glyphicon glyphicon-th-large'></i>
+                                                            <span class='text-center'>  Quick actions  </span>
+                                                            <span class='caret'></span>
+                                                            <span class='clearfix'></span>
+                                                        </button>
+                                                        <ul class='dropdown-menu'>
+                                                            <li ng-repeat="(action,availability) in device.data.availableActions" ng-show="availability">
+                                                                <a>
+                                                                    <div class='pull-left' style="text-transform: capitalize;">{{action}}</div>
 
+                                                                    <span class='clearfix'></span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <!-- ./row ./devices -->
                     </div>
@@ -349,8 +425,8 @@
                             </script>
                         </div>
                         <div class="col-md-6">
-                            <p>Flash this code within ServU app on your device to add it automatically to your account</p>
-                            <p class="text-muted"><i>Tip : refresh your devices on the web interface with the refresh button to see it appear</i></p>
+                            <p>Flash this code with your device to download the app for ANDROID</p>
+                            <p class="text-muted"><i>Sorry iOS users, the app is not available for iOs devices yet</i></p>
                         </div>
                     </div>
                 </div>
@@ -371,16 +447,16 @@
     </div>
 </section>
 
-<!-- More modal -->
-<section>
+<!-- More modal
+<section ng-controller="devicesCtrl">
     <div class='modal fade' id='moreModal' tabindex='-1' role='dialog' aria-labelledby='moreModalLabel'>
         <div class='modal-dialog' role='document'>
             <div class='modal-content'>
-                <div class='modal-header' id="moreModalHeader">
+                <div class='modal-header'>
                     <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
                 </div>
                 <div class='modal-body' id="moreModalBody">
-
+                    Coucou {{moreDevice.name}}
                 </div>
                 <div class='modal-footer' id="addModalFooter">
                     <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
@@ -388,7 +464,7 @@
             </div>
         </div>
     </div>
-</section>
+</section>-->
 
 <!-- Choose event modal -->
 <section>
@@ -478,6 +554,8 @@
 <script src="../../js/persoJS/formulaire.js"></script>
 <script src="../../js/bootstrap-notify.js"></script>
 
+<script src="../../js/persoJS/controllers.js"></script>
+
 <!-- Validation JQuery Form -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
@@ -493,6 +571,8 @@
 <script src="../js/persoJS/ui-bootstrap-tpls-2.5.0.min.js"></script>
 
 
+<script>document.title = '<%= username%> - ' + document.title;</script>
+<script>var username = '<%= username %>'</script>
 <script>
     document.title = '<%= username%> - ' + document.title;
     setCookie('token','<%= token%>',7);

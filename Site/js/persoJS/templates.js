@@ -89,45 +89,72 @@ function getMoreModalElementTemplate(icon,name,data) {
     );
 }
 
+function getDeviceEvents(id) {
 
+    var device = getDeviceById(id);
 
+}
 
 
 // Device variable structure
 var device1 = {
-    id: 1,
+    uuid: 1,
     name: 'Phone of Sophie',
-    description: "Apple iPhone 6 16Gb",
-    type: "mobile-phone",
-    battery: Math.floor((Math.random() * 100) + 1),
-    inCharge: true,
-    connection: "4G",
-    availableProbes: {
-        gps: true,
-        flash: true,
-        wifiConn: true,
-        bluetoothConn: true
+    manufacturer: "Apple",
+    model: "iPhone 6",
+    platform: "mobile-phone",
+    version: "10.3",
+    serial: "975637819",
+    data: {
+        battery: Math.floor((Math.random() * 100) + 1),
+        inCharge: true,
+        connection: "4G",
+        availableProbes: {
+            gps: true,
+            flash: true,
+            wifiConn: true,
+            bluetoothConn: true
+        },
+        availableActions: {
+            ring: false,
+            vibrate: true,
+            flash: true,
+            sms: true
+        }
     }
 };
+
 
 var device2 = {
-    id: 2,
-    name: "Tablet of Alex",
-    description: "Samsung Galaxy Tab S 32Gb",
-    type: "tablet",
-    battery: Math.floor((Math.random() * 100) + 1),
-    inCharge: false,
-    connection: "Wifi",
-    availableProbes: {
-        gps: true,
-        flash: true,
-        wifiConn: true,
-        bluetoothConn: true
+    uuid: 356854,
+    name: 'Phone of Quentin',
+    manufacturer: "Acer",
+    model: "très bonne question",
+    platform: "mobile-phone",
+    version: "6.0",
+    serial: "3975682",
+    data: {
+        battery: Math.floor((Math.random() * 100) + 1),
+        inCharge: false,
+        connection: "Wifi",
+        availableProbes: {
+            gps: true,
+            flash: true,
+            wifiConn: true,
+            bluetoothConn: true
+        },
+        availableActions: {
+            ring: true,
+            vibrate: false,
+            flash: true,
+            sms: false
+        }
     }
 };
 
+/*
 var device3 = {
-    id: 3,
+    uuid: 3,
     name: "Phone of Quentin",
     description: "Acer",
     type: "mobile-phone",
@@ -141,11 +168,12 @@ var device3 = {
         bluetoothConn: true
     }
 };
+*/
 
-var devices = [device1,device2,device3];
+var devices = [device1,device2]//,device2,device3];
 
 var event1 = {
 
 };
 
-var events = [];
+var events = [event1];

@@ -37,8 +37,10 @@ function postAction(path,params,method,id,action) {
     });
 }
 
+
 // Function that refreshes the data
 function refresh() {
+    /*
     $("#nbPhones > span").remove();
     $("#nbTablets > span").remove();
     $("#items >").remove();
@@ -46,25 +48,22 @@ function refresh() {
     nbPhone = 0;
     nbTablet = 0;
 
-    device1.battery = Math.floor((Math.random() * 100) + 1);
-    device2.battery = Math.floor((Math.random() * 100) + 1);
+    $.get( "/api/user/"+username+"/devices", function( data ) {
+        console.log('data : ',data);
+    });
+
+    device1.data.battery = Math.floor((Math.random() * 100) + 1);
+    //device2.battery = Math.floor((Math.random() * 100) + 1);
 
     if(devices.length > 0){
         devices.forEach(loadDeviceInfo);
     } else {
         $("#items").append("<h2 style='color: black;'>No devices yet... Click on the plus to add one</h2>");
-    }
-
+    }*/
 }
-
-
-
-
 
 // Function that generate a device panel in html using its data
 function loadDeviceInfo(device) {
-	
-    username = document.getElementById("pseudo").innerHTML;
 	
 	var myurl =  "/api/users/" + username + "/devices"
 	
@@ -89,26 +88,31 @@ function loadDeviceInfo(device) {
 		}
 
 	
-    id = device.id;
+    id = device.uuid;
     name = device.name;
-    description = device.description;
-    type = device.type;
-    battery = device.battery;
-    inCharge = device.inCharge;
-    connection = device.connection;
+    manufacturer = device.manufacturer;
+    model = device.model;
+    type = device.platform;
+    version = device.version;
+    battery = device.data.battery;
+    inCharge = device.data.inCharge;
+    connection = device.data.connection;
 
-    if(type=='mobile-phone'){nbPhone++;
-        $("#nbPhones > span").remove();
-        $("#nbPhones").append(
-            "<span><i class='fa fa-mobile-phone'></i> "+nbPhone+"</span>"
-        );
-    };
-    if(type=='tablet'){nbTablet++;
-        $("#nbTablets > span").remove();
-        $("#nbTablets").append(
-            "<span><i class='fa fa-tablet'></i> "+nbTablet+"</span>"
-        );
-    };
+    description = manufacturer + " " + model;
+
+    if(type=='mobile-phone'){nbPhone++;};
+    $("#nbPhones > span").remove();
+    $("#nbPhones").append(
+        "<span><i class='fa fa-mobile-phone'></i> "+nbPhone+"</span>"
+    );
+
+    if(type=='tablet'){nbTablet++;};
+    $("#nbTablets > span").remove();
+    $("#nbTablets").append(
+        "<span><i class='fa fa-tablet'></i> "+nbTablet+"</span>"
+    );
+
+
 
     inCharge?animationToogle="progress-bar-striped active":animationToogle="";
     warning = false;
@@ -201,7 +205,7 @@ function changeDeleteModal(id,name) {
 function deleteById(id,name) {
 
     for(var i = devices.length-1; i >= 0; i--){
-        if(devices[i].id == id){
+        if(devices[i].uuid == id){
             devices.splice(i,1);
             break;
         }
@@ -228,13 +232,14 @@ function deleteById(id,name) {
 function getDeviceById(id) {
 	
     for(var i = devices.length-1; i >= 0; i--){
-        if(devices[i].id == id){
+        if(devices[i].uuid == id){
             return devices[i];
         }
     };
 }
 
 // Function that completes the more modal
+/*
 function changeMoreModal(id) {
 
     device = getDeviceById(id);
@@ -247,7 +252,7 @@ function changeMoreModal(id) {
     $("#moreModalHeader").append("<h5 class='modal-title'><b>More about "+device.name+"</b></h5>");
     $("#moreModalBody").append(
         "<div class='panel-group' id='accordion'>" +
-        getMoreModalElementTemplate('wifi','Network',"<p><b>State : </b>"+device.connection+"</p>") +
+        getMoreModalElementTemplate('wifi','Network',"<p><b>State : </b>"+device.data.connection+"</p>") +
         getMoreModalElementTemplate('bluetooth','Bluetooth',"<p><b>State : </b>disabled</p>") +
         getMoreModalElementTemplate('location','Position',
             "<p><b>Latitude : </b>"+Math.floor((Math.random() * 100000) + 1)/100+"</p>" +
@@ -255,19 +260,20 @@ function changeMoreModal(id) {
             "<p><b>Accuracy : </b>"+Math.floor((Math.random() * 10) + 1)+" meters</p>" +
             "<p><b>Timestamp : </b>"+currentTime.getDate()+" "+currentTime.getTime()+"</p>") +
         getMoreModalElementTemplate('battery-full','Battery',
-            "<p><b>Percentage : </b>"+device.battery+"%</p>" +
-            "<p><b>In charge : </b>"+device.inCharge+"</p>") +
+            "<p><b>Percentage : </b>"+device.data.battery+"%</p>" +
+            "<p><b>In charge : </b>"+device.data.inCharge+"</p>") +
         "</div>"
     );
 
 }
+*/
 
 // Function that completes the action modal
 function changeActionModal(username,id,action) {
 
     device = getDeviceById(id);
 
-    path = "/api/users/" + username + "/devices/" + device.id + "/actions";
+    path = "/api/users/" + username + "/devices/" + device.uuid + "/actions";
 	
 	//moche a changer
 	var params = { 
@@ -329,16 +335,3 @@ $(document).on('click', '#listActivable > a', function() {
     $(this).addClass("active");
     $("#chooseEventButton").removeClass("disabled");
 });
-
-// Fonctions de test pour ajax, vouées à disparaître
-function getTestDisplay(json) {
-    alert("data : "+json);
-}
-
-function getTest() {
-    $.ajax({
-        url: "http://odata.bordeaux.fr/v1/databordeaux/airejeux/?format=json",
-        dataType: "jsonp",
-        jsonpCallback: "getTestDisplay"
-    });
-}
