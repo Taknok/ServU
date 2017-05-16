@@ -32,7 +32,7 @@ app.use(session({
 
     //Default Route
     .get('/', function(req, res){
-        if (typeof(req.session.username) != 'undefined') {
+        if (typeof(req.session.username) !== 'undefined') {
             res.render('index', {
                 username: req.body.username,
                 lastname: req.body.lastname,
@@ -62,7 +62,7 @@ app.use(session({
         }
         request.get({
             url: 'http://' + adresse + ':' + portApi + '/api/users/' + req.params.username,
-            headers: token,
+            headers: {'x-access-token':token},
             json: true,
             body : {username: req.params.username}
         }, function (err, response, body) {
@@ -72,6 +72,8 @@ app.use(session({
             }
             switch(response.statusCode){
                 case 200:
+                    req.session.lastname = response.body.lastname;
+                    req.session.firstname = response.body.firstname;
                     res.render('gestion', {
                         username: req.session.username,
                         lastname: req.session.lastname,
@@ -85,7 +87,7 @@ app.use(session({
                     res.send("<h1>Forbidden</h1>");
                     break;
                 case 404:
-                    res.send("<h1>User not found</h1>");
+                    res.send("<h1>User Not Found</h1>");
                     break;
                 default :
                     res.send("<h1>Unknow Error</h1>");
@@ -111,7 +113,7 @@ app.use(session({
         }
         request.put({
             url: 'http://' + adresse + ':' + portApi + '/api/users/' + req.params.username,
-            headers : token,
+            headers: {'x-access-token':token},
             json: true,
             body : dataChanged}, function (err, response, body) {
             if (err) {
@@ -216,14 +218,9 @@ var login = function(req, res){
         console.log(response.statusCode);
         switch (response.statusCode) {
             case 200:
-                console.log(body.token);
                 token = body.token;
-                if(req.session.username != undefined){
-                    req.session.username = req.body.username;
-                    req.session.lastname = req.body.lastname;
-                    req.session.firstname = req.body.firstname;
-                }
-                res.redirect('/users/' + req.session.username);
+                req.session.username = req.body.username;
+                res.redirect('/users/' + req.body.username);
                 break;
             case 400:
                 res.send("<h1>Wrong Format</h1>");

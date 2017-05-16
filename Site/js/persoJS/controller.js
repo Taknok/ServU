@@ -114,13 +114,13 @@ angular.module('root', ['ui.bootstrap'])
             $http.post("http://127.0.0.1:3000/api/users/" + $scope.username +/devices/ + $scope.uuid + '/events', dataEvent).then(function () {
                 $log.log("Evenement bien envoyé au serveur");
             }).catch(function (e) {
-                if (e.status == 400) {
+                if (e.status === 400) {
                     console.error("Wrong format or Owner not found :", e);
-                } else if (e.status == 401) {
+                } else if (e.status === 401) {
                     console.error("Unauthorized :", e);
-                } else if (e.status == 403) {
+                } else if (e.status === 403) {
                     console.error("Forbidden :", e);
-                } else if (e.status == 404) {
+                } else if (e.status === 404) {
                     console.error("User or device not found :", e);
                 }
             });
@@ -174,7 +174,7 @@ angular.module('root', ['ui.bootstrap'])
             //Permet de creer des marker sur la map
             map.addListener('click', function(e) {
                 $scope.dataCondition.position = {lat : e.latLng.lat(), lng : e.latLng.lng()};
-                if(marker != undefined){
+                if(marker !== undefined){
                     marker.setMap(null);
                 }
                 marker = new google.maps.Marker({
@@ -209,7 +209,7 @@ angular.module('root', ['ui.bootstrap'])
             $ctrl.selectedItem = item;
             var myEl = angular.element(document.querySelector('#condition_statut'));
             $scope.dataCondition = {};
-            if (item.name == "Wifi") {
+            if (item.name === "Wifi") {
                 $scope.dataCondition.enable = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -219,7 +219,7 @@ angular.module('root', ['ui.bootstrap'])
                     '</div></form>'
                 );
             }
-            else if(item.name  == "Battery"){
+            else if(item.name  === "Battery"){
                 $scope.dataCondition.level = 20;
                 $scope.dataCondition.operator = '<';
                 $scope.changeOperator = function(operator){
@@ -237,7 +237,7 @@ angular.module('root', ['ui.bootstrap'])
                     '</div></form>'
                 );
             }
-            else if (item.name == "Bluetooth"){
+            else if (item.name === "Bluetooth"){
                 $scope.dataCondition.enable = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -247,7 +247,7 @@ angular.module('root', ['ui.bootstrap'])
                     '</div></form>'
                 );
             }
-            else if (item.name == "Localisation"){
+            else if (item.name === "Localisation"){
                 myEl.html(
                     '<form class="form-inline">' +
                     '<div id="map"></div>' +
@@ -267,7 +267,7 @@ angular.module('root', ['ui.bootstrap'])
             $ctrl.selectedAction = action;
             var myEl = angular.element(document.querySelector('#action_statut'));
             $scope.dataAction = {};
-            if (action.name == "Ring"){
+            if (action.name === "Ring"){
                 $scope.dataAction.time = 1;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -277,7 +277,7 @@ angular.module('root', ['ui.bootstrap'])
                     ' <div class="input-group-addon">Seconds</div></div></form>'
                 );
             }
-            else if (action.name == "Vibrate"){
+            else if (action.name === "Vibrate"){
                 $scope.dataAction.time = 1;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -287,7 +287,7 @@ angular.module('root', ['ui.bootstrap'])
                     ' <div class="input-group-addon">Seconds</div></div></form>'
                 );
             }
-            else if (action.name == "Flash"){
+            else if (action.name === "Flash"){
                 $scope.dataAction.enable = true;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -297,7 +297,7 @@ angular.module('root', ['ui.bootstrap'])
                     '</div></form>'
                 );
             }
-            else if (action.name == "Wifi"){
+            else if (action.name === "Wifi"){
                 $scope.dataAction.enable = true;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -307,7 +307,7 @@ angular.module('root', ['ui.bootstrap'])
                     '</div></form>'
                 );
             }
-            else if (action.name == "Bluetooth"){
+            else if (action.name === "Bluetooth"){
                 $scope.dataAction.enable = true;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -317,7 +317,7 @@ angular.module('root', ['ui.bootstrap'])
                     '</div></form>'
                 );
             }
-            else if (action.name == "Ligthness"){
+            else if (action.name === "Ligthness"){
                 $scope.dataAction.level = 50;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
