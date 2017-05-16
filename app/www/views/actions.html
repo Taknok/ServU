@@ -28,6 +28,15 @@
 				</div>
 			</label>
 		</li>
+		<li class="item item-icon-left item-toggle">
+			<i class="icon ion-lightbulb"></i><div on-double-tap="testFlashlight()">{{"Flashlight" | translate}}</div>
+			<label class="toggle toggle-balenced">
+				<input type="checkbox" ng-model="flashlight.enable">
+				<div class="track">
+					<div class="handle"></div>
+				</div>
+			</label>
+		</li>
 	</ul>
   </ion-content>
 </ion-view>

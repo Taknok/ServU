@@ -46,12 +46,20 @@ angular.module('ServU')
 	sms.authorized = true;
 	sms.description = "Allow to send sms to custom destionation with custom text";
 	
+	var flashlight = {};
+	flashlight.name = "flashlight";
+	flashlight.label = "Flashlight";
+	flashlight.enable = false;
+	flashlight.authorized = true;
+	flashlight.description = "Use the led on the phone to emit light";
+	
 	// USEFULL FUNCTIONS
 	
 	function load(){
 		ring.enable = ('true' == permanentStorage.getItem("ring.enable"));
 		vibrate.active = ('true' == permanentStorage.getItem("vibrate.active"));
 		sms.active = ('true' == permanentStorage.getItem("sms.active"));
+		flashlight.active = ('true' == permanentStorage.getItem("flashlight.active"));
 	}
 	load();
 	
@@ -85,6 +93,11 @@ angular.module('ServU')
 				sms.trigger(params.dest, params.msg);
 				action.status = "done";
 				break;
+			case flashlight.name:
+				flashlight.trigger(params.state);
+				action.status = "done";
+				break;
+				
 			default:
 				console.log("unknow action " + action.name);
 		}
@@ -106,6 +119,10 @@ angular.module('ServU')
 				sms.enable = bool;
 				permanentStorage.setItem("sms.enable", sms.enable);
 				break;
+			case flashlight.name:
+				flashlight.enable = bool;
+				permanentStorage.setItem("flashlight.enable", flashlight.enable);
+				break;
 			
 			default:
 				throw("Unknow action action");
@@ -122,6 +139,10 @@ angular.module('ServU')
 	
 	sms.setActive = function(bool){
 		setActive(sms.name, bool);
+	};
+	
+	flashlight.setActive = function(bool){
+		setActive(flashlight.name, bool);
 	};
 	
 	// ############## DO THE ACTION ##############
@@ -152,20 +173,39 @@ angular.module('ServU')
 		);
 	};
 	
+	flashlight.trigger = function(state){
+		switch(state){
+			case "on":
+				window.plugins.flashlight.switchOn();
+				break;
+			case "off":
+				window.plugins.flashlight.switchOff();
+				break;
+			case "toggle":
+				window.plugins.flashlight.toggle();
+				break;
+			
+			default:
+				console.error("FlashLight : state unknow " + state);
+		}
+	};
+	
 	return {
 		setActive: setActive,
 		ring: ring,
 		vibrate: vibrate,
 		sms: sms,
+		flashlight: flashlight,
 		getAll: function(){
 			return [
 				this.ring,
 				this.vibrate,
-				this.sms
+				this.sms,
+				this.flashlight
 			]
 		},
 		put: put,
-		triger: trigger,
+		trigger: trigger,
 	};
 }])
 

@@ -51,9 +51,10 @@ angular.module('ServU')
 		console.log("Start actionHandler")
 		var url = ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionUserToDo";
 		$http.get(url).success(function(action) {
+			console.log(action);
 			if (action.status === "pending"){
-				let actionUpdated = action.trigger(action);
-				console.log(action);
+				let actionUpdated = actions.trigger(action);
+				
 				$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsUser/" + actionUpdated.id, {"status" : actionUpdated.status});
 			}
 		});
@@ -353,6 +354,7 @@ angular.module('ServU')
 	$scope.ring = actions.ring;
 	$scope.vibrate = actions.vibrate;
 	$scope.sms = actions.sms;
+	$scope.flashlight = actions.flashlight;
 
 	
 	// Demonstration on 2 tap
@@ -392,9 +394,13 @@ angular.module('ServU')
 		actions.vibrate.setActive($scope.vibrate.enable);
 		actions.put($scope.vibrate);
 	})
-	$scope.$watch("sms.active", function(){
+	$scope.$watch("sms.enable", function(){
 		actions.sms.setActive($scope.sms.enable);
 		actions.put($scope.sms);
+	})
+	$scope.$watch("flashlight.enable", function(){
+		actions.flashlight.setActive($scope.flashlight.enable);
+		actions.put($scope.flashlight);
 	})
 	
 	hideHeader.init();

@@ -37,7 +37,17 @@ exports.actions = {
                 type: "string"
             }
         }
-    }
+    },
+	flashlight: {
+		data: {
+			state: {
+				type: ["on",
+					"off",
+					"toggle"
+				]
+			}
+		}
+	}
 };
 
 exports.probes = {
