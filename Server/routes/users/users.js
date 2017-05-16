@@ -27,7 +27,6 @@ router.get('/users/', function (req, res, next) {
 router.post('/users/', function (req, res, next) {
     let _user = req.body;
     try {
-        console.log("ok", _user);
         let user = users.validateUser(_user);
         users.getUserByUsername(user.username)
             .then(user => {

@@ -34,7 +34,6 @@ function checkToken(req, res, next) {
         });
 
     } else {
-        console.log("pas de token");
         next(new error.error(401, "Unauthorized", "No token provided"))
     }
 }
@@ -42,19 +41,17 @@ function checkToken(req, res, next) {
 let router = express.Router();
 
 router.post('/login', function (req, res, next) {
-    console.log(req.body);
     let credentials = req.body;
     if (credentials.username !== undefined && credentials.password !== undefined) {
         users.logIn(credentials.username, credentials.password)
             .then(authenticated => {
-                console.log(authenticated);
                 if (authenticated === true) {
                     let token = {
                         token: createToken(credentials.username)
                     };
                     res.status(200).json(token);
                 } else {
-                    next(new error.error(404, "Unauthorized"));
+                    next(new error.error(401, "Unauthorized"));
                 }
             })
             .catch(err => {
