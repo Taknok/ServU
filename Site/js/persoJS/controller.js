@@ -3,8 +3,7 @@
  */
 
 angular.module('root', ['ui.bootstrap'])
-    .controller("gestion", ['$scope', '$log','$uibModal', '$compile','$http', function($scope, $log, $uibModal, $compile, $http) {
-        //$scope.message = 'Hello World!';
+    .controller("gestion", ['$scope', '$log','$uibModal', '$compile','$http', function($scope, $log, $uibModal, $compile) {
         $scope.addNewButton = function(element){
             $compile(element)($scope);
         };
@@ -95,7 +94,7 @@ angular.module('root', ['ui.bootstrap'])
             {name : 'Bluetooth', icon : "icon ion-bluetooth"}];
 
         //Lors du clic create du modal
-        $ctrl.ok = function ($http) {
+        $ctrl.ok = function () {
             $log.log(JSON.stringify($scope.dataCondition));
             $log.log(JSON.stringify($scope.dataAction));
             var dataIf = {
@@ -125,225 +124,224 @@ angular.module('root', ['ui.bootstrap'])
                     console.error("User or device not found :", e);
                 }
             });
+            $uibModalInstance.close();
         };
-        $uibModalInstance.close();
-    };
 
-//Lors du clic sur cancel ou a cote du modal
-$ctrl.cancel = function () {
-    $uibModalInstance.dismiss('cancel');
-};
+        //Lors du clic sur cancel ou a cote du modal
+        $ctrl.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
 
-//Gere l'affichage de la carte pour localisation
-$scope.affichage = function(){
-    var marker;
+        //Gere l'affichage de la carte pour localisation
+        $scope.affichage = function(){
+            var marker;
 
-    // Option pour la carte
-    var Enseirb_position = new google.maps.LatLng(44.8066376, -0.6073554);
-    var mapOptions = {
-        center: Enseirb_position,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        disableDefaultUI: false,
-        zoom: 14,
-        zoomControl: true,
-        mapTypeControl: false,
-        scaleControl: true,
-        streetViewControl: false,
-        rotateControl: true
-    };
+            // Option pour la carte
+            var Enseirb_position = new google.maps.LatLng(44.8066376, -0.6073554);
+            var mapOptions = {
+                center: Enseirb_position,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                disableDefaultUI: false,
+                zoom: 14,
+                zoomControl: true,
+                mapTypeControl: false,
+                scaleControl: true,
+                streetViewControl: false,
+                rotateControl: true
+            };
 
-    //Creation de la carte
-    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-    $scope.radius = 1000;
-    var radiusRange = new google.maps.Circle({
-        strokeColor: '#a3afff',
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
-        fillColor: '#86f3ff',
-        fillOpacity: 0.10,
-        clickable : false,
-        draggable : false,
-        map: map,
-        center: map.center,
-        radius: $scope.radius
-    });
+            //Creation de la carte
+            var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+            $scope.radius = 1000;
+            var radiusRange = new google.maps.Circle({
+                strokeColor: '#a3afff',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#86f3ff',
+                fillOpacity: 0.10,
+                clickable : false,
+                draggable : false,
+                map: map,
+                center: map.center,
+                radius: $scope.radius
+            });
 
-    //Permet d'avoir sa position
-    var survId = navigator.geolocation.getCurrentPosition(function (pos) {
-        map.setCenter({lat : pos.coords.latitude, lng : pos.coords.longitude});
-    }, function(){},{maximumAge: 10000, timeout:0});
+            //Permet d'avoir sa position
+            var survId = navigator.geolocation.getCurrentPosition(function (pos) {
+                map.setCenter({lat : pos.coords.latitude, lng : pos.coords.longitude});
+            }, function(){},{maximumAge: 10000, timeout:0});
 
-    //Permet de creer des marker sur la map
-    map.addListener('click', function(e) {
-        $scope.dataCondition.position = {lat : e.latLng.lat(), lng : e.latLng.lng()};
-        if(marker != undefined){
-            marker.setMap(null);
-        }
-        marker = new google.maps.Marker({
-            position: $scope.dataCondition.position,
-            map: map
-        });
-        map.setCenter(marker.getPosition());
-        radiusRange.setCenter(marker.getPosition());
-        $scope.dataCondition = {lat : marker.getPosition().lat(), lng : marker.getPosition().lng(), radius : $scope.radius }
-    });
+            //Permet de creer des marker sur la map
+            map.addListener('click', function(e) {
+                $scope.dataCondition.position = {lat : e.latLng.lat(), lng : e.latLng.lng()};
+                if(marker != undefined){
+                    marker.setMap(null);
+                }
+                marker = new google.maps.Marker({
+                    position: $scope.dataCondition.position,
+                    map: map
+                });
+                map.setCenter(marker.getPosition());
+                radiusRange.setCenter(marker.getPosition());
+                $scope.dataCondition = {lat : marker.getPosition().lat(), lng : marker.getPosition().lng(), radius : $scope.radius }
+            });
 
-    //Permet de changer le zoom de la carte en fonction du rayon
-    $scope.setRadius = function(filtre_rayon){
-        var valeur_rayon = parseFloat(filtre_rayon);
-        if (valeur_rayon < 75)
-            map.setZoom(18);
-        else if (valeur_rayon >= 75 && valeur_rayon < 150)
-            map.setZoom(17);
-        else if (valeur_rayon >= 150 && valeur_rayon < 300)
-            map.setZoom(16);
-        else if (valeur_rayon >= 300 && valeur_rayon < 500)
-            map.setZoom(15);
-        else if(valeur_rayon >= 500 && valeur_rayon < 1000)
-            map.setZoom(14);
-        else if(valeur_rayon >= 1000 && valeur_rayon <= 2000)
-            map.setZoom(13);
-    };
-};
+            //Permet de changer le zoom de la carte en fonction du rayon
+            $scope.setRadius = function(filtre_rayon){
+                var valeur_rayon = parseFloat(filtre_rayon);
+                if (valeur_rayon < 75)
+                    map.setZoom(18);
+                else if (valeur_rayon >= 75 && valeur_rayon < 150)
+                    map.setZoom(17);
+                else if (valeur_rayon >= 150 && valeur_rayon < 300)
+                    map.setZoom(16);
+                else if (valeur_rayon >= 300 && valeur_rayon < 500)
+                    map.setZoom(15);
+                else if(valeur_rayon >= 500 && valeur_rayon < 1000)
+                    map.setZoom(14);
+                else if(valeur_rayon >= 1000 && valeur_rayon <= 2000)
+                    map.setZoom(13);
+            };
+        };
 
 //Reagi lors du changement de condition
-$ctrl.condition_update = function (item) {
-    $ctrl.selectedItem = item;
-    var myEl = angular.element(document.querySelector('#condition_statut'));
-    $scope.dataCondition = {};
-    if (item.name == "Wifi") {
-        $scope.dataCondition.enable = false;
-        myEl.html(
-            '<form class="form-inline"><div class="form-group">' +
-            '<div class="input-group">' +
-            '<div class="input-group-addon">Status : </div>' +
-            '<button class="btn btn-default" ng-click="dataCondition.enable = !dataCondition.enable">{{dataCondition.enable}}</button>' +
-            '</div></form>'
-        );
-    }
-    else if(item.name  == "Battery"){
-        $scope.dataCondition.level = 20;
-        $scope.dataCondition.operator = '<';
-        $scope.changeOperator = function(operator){
-            if(operator == '>')
+        $ctrl.condition_update = function (item) {
+            $ctrl.selectedItem = item;
+            var myEl = angular.element(document.querySelector('#condition_statut'));
+            $scope.dataCondition = {};
+            if (item.name == "Wifi") {
+                $scope.dataCondition.enable = false;
+                myEl.html(
+                    '<form class="form-inline"><div class="form-group">' +
+                    '<div class="input-group">' +
+                    '<div class="input-group-addon">Status : </div>' +
+                    '<button class="btn btn-default" ng-click="dataCondition.enable = !dataCondition.enable">{{dataCondition.enable}}</button>' +
+                    '</div></form>'
+                );
+            }
+            else if(item.name  == "Battery"){
+                $scope.dataCondition.level = 20;
                 $scope.dataCondition.operator = '<';
-            else
-                $scope.dataCondition.operator = '>';
-        };
-        myEl.html(
-            '<form class="form-inline"><div class="form-group">' +
-            '<div class="input-group">' +
-            '<div class="input-group-addon">Battery level : </div>' +
-            '<button class="btn btn-default" ng-click="changeOperator(dataCondition.operator)">{{dataCondition.operator}}</button>' +
-            '<div class="form-group"><input class="form-control" id="battery_low" placeholder="%" min="1" max="100" type="number" required ng-model="dataCondition.level">' +
-            '</div></form>'
-        );
-    }
-    else if (item.name == "Bluetooth"){
-        $scope.dataCondition.enable = false;
-        myEl.html(
-            '<form class="form-inline"><div class="form-group">' +
-            '<div class="input-group">' +
-            '<div class="input-group-addon">Status : </div>' +
-            '<button class="btn btn-default" ng-click="dataCondition.enable = !dataCondition.enable">{{dataCondition.enable}}</button>' +
-            '</div></form>'
-        );
-    }
-    else if (item.name == "Localisation"){
-        myEl.html(
-            '<form class="form-inline">' +
-            '<div id="map"></div>' +
-            '<button type="submit" class="btn btn-default">Select the range :</button>' +
-            '<input class="form-control" type="range" min="1" max="3000" ng-model="radius" ng-change="setRadius(radius)" required>' +
-            '<button type="submit" class="btn btn-default">{{radius}}</button>' +
-            '</form>'
-        );
+                $scope.changeOperator = function(operator){
+                    if(operator == '>')
+                        $scope.dataCondition.operator = '<';
+                    else
+                        $scope.dataCondition.operator = '>';
+                };
+                myEl.html(
+                    '<form class="form-inline"><div class="form-group">' +
+                    '<div class="input-group">' +
+                    '<div class="input-group-addon">Battery level : </div>' +
+                    '<button class="btn btn-default" ng-click="changeOperator(dataCondition.operator)">{{dataCondition.operator}}</button>' +
+                    '<div class="form-group"><input class="form-control" id="battery_low" placeholder="%" min="1" max="100" type="number" required ng-model="dataCondition.level">' +
+                    '</div></form>'
+                );
+            }
+            else if (item.name == "Bluetooth"){
+                $scope.dataCondition.enable = false;
+                myEl.html(
+                    '<form class="form-inline"><div class="form-group">' +
+                    '<div class="input-group">' +
+                    '<div class="input-group-addon">Status : </div>' +
+                    '<button class="btn btn-default" ng-click="dataCondition.enable = !dataCondition.enable">{{dataCondition.enable}}</button>' +
+                    '</div></form>'
+                );
+            }
+            else if (item.name == "Localisation"){
+                myEl.html(
+                    '<form class="form-inline">' +
+                    '<div id="map"></div>' +
+                    '<button type="submit" class="btn btn-default">Select the range :</button>' +
+                    '<input class="form-control" type="range" min="1" max="3000" ng-model="radius" ng-change="setRadius(radius)" required>' +
+                    '<button type="submit" class="btn btn-default">{{radius}}</button>' +
+                    '</form>'
+                );
 
-        $scope.affichage();
-    }
-    $compile(myEl)($scope);
-};
+                $scope.affichage();
+            }
+            $compile(myEl)($scope);
+        };
 
 //Reagi lors du changement d'action
-$ctrl.action_update = function (action) {
-    $ctrl.selectedAction = action;
-    var myEl = angular.element(document.querySelector('#action_statut'));
-    $scope.dataAction = {};
-    if (action.name == "Ring"){
-        $scope.dataAction.time = 1;
-        myEl.html(
-            '<form class="form-inline"><div class="form-group">' +
-            '<div class="input-group">' +
-            '<div class="input-group-addon">Time : </div>' +
-            '<input class="form-control" id="battery_low" placeholder="Time to ring" min="1" max="10" type="number" required ng-model="dataAction.time">' +
-            ' <div class="input-group-addon">Seconds</div></div></form>'
-        );
-    }
-    else if (action.name == "Vibrate"){
-        $scope.dataAction.time = 1;
-        myEl.html(
-            '<form class="form-inline"><div class="form-group">' +
-            '<div class="input-group">' +
-            '<div class="input-group-addon">Time : </div>' +
-            '<input class="form-control" id="Vibrate" placeholder="Time to ring" min="1" max="10" type="number" required ng-model="dataAction.time">' +
-            ' <div class="input-group-addon">Seconds</div></div></form>'
-        );
-    }
-    else if (action.name == "Flash"){
-        $scope.dataAction.enable = true;
-        myEl.html(
-            '<form class="form-inline"><div class="form-group">' +
-            '<div class="input-group">' +
-            '<div class="input-group-addon">Status : </div>' +
-            '<button class="btn btn-default">{{dataCondition.enable}}</button>' +
-            '</div></form>'
-        );
-    }
-    else if (action.name == "Wifi"){
-        $scope.dataAction.enable = true;
-        myEl.html(
-            '<form class="form-inline"><div class="form-group">' +
-            '<div class="input-group">' +
-            '<div class="input-group-addon">Status : </div>' +
-            '<button class="btn btn-default" ng-click="dataCondition.enable != dataCondition.enable">{{dataAction.enable}}</button>' +
-            '</div></form>'
-        );
-    }
-    else if (action.name == "Bluetooth"){
-        $scope.dataAction.enable = true;
-        myEl.html(
-            '<form class="form-inline"><div class="form-group">' +
-            '<div class="input-group">' +
-            '<div class="input-group-addon">Status : </div>' +
-            '<button class="btn btn-default" ng-click="dataCondition.enable != dataCondition.enable">{{dataAction.enable}}</button>' +
-            '</div></form>'
-        );
-    }
-    else if (action.name == "Ligthness"){
-        $scope.dataAction.level = 50;
-        myEl.html(
-            '<form class="form-inline"><div class="form-group">' +
-            '<div class="input-group">' +
-            '<div class="input-group-addon">Level of ligthness : </div>' +
-            '<input class="form-control" id="lightnessLevel" placeholder="%" min="1" max="100" type="number" required ng-model="dataAction.level">' +
-            '</div></form>'
-        );
-    }
-    $compile(myEl)($scope);
-};
-})
+        $ctrl.action_update = function (action) {
+            $ctrl.selectedAction = action;
+            var myEl = angular.element(document.querySelector('#action_statut'));
+            $scope.dataAction = {};
+            if (action.name == "Ring"){
+                $scope.dataAction.time = 1;
+                myEl.html(
+                    '<form class="form-inline"><div class="form-group">' +
+                    '<div class="input-group">' +
+                    '<div class="input-group-addon">Time : </div>' +
+                    '<input class="form-control" id="battery_low" placeholder="Time to ring" min="1" max="10" type="number" required ng-model="dataAction.time">' +
+                    ' <div class="input-group-addon">Seconds</div></div></form>'
+                );
+            }
+            else if (action.name == "Vibrate"){
+                $scope.dataAction.time = 1;
+                myEl.html(
+                    '<form class="form-inline"><div class="form-group">' +
+                    '<div class="input-group">' +
+                    '<div class="input-group-addon">Time : </div>' +
+                    '<input class="form-control" id="Vibrate" placeholder="Time to ring" min="1" max="10" type="number" required ng-model="dataAction.time">' +
+                    ' <div class="input-group-addon">Seconds</div></div></form>'
+                );
+            }
+            else if (action.name == "Flash"){
+                $scope.dataAction.enable = true;
+                myEl.html(
+                    '<form class="form-inline"><div class="form-group">' +
+                    '<div class="input-group">' +
+                    '<div class="input-group-addon">Status : </div>' +
+                    '<button class="btn btn-default">{{dataCondition.enable}}</button>' +
+                    '</div></form>'
+                );
+            }
+            else if (action.name == "Wifi"){
+                $scope.dataAction.enable = true;
+                myEl.html(
+                    '<form class="form-inline"><div class="form-group">' +
+                    '<div class="input-group">' +
+                    '<div class="input-group-addon">Status : </div>' +
+                    '<button class="btn btn-default" ng-click="dataCondition.enable != dataCondition.enable">{{dataAction.enable}}</button>' +
+                    '</div></form>'
+                );
+            }
+            else if (action.name == "Bluetooth"){
+                $scope.dataAction.enable = true;
+                myEl.html(
+                    '<form class="form-inline"><div class="form-group">' +
+                    '<div class="input-group">' +
+                    '<div class="input-group-addon">Status : </div>' +
+                    '<button class="btn btn-default" ng-click="dataCondition.enable != dataCondition.enable">{{dataAction.enable}}</button>' +
+                    '</div></form>'
+                );
+            }
+            else if (action.name == "Ligthness"){
+                $scope.dataAction.level = 50;
+                myEl.html(
+                    '<form class="form-inline"><div class="form-group">' +
+                    '<div class="input-group">' +
+                    '<div class="input-group-addon">Level of ligthness : </div>' +
+                    '<input class="form-control" id="lightnessLevel" placeholder="%" min="1" max="100" type="number" required ng-model="dataAction.level">' +
+                    '</div></form>'
+                );
+            }
+            $compile(myEl)($scope);
+        };
+    })
 
-//Permet de recompiler un bouton javascript avec angular
-.directive("setOnClick", function($compile){
-    return {
-        restrict: "A",
-        link: function(scope, elm)
-        {
-            elm.attr("ng-click", "open('lg')");
-            elm.removeAttr("set-on-click");
-            $compile(elm)(scope);
-        }
-    };
-});
+    //Permet de recompiler un bouton javascript avec angular
+    .directive("setOnClick", function($compile){
+        return {
+            restrict: "A",
+            link: function(scope, elm)
+            {
+                elm.attr("ng-click", "open('lg')");
+                elm.removeAttr("set-on-click");
+                $compile(elm)(scope);
+            }
+        };
+    });
 
 

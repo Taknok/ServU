@@ -34,12 +34,19 @@ app.use(session({
     .get('/', function(req, res){
         if (typeof(req.session.username) != 'undefined') {
             res.render('index', {
-                username: user_session.username,
-                lastname: user_session.lastname,
-                firstname: user_session.firstname,
+                username: req.body.username,
+                lastname: req.body.lastname,
+                firstname: req.body.firstname,
                 session: true});
         }
         else{
+
+            /*
+            res.render('gestion', {
+                username: req.body.username,
+                lastname: req.body.lastname,
+                firstname: req.body.firstname,
+                session: true}); */
              res.render('index', {
              session: false,
              username: "test"});
@@ -216,7 +223,7 @@ var login = function(req, res){
                     req.session.lastname = req.body.lastname;
                     req.session.firstname = req.body.firstname;
                 }
-                //res.redirect('/users/' + req.session.username);
+                res.redirect('/users/' + req.session.username);
                 break;
             case 400:
                 res.send("<h1>Wrong Format</h1>");
