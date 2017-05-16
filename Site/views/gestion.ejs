@@ -10,25 +10,26 @@
 
     <title>ServU</title>
 
+    <link rel="icon" type="image/png" href="../img/smallLogo.png" />
     <!-- Bootstrap Core CSS -->
-    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="../../css/stylish-portfolio.css" rel="stylesheet">
+    <link href="../css/stylish-portfolio.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="../../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
-    <link href="../../css/ionicons.css" rel="stylesheet" type="text/css">
+    <link href="../css/ionicons.css" rel="stylesheet" type="text/css">
 
     <!-- Personnal CSS Piti -->
-    <link href="../../css/persoCSS/amethystFont.css" rel="stylesheet">
-    <link href="../../css/persoCSS/colorOrange.css" rel="stylesheet">
+    <link href="../css/persoCSS/amethystFont.css" rel="stylesheet">
+    <link href="../css/persoCSS/colorOrange.css" rel="stylesheet">
 
-    <link href="../../css/persoCSS/custom.css" rel="stylesheet">
+    <link href="../css/persoCSS/custom.css" rel="stylesheet">
     <link href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.min.css" rel="stylesheet">
     <style>
-        .correct {
+        /*.correct {
             border-color: rgba(68, 191, 68, 0.75);
         }
 
@@ -44,11 +45,13 @@
         .incorrect:focus {
             border-color: rgba(191, 68, 68, 0.75);
             box-shadow: 0 0 8px rgba(191, 68, 68, 0.5);
-        }
+        }*/
     </style>
 
     <!-- qrcode library -->
-    <script type="text/javascript" src="../../js/qrcode.js"></script>
+    <script type="text/javascript" src="../js/qrcode.js"></script>
+
+
 
 </head>
 
@@ -90,7 +93,7 @@
 
         <div class="row">
             <div class="col-md-12 col-xs-12 text-center">
-                <h2 class="fontAmethyst">Profile {{username}}</h2>
+                <h2 class="fontAmethyst">Profile</h2>
                 <button class="btn btn-xs btn-info" ng-click="open('lg')"><i class="glyphicon glyphicon-plus"></i></button>
                 <hr class="small">
             </div>
@@ -323,7 +326,7 @@
 </section>
 
 <!-- Event Skeleton -->
-<section id="event" class="about bg-warning">
+<section id="event" class="about bg-warning" ng-controller = 'EventSkeletonCtrl'>
     <div class="container">
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
@@ -333,26 +336,27 @@
         </div>
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="alertPlaceEventSkeleton"></div>
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <div class="list-group">
+                        <div class="list-group" ng-repeat="eventSkeleton in eventSkeletons">
                             <button type="button" class="list-group-item">
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <a class="btn btn-primary pull-right"><i class="fa fa-times"></i></a>
-                                        <h2 class="list-group-item-heading fontCounter" style="color: #5D9CEC">Event 1</h2>
-                                        <p class="list-group-item-text">...</p>
+                                        <h2 class="list-group-item-heading fontCounter" style="color: #5D9CEC">{{eventSkeleton.label}}</h2>
+                                        <p class="list-group-item-text">{{eventSkeleton.description}}</p>
                                         <hr>
                                     </div>
 
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <h3 class="list-group-item-text text-aqua fontCounter">IF</h3>
-                                        <p>Blabla</p>
+                                        <p>{{eventSkeleton.if.probe}} {{eventSkeleton.if.comarator}} {{eventSkeleton.if.value}} </p>
                                         <hr>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                         <h3 class="list-group-item-text text-grapefruit fontCounter">THEN</h3>
-                                        <p>Blabla</p>
+                                        <p>{{eventSkeleton.action.type}} {{eventSkeleton.action.parameter}}</p>
                                         <hr>
                                     </div>
                                     <div class="clearfix"></div>
@@ -433,10 +437,10 @@
                 <div class='modal-footer' id="addModalFooter">
                     <div class="row">
                         <div class="col-md-3 pull-left">
-                            <img src="../../img/soon-play.PNG" class="store">
+                            <img src="../img/soon-play.PNG" class="store">
                         </div>
                         <div class="col-md-3 pull-left">
-                            <img src="../../img/soon-app.PNG" class="store">
+                            <img src="../img/soon-app.PNG" class="store">
                         </div>
                     </div>
                     <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
@@ -539,7 +543,7 @@
 
 
 <!-- jQuery -->
-<script src="../../js/jquery.js"></script>
+<script src="../js/jquery.js"></script>
 
 <!-- Bootstrap Core JavaScript -->
 
@@ -548,13 +552,16 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
 
 <script src="../js/persoJS/controller.js"></script>
-<script src="../../js/bootstrap.min.js"></script>
-<script src="../../js/persoJS/devicesController.js"></script>
-<script src="../../js/persoJS/templates.js"></script>
-<script src="../../js/persoJS/formulaire.js"></script>
-<script src="../../js/bootstrap-notify.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/persoJS/devicesController.js"></script>
+<script src="../js/persoJS/templates.js"></script>
+<script src="../js/persoJS/formulaire.js"></script>
+<script src="../js/bootstrap-notify.js"></script>
 
-<script src="../../js/persoJS/controllers.js"></script>
+<script src="../js/persoJS/controllers.js"></script>
+
+<script src="../js/persoJS/controllerEventSkeleton.js"></script>
+<script src="../js/persoJS/services.js"></script>
 
 <!-- Validation JQuery Form -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.js"></script>
@@ -564,10 +571,10 @@
 <!--<script src="../js/bootstrap.min.js"></script>-->
 
 <!-- Theme Bootstrap -->
-<script type="text/javascript" src="../../js/persoJS/themeBootstrap.js" ></script>
+<script type="text/javascript" src="../js/persoJS/themeBootstrap.js" ></script>
 
 <!-- Personnal Script PITI -->
-<script type="text/javascript" src="../../js/persoJS/controlConnection.js" ></script>
+<script type="text/javascript" src="../js/persoJS/controlConnection.js" ></script>
 <script src="../js/persoJS/ui-bootstrap-tpls-2.5.0.min.js"></script>
 
 

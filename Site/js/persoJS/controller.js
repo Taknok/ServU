@@ -241,8 +241,8 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 $scope.ConditionName = "battery.level";
                 $scope.dataCondition.value = 20;
                 $scope.dataCondition.comparator = '<';
-                $scope.changeOperator = function(operator){
-                    if(comparator == '>')
+                $scope.changeOperator = function(comparator){
+                    if(comparator === '>')
                         $scope.dataCondition.comparator = '<';
                     else
                         $scope.dataCondition.comparator = '>';
