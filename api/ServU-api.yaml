@@ -798,7 +798,7 @@ paths:
         description: Action's status
         required: true
         schema:
-          $ref: "#/definitions/action_status"
+          $ref: "#/definitions/status"
       responses:
         "204":
           description: Success
@@ -966,7 +966,7 @@ definitions:
       description:
         type: string
       status:
-        $ref: "#/definitions/action_status"
+        $ref: "#/definitions/status"
       parameters:
         type: object
       creation_date:
@@ -1011,7 +1011,7 @@ definitions:
       action:
         type: object
 
-  action_status:
+  status:
     type: string
     enum: ["pending","in progress","done"]
 

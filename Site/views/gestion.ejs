@@ -63,13 +63,22 @@
             <a href="/" onclick=$("#menu-close").click();>ServU</a>
         </li>
         <li>
+            <a href="/" onclick=$("#menu-close").click();>Home</a>
+        </li>
+        <li>
+            <a href="/logout" onclick=$("#menu-close").click();>Logout</a>
+        </li>
+        <li>
+            <hr>
+        </li>
+        <li>
             <a href="#profile" onclick=$("#menu-close").click();>Profil</a>
         </li>
         <li>
             <a href="#devices" onclick=$("#menu-close").click();>Devices</a>
         </li>
         <li>
-            <a href="/logout" onclick=$("#menu-close").click();>Logout</a>
+            <a href="#event" onclick=$("#menu-close").click();>Event Creator</a>
         </li>
     </ul>
 </nav>
@@ -126,14 +135,14 @@
                                             <div class="form-group">
                                                 <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="text">Change first name :</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
-                                                    <input type="text" class="form-control" id="change_prenom" name="firstname" placeholder="Enter new first name">
+                                                    <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter new first name">
                                                     <span class="erreur_info alert-danger">At least 2 characters must be entered !</span>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="text">Change last name :</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
-                                                    <input type="text" class="form-control" id="change_nom" name="lastname" placeholder="Enter new last name">
+                                                    <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter new last name">
                                                     <span class="erreur_info alert-danger">At least 2 characters must be entered !</span>
                                                 </div>
                                             </div>
@@ -189,7 +198,7 @@
                     <div class="panel-heading">
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12">
-                                <h2 class="fontAmethyst">Available devices</h2>
+                                <h2 class="fontAmethyst">Devices</h2>
                                 <hr class="small">
                             </div>
                         </div>
@@ -235,6 +244,72 @@
         <!-- /.row -->
     </div>
     <!-- /.container -->
+</section>
+
+<!-- Event Skeleton -->
+<section id="event" class="about bg-warning">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                <h2 class="fontAmethyst text-white">Event Skeletons</h2>
+                <hr class="small">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="list-group">
+                            <button type="button" class="list-group-item">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <a class="btn btn-primary pull-right"><i class="fa fa-times"></i></a>
+                                        <h2 class="list-group-item-heading fontCounter" style="color: #5D9CEC">Event 1</h2>
+                                        <p class="list-group-item-text">...</p>
+                                        <hr>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <h3 class="list-group-item-text text-aqua fontCounter">IF</h3>
+                                        <p>Blabla</p>
+                                        <hr>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <h3 class="list-group-item-text text-grapefruit fontCounter">THEN</h3>
+                                        <p>Blabla</p>
+                                        <hr>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </button>
+                        </div>
+                        <!--
+                        <table class="table table-hover col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <thead>
+                                <tr>
+                                    <th class="info">Name</th>
+                                    <th>Description</th>
+                                    <th>IF</th>
+                                    <th>THEN</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="info">Event 1</td>
+                                    <td>Blablalalaaaadzfafgagagageagddceac</td>
+                                    <td>Battery Level < 10%</td>
+                                    <td>Call Maman</td>
+                                    <td><button class="btn btn-primary"><span aria-hidden="true">&times;</span></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <!-- Delete modal -->

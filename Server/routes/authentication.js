@@ -42,10 +42,12 @@ function checkToken(req, res, next) {
 let router = express.Router();
 
 router.post('/login', function (req, res, next) {
+    console.log(req.body);
     let credentials = req.body;
     if (credentials.username !== undefined && credentials.password !== undefined) {
         users.logIn(credentials.username, credentials.password)
             .then(authenticated => {
+                console.log(authenticated);
                 if (authenticated === true) {
                     let token = {
                         token: createToken(credentials.username)

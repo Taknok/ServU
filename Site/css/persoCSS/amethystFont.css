@@ -3,8 +3,17 @@
     src: url('../../fonts/persoFonts/Amethyst.ttf');
 }
 
+@font-face {
+    font-family: "Counter-Strike";
+    src: url('../../fonts/persoFonts/cs_regular.ttf')
+}
+
 .fontAmethyst {
     font-family: "Amethyst";
+}
+
+.fontCounter {
+    font-family: "Counter-Strike";
 }
 
 .text-white {
