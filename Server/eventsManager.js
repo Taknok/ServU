@@ -3,6 +3,7 @@ const actions = require("./database/actions");
 const probes = require("./database/probes");
 const COMPARATOR = require("./contentVerification/content").COMPARATOR;
 const LOGIC = require("./contentVerification/content").LOGIC;
+const validator = require("./contentVerification/validator");
 
 function refreshEvent(event) {
     let conditionFulfilled = undefined;
@@ -13,7 +14,17 @@ function refreshEvent(event) {
         let attribute = condition.probe.split(".")[1];
         promises.push(
             probes.getOneProbe(event.device, probeName)
-                .then(probe => probe.data[attribute])
+                .then(probe => {
+                    return new Promise((resolve,reject) => {
+                        if(probe === undefined){
+                            reject(`The probe '${probeName}' does not exist on exist on this device`);
+                        }else if(!probe.active){
+                            reject(`The probe '${probeName}' is disabled on the device`);
+                        }else{
+                            resolve(probe.data[attribute])
+                        }
+                    });
+                })
                 .then(value => {
                     booleanResults[index] = {
                         value: performComparison(value, condition.value, condition.comparator),
@@ -31,14 +42,24 @@ function refreshEvent(event) {
         })
         .then(() => {
             if (conditionFulfilled && !event.status) {
-                let action = event.action;
-                action.label = "Triggered by event : " + event.label;
-                action.description = event.description;
-                return actions.addAction(action, event.owner, event.device);
+                event.action.label = "Triggered by event : " + event.label;
+                event.action.description = event.description;
+                return validator.validateAction(event.action.type,event.device,event.action.parameters);
+            }else{
+                return false;
+            }
+        })
+        .then(res => {
+            if(res === true){
+                return actions.addAction(event.action, event.owner, event.device);
             }
         })
         .catch(err => {
-            console.error("Refresh event failed : " + err);
+            if(err.api){
+                console.error(`Refresh event ${event.id} failed : ` + err.message)
+            }else{
+                console.error(`Refresh event ${event.id} failed : ` + err);
+            }
         });
 }
 

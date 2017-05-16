@@ -6,7 +6,7 @@ let router = express.Router();
 module.exports = router;
 
 router.put('/actionsUser/:id', function (req, res, next) {
-    let _status = req.body['action_status'];
+    let _status = req.body['status'];
     let id = req.params.id;
     let creator_username = req.SERVER.username;
     let device_uuid = req.SERVER.uuid;
