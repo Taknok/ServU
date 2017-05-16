@@ -5,6 +5,7 @@
 var cookies = document.cookie.split(';');
 var token = cookies[0].substr(6);
 var username = cookies[1].substr(9);
+const url = 'http://127.0.0.1:3000';
 
 angular.module('root', ['ui.bootstrap'])
 
@@ -26,6 +27,12 @@ angular.module('root', ['ui.bootstrap'])
                 '<h2 class="modal-title" id="modal-title">Event creation</h2>' +
                 '</div>' +
                 '<div class="modal-body container form-group" id="modal-body">' +
+                '<div class="row"><h5 class="col-xs-2 control-label">LABEL : </h5>' +
+                '<div class="col-xs-8 selectContainer">'+
+                '<form class="form-inline">' +
+                '<div class="input"><input style="width:80%;" class="form-control" placeholder="Enter a name" type="text" ng-model="label" required>' +
+                '</div></form>' +
+                '</div></div>' +
                 '<div class="row"><h5 class="col-xs-2 control-label">DESCRIPTION : </h5>' +
                 '<div class="col-xs-8 selectContainer">'+
                 '<form class="form-inline">' +
@@ -105,21 +112,21 @@ angular.module('root', ['ui.bootstrap'])
         $ctrl.ok = function () {
             $log.log(JSON.stringify($scope.dataCondition));
             $log.log(JSON.stringify($scope.dataAction));
-            var dataIf = {
-                probe : $ctrl.selectedItem ,
-                data : $scope.dataCondition
+            var data = {
+                label: $scope.label,
+                description: $scope.description,
+                if: [{
+                    probe: $scope.ConditionName,
+                    comparator: $scope.dataCondition.comparator,
+                    value: $scope.dataCondition.value,
+                    logicOperator: ""
+                }],
+                action: [{
+                    type: $scope.ActionName,
+                    parameter: $scope.dataAction
+                }]
             };
-            var dataThen = {
-                action : $ctrl.selectedAction,
-                data : $scope.dataAction
-            };
-            var dataEvent = {
-                label: "???",
-                description : $scope.description,
-                if: dataIf,
-                action: dataThen
-            };
-            $http.post("http://127.0.0.1:3000/api/users/" + $scope.username +/devices/ + $scope.uuid + '/events', dataEvent).then(function () {
+            $http.post(url + "/api/users/" + $scope.username + '/eventSkeletons', data).then(function () {
                 $log.log("Evenement bien envoyé au serveur");
             }).catch(function (e) {
                 if (e.status === 400) {
@@ -218,44 +225,51 @@ angular.module('root', ['ui.bootstrap'])
             var myEl = angular.element(document.querySelector('#condition_statut'));
             $scope.dataCondition = {};
             if (item.name === "Wifi") {
-                $scope.dataCondition.enable = false;
+                $scope.ConditionName = "wifi.isEnable";
+                $scope.dataCondition.comparator = "=";
+                $scope.dataCondition.value = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataCondition.enable = !dataCondition.enable">{{dataCondition.enable}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataCondition.enable = !dataCondition.enable">{{dataCondition.value}}</button>' +
                     '</div></form>'
                 );
             }
             else if(item.name  === "Battery"){
-                $scope.dataCondition.level = 20;
-                $scope.dataCondition.operator = '<';
+                $scope.ConditionName = "battery.level";
+                $scope.dataCondition.value = 20;
+                $scope.dataCondition.comparator = '<';
                 $scope.changeOperator = function(operator){
-                    if(operator == '>')
-                        $scope.dataCondition.operator = '<';
+                    if(comparator == '>')
+                        $scope.dataCondition.comparator = '<';
                     else
-                        $scope.dataCondition.operator = '>';
+                        $scope.dataCondition.comparator = '>';
                 };
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Battery level : </div>' +
-                    '<button class="btn btn-default" ng-click="changeOperator(dataCondition.operator)">{{dataCondition.operator}}</button>' +
-                    '<div class="form-group"><input class="form-control" id="battery_low" placeholder="%" min="1" max="100" type="number" required ng-model="dataCondition.level">' +
+                    '<button class="btn btn-default" ng-click="changeOperator(dataCondition.operator)">{{dataCondition.comparator}}</button>' +
+                    '<div class="form-group"><input class="form-control" id="battery_low" placeholder="%" min="1" max="100" type="number" required ng-model="dataCondition.value">' +
                     '</div></form>'
                 );
             }
             else if (item.name === "Bluetooth"){
-                $scope.dataCondition.enable = false;
+                $scope.ConditionName = "bluetooth.isConnected";
+                $scope.dataCondition.comparator = "=";
+                $scope.dataCondition.value = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataCondition.enable = !dataCondition.enable">{{dataCondition.enable}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataCondition.enable = !dataCondition.enable">{{dataCondition.value}}</button>' +
                     '</div></form>'
                 );
             }
             else if (item.name === "Localisation"){
+                $scope.ConditionName = "localisation";
+                $scope.dataCondition.comparator = "=";
                 myEl.html(
                     '<form class="form-inline">' +
                     '<div id="map"></div>' +
@@ -276,6 +290,7 @@ angular.module('root', ['ui.bootstrap'])
             var myEl = angular.element(document.querySelector('#action_statut'));
             $scope.dataAction = {};
             if (action.name === "Ring"){
+                $scope.ActionName = "ring";
                 $scope.dataAction.time = 1;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -286,6 +301,7 @@ angular.module('root', ['ui.bootstrap'])
                 );
             }
             else if (action.name === "Vibrate"){
+                $scope.ActionName = "vibrate";
                 $scope.dataAction.time = 1;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -296,6 +312,7 @@ angular.module('root', ['ui.bootstrap'])
                 );
             }
             else if (action.name === "Flash"){
+                $scope.ActionName = "flash";
                 $scope.dataAction.enable = true;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -306,6 +323,7 @@ angular.module('root', ['ui.bootstrap'])
                 );
             }
             else if (action.name === "Wifi"){
+                $scope.ActionName = "wifi";
                 $scope.dataAction.enable = true;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -316,6 +334,7 @@ angular.module('root', ['ui.bootstrap'])
                 );
             }
             else if (action.name === "Bluetooth"){
+                $scope.ActionName = "bluetooth";
                 $scope.dataAction.enable = true;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -326,6 +345,7 @@ angular.module('root', ['ui.bootstrap'])
                 );
             }
             else if (action.name === "Ligthness"){
+                $scope.ActionName = "ligthness";
                 $scope.dataAction.level = 50;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +

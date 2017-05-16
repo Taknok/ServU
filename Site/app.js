@@ -166,7 +166,6 @@ app.use(session({
                     email : req.body.email,
                     password: req.body.password
                 }}, function (err, response, body) {
-
                 if (err) {
                     console.error(err);
                     res.redirect('/');
