@@ -44,4 +44,6 @@ rootApp
             });
         }
 
+        $scope.username = 'Toto';
+        getListEventSkeleton();
     });

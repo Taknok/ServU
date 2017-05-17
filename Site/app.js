@@ -126,11 +126,6 @@ app.use(session({
                 case 204:
                     req.session.lastname = lastname;
                     req.session.firstname = firstname;
-                    res.render('gestion', {
-                        username: req.session.username,
-                        lastname: req.session.lastname,
-                        firstname: req.session.firstname
-                    });
                     break;
                 case 400:
                     res.send("<h1>Wrong Format</h1>");
@@ -151,7 +146,7 @@ app.use(session({
                     res.send("<h1>Unknow Error</h1>");
             }
         });
-        res.redirect('/users');
+        res.redirect('/users/' + req.session.username);
     })
     .post('/signUp', function(req, res) {
         console.log(req.body);

@@ -13,12 +13,15 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
         $http.defaults.headers.common['x-access-token'] = token;
     })
     .controller("gestion", ['$scope', '$log','$uibModal', '$compile','$http', function($scope, $log, $uibModal, $compile) {
-        //$scope.message = 'Hello World!';
+
+        //Permet de compiler le bouton pour qu'il ait angular
         $scope.addNewButton = function(element){
             $compile(element)($scope);
         };
         var $ctrl = this;
         $ctrl.animationsEnabled = true;
+
+        //Ouverture du modal
         $scope.open = function (size, parentSelector) {
             var modalInstance = $uibModal.open({
                 animation: $ctrl.animationsEnabled,
@@ -28,21 +31,21 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 '<h2 class="modal-title" id="modal-title">Event creation</h2>' +
                 '</div>' +
                 '<div class="modal-body container form-group" id="modal-body">' +
-                '<div class="row"><h5 class="col-xs-2 control-label">LABEL : </h5>' +
+                '<div class="row"><h5 class="col-xs-2 col-md-2 control-label">LABEL : </h5>' +
                 '<div class="col-xs-8 selectContainer">'+
                 '<form class="form-inline">' +
                 '<div class="input"><input style="width:80%;" class="form-control" placeholder="Enter a name" type="text" ng-model="label" required>' +
                 '</div></form>' +
                 '</div></div>' +
-                '<div class="row"><h5 class="col-xs-2 control-label">DESCRIPTION : </h5>' +
+                '<div class="row"><h5 class="col-xs-2 col-md-2 control-label">DESCRIPTION : </h5>' +
                 '<div class="col-xs-8 selectContainer">'+
                 '<form class="form-inline">' +
                 '<div class="input"><input style="width:80%;" class="form-control" placeholder="Enter a description" type="text" ng-model="description" required>' +
                 '</div></form>' +
                 '</div></div>' +
                 '<div class="row">' +
-                '<h5 class="col-xs-2 control-label">IF</h5>' +
-                '<div class="dropdown col-xs-2 selectContainer">' +
+                '<h5 class="col-xs-2 col-md-2 control-label">IF</h5>' +
+                '<div class="dropdown col-xs-2 col-md-2 selectContainer">' +
                 '<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="{{$ctrl.selectedItem.icon}}"></i> {{$ctrl.selectedItem.name ? $ctrl.selectedItem.name : "Condition"}}' +
                 ' <span class="caret"></span></button>' +
                 '<ul class="dropdown-menu">' +
@@ -64,7 +67,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 '<div id="action_statut"></div>'+
                 '</div></div></div>' +
                 '<div class="modal-footer">' +
-                '<button class="btn btn-primary" type="button" ng-click="$ctrl.ok()">Create</button>' +
+                '<button class="btn btn-primary" type="button" ng-disabled="!label || !description || !$ctrl.selectedAction || !$ctrl.selectedItem " ng-click="$ctrl.ok()">Create</button>' +
                 '<button class="btn btn-warning" type="button" ng-click="$ctrl.cancel()">Cancel</button>' +
                 '</div>',
                 controller: 'ModalInstanceCtrl',
@@ -77,17 +80,16 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                     }
                 }
             });
-
             modalInstance.result.then(function (selectedItem) {});
         };
 
+        //Fait une petite anim
         $ctrl.toggleAnimation = function () {
             $ctrl.animationsEnabled = !$ctrl.animationsEnabled;
         };
     }])
-    // Please note that $uibModalInstance represents a modal window (instance) dependency.
-    // It is not the same as the $uibModal service used above.
 
+    //Controller du modal
     .controller('ModalInstanceCtrl', function ($scope, $compile,$uibModalInstance, $log, $http) {
         window.onload=function(){
             $('.selectpicker').selectpicker();
@@ -107,26 +109,34 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             {name : 'Flash' , icon : 'glyphicon glyphicon-flash'},
             {name : 'Ligthness', icon : 'icon ion-ios-sunny'},
             {name : 'Wifi', icon : "icon ion-wifi"},
-            {name : 'Bluetooth', icon : "icon ion-bluetooth"}];
+            {name : 'Bluetooth', icon : "icon ion-bluetooth"},
+            {name : 'SMS', icon : "glyphicon glyphicon-envelope"}];
 
         //Lors du clic create du modal
         $ctrl.ok = function () {
-            $log.log(JSON.stringify($scope.dataCondition));
-            $log.log(JSON.stringify($scope.dataAction));
-            var data = {
-                label: $scope.label,
-                description: $scope.description,
-                if: [{
+            var dataIf;
+            if($scope.ConditionName === "localisation"){
+                dataIf = createTableLocalisation($scope.dataCondition, 'localisation','=');
+            }
+            else{
+                dataIf = [{
                     probe: $scope.ConditionName,
                     comparator: $scope.dataCondition.comparator,
                     value: $scope.dataCondition.value,
                     logicOperator: ""
-                }],
+                }];
+            }
+            var data = {
+                label: $scope.label,
+                description: $scope.description,
+                if: dataIf,
                 action: [{
                     type: $scope.ActionName,
                     parameter: $scope.dataAction
                 }]
             };
+
+            //Envoie de la requete pour creer un evenement
             $http.post(url + "/api/users/" + $scope.username + '/eventSkeletons', data).then(function () {
                 $log.log("Evenement bien envoyé au serveur");
             }).catch(function (e) {
@@ -140,6 +150,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                     console.error("User or device not found :", e);
                 }
             });
+            //Ferme le modal
             $uibModalInstance.close();
         };
 
@@ -220,11 +231,13 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             };
         };
 
-//Reagi lors du changement de condition
+        //Reagi lors du changement de condition
         $ctrl.condition_update = function (item) {
             $ctrl.selectedItem = item;
             var myEl = angular.element(document.querySelector('#condition_statut'));
             $scope.dataCondition = {};
+
+            //MISE A JOUR DE L AFFICHAGE
             if (item.name === "Wifi") {
                 $scope.ConditionName = "wifi.isEnable";
                 $scope.dataCondition.comparator = "=";
@@ -241,7 +254,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 $scope.ConditionName = "battery.level";
                 $scope.dataCondition.value = 20;
                 $scope.dataCondition.comparator = '<';
-                $scope.changeOperator = function(comparator){
+                $scope.changeOperator = function(operator){
                     if(comparator === '>')
                         $scope.dataCondition.comparator = '<';
                     else
@@ -285,11 +298,13 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             $compile(myEl)($scope);
         };
 
-//Reagi lors du changement d'action
+        //Reagi lors du changement d'action
         $ctrl.action_update = function (action) {
             $ctrl.selectedAction = action;
             var myEl = angular.element(document.querySelector('#action_statut'));
             $scope.dataAction = {};
+
+            //MiSE A JOUR DE L AFFICHAGE
             if (action.name === "Ring"){
                 $scope.ActionName = "ring";
                 $scope.dataAction.time = 1;
@@ -356,11 +371,23 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                     '</div></form>'
                 );
             }
+
+            else if (action.name = "SMS"){
+                $scope.ActionName = "sms";
+                myEl.html(
+                    '<form class="form-inline"><div class="form-group">' +
+                    '<div class="input-group">' +
+                    '<div class="input-group-addon">Message :</div>' +
+                    '<input class="form-control" id="destSMS" placeholder="Phone Number" type="text" required ng-model="dataAction.dest">' +
+                    '<textarea class="form-control" id="SMS" placeholder="Message Text" required ng-model="dataAction.msg">' +
+                    '</div></form>'
+                );
+            }
             $compile(myEl)($scope);
         };
     })
 
-    //Permet de recompiler un bouton javascript avec angular
+    //Permet de recompiler un bouton javascript avec set-on-click avec angular
     .directive("setOnClick", function($compile){
         return {
             restrict: "A",
@@ -374,3 +401,51 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
     });
 
 
+//FOnction pour retourner le carré de localisation avec le rayon
+
+var limitsArea = function(lat, lng, radius){
+    function DistanceToLat(distance){
+        var lat = distance/110574;
+        return lat;
+    }
+    function DistanceToLng(distance, lat){
+        var Lng = distance/(111320 * Math.cos((lat/180) * Math.PI));
+        return Lng;
+    }
+    return{
+        latMin : lat - DistanceToLat(radius),
+        latMax : lat + DistanceToLat(radius),
+        lngMin : lng - DistanceToLng(radius,lat),
+        lngMax : lng + DistanceToLng(radius,lat)
+    }
+};
+
+var createTableLocalisation = function(data,probeName,probeComparator){
+    var dataIf =[];
+    var locationPoints = limitsArea(data.lat,data.lng,data.radius);
+    dataIf.push({
+        probe: probeName,
+        comparator: probeComparator,
+        value: locationPoints.latMin,
+        logicOperator: ""
+    });
+    dataIf.push({
+        probe: probeName,
+        comparator: probeComparator,
+        value: locationPoints.latMax,
+        logicOperator: "AND"
+    });
+    dataIf.push({
+        probe: probeName,
+        comparator: probeComparator,
+        value: locationPoints.lngMin,
+        logicOperator: "AND"
+    });
+    dataIf.push({
+        probe: probeName,
+        comparator: probeComparator,
+        value: locationPoints.lngMax,
+        logicOperator: "AND"
+    });
+    return dataIf;
+};

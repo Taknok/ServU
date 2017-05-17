@@ -12,7 +12,7 @@
 
     <link rel="icon" type="image/png" href="../img/smallLogo.png" />
     <!-- Bootstrap Core CSS -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="../css/stylish-portfolio.css" rel="stylesheet">
@@ -28,6 +28,7 @@
 
     <link href="../css/persoCSS/custom.css" rel="stylesheet">
     <link href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.js"></script>
     <style>
         /*.correct {
             border-color: rgba(68, 191, 68, 0.75);
@@ -134,23 +135,21 @@
                                         <br>
                                     </div>
                                     <div class="row">
-                                        <form action="<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_info">
+                                        <form action="/users/<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_info" data-toggle="validator">
                                             <div class="form-group">
                                                 <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="text">Change first name :</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
-                                                    <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter new first name">
-                                                    <span class="erreur_info alert-danger">At least 2 characters must be entered !</span>
+                                                    <input type="text" class="form-control" id="firstname" name="firstname" data-minlength="1" placeholder="Enter new first name" required>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="text">Change last name :</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
-                                                    <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter new last name">
-                                                    <span class="erreur_info alert-danger">At least 2 characters must be entered !</span>
+                                                    <input type="text" class="form-control" id="lastname" name="lastname" data-minlength="1" placeholder="Enter new last name" required>
                                                 </div>
                                             </div>
                                             <div class="form-group text-center">
-                                                <button type="submit" class="btn btn-primary">Confirm</button>
+                                                <button type="submit" class="btn btn-primary" >Confirm</button>
                                             </div>
                                         </form>
                                     </div>
@@ -160,21 +159,20 @@
                                         <br>
                                     </div>
                                     <div class="row">
-                                        <form action="/api/users/<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_mdp">
+                                        <form action="/users/<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_mdp" data-toggle="validator">
                                             <div class="form-group">
                                                 <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="text">New password :</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
-                                                    <input type="password" class="form-control" name="password" id="password" placeholder="Enter your new password">
-                                                    <span class="erreur_info alert-danger">At least 6 characters must be entered !</span>
+                                                    <input type="password" class="form-control" name="password" id="password" placeholder="Enter your new password" data-minlength="6" required>
                                                 </div>
-
+                                                <div class="help-block">Minimum of 6 characters</div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="pwd">Confirm password :</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
-                                                    <input type="password" class="form-control" name="password2" id="password2" placeholder="Confirm password">
-                                                    <span class="erreur_info alert-danger">Passwords don't match, please enter them again</span>
+                                                    <input type="password" class="form-control" name="password2" id="password2" data-match="#password" data-match-error="These don't match" placeholder="Confirm password" required>
                                                 </div>
+                                                <div class="help-block with-errors"></div>
                                             </div>
                                             <div class="form-group text-center">
                                                 <button type="submit" class="btn btn-primary">Confirm</button>
@@ -240,10 +238,10 @@
                                             <div class='row gutter-10'>
                                                 <div class='col-lg-2 col-md-2 col-sm-2 col-xs-2 gutter-10'>
                                                     <h3 class='panel-title' id='deviceLogo'><i class='fa fa-{{device.platform}} fa-lg'></i></h3>
-                                                    </div>
+                                                </div>
                                                 <div class='col-lg-8 col-md-8 col-sm-8 col-xs-8 gutter-10'>
                                                     <div id='deviceTitle' class='panel-title text-center'>{{device.name}}</div>
-                                                    </div>
+                                                </div>
                                                 <div class='col-lg-2 col-md-2 col-sm-2 col-xs-2 gutter-10'>
                                                     <span data-toggle='tooltip' title='Delete' data-placement='top'>
                                                         <button class='btn btn-danger btn-xs' ng-click="deleteByUuid(device.uuid)">
