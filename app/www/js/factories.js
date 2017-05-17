@@ -57,9 +57,9 @@ angular.module('ServU')
 	
 	function load(){
 		ring.enable = ('true' == permanentStorage.getItem("ring.enable"));
-		vibrate.active = ('true' == permanentStorage.getItem("vibrate.active"));
-		sms.active = ('true' == permanentStorage.getItem("sms.active"));
-		flashlight.active = ('true' == permanentStorage.getItem("flashlight.active"));
+		vibrate.active = ('true' == permanentStorage.getItem("vibrate.enable"));
+		sms.active = ('true' == permanentStorage.getItem("sms.enable"));
+		flashlight.active = ('true' == permanentStorage.getItem("flashlight.enable"));
 	}
 	load();
 	
