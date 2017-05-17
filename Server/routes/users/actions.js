@@ -3,6 +3,7 @@ const error = require("../../error");
 const actions = require("../../database/actions");
 const actionsAvailable = require("../../database/actionsAvailable");
 const validator = require("../../contentVerification/validator");
+const socket = require("../../socket");
 
 let router = express.Router();
 module.exports = router;
@@ -28,6 +29,7 @@ router.post('/actionsUser', function (req, res, next) {
         validator.validateAction(action.type, device_uuid, action.parameters)
             .then(() => actions.addAction(action, creator_username, device_uuid))
             .then(created => {
+                socket.sendActionToDo(created, device_uuid);
                 res.status(201).json(created);
             })
             .catch(err => next(err));

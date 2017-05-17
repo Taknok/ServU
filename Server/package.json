@@ -10,11 +10,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jsonwebtoken": "^7.4.0",
     "body-parser": "^1.17.1",
     "cors": "^2.8.3",
     "crypto": "0.0.3",
     "express": "^4.15.2",
-    "mongodb": "^2.2.25"
+    "jsonwebtoken": "^7.4.0",
+    "mongodb": "^2.2.25",
+    "socket.io": "^2.0.1"
   }
 }

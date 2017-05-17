@@ -1,7 +1,7 @@
 const error = require('../../error');
 const express = require('express');
 const eventSkeletons = require('../../database/eventSkeletons');
-const checkToken = require("../authentication").checkToken;
+const checkToken = require("../authentication").checkTokenMiddleware;
 
 let router = express.Router();
 module.exports = router;

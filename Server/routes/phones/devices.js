@@ -2,7 +2,7 @@ const express = require('express');
 const devices = require("../../database/devices");
 const error = require("../../error");
 const users = require("../../database/users");
-const checkToken = require("../authentication").checkToken;
+const checkToken = require("../authentication").checkTokenMiddleware;
 
 const probesRouter = require("./probes");
 const actionsAvailableRouter = require("./actionsAvailable");
@@ -11,15 +11,14 @@ const actionsRouter = require("./actions");
 let router = express.Router();
 module.exports = router;
 
-router.post('/phones', checkToken ,function (req, res, next) {
-    // ==> Il faut vérifier que le owner du device est bien l'utilisateur authentifié
+router.post('/phones', checkToken, function (req, res, next) {
     let decodedUsername = req.decodedUsername;
     let _device = req.body;
     try {
         let device = devices.validateDevice(_device);
-        if(decodedUsername !== device.owner){
-            next(new error.error(403,"Forbidden","You are not allowed to access to this user data"))
-        }else{
+        if (decodedUsername !== device.owner) {
+            next(new error.error(403, "Forbidden", "You are not allowed to access to this user data"))
+        } else {
             users.getUserByUsername(device.owner)
                 .then(user => {
                     return new Promise((resolve, reject) => {
@@ -53,13 +52,12 @@ router.post('/phones', checkToken ,function (req, res, next) {
     }
 });
 
-router.use('/phones/:uuid\*',checkToken, function (req, res, next) {
-    // ==> Il faut vérifier que le device appartient bien à l'utilisateur authentifié
+router.use('/phones/:uuid\*', checkToken, function (req, res, next) {
     let decodedUsername = req.decodedUsername;
     let uuid = req.params.uuid;
     req.SERVER.uuid = uuid;
     req.SERVER.username = decodedUsername;
-    devices.getDeviceByUuid(uuid,decodedUsername) //==> Ajouter username en 2ème param
+    devices.getDeviceByUuid(uuid, decodedUsername)
         .then(owner => {
             if (owner === undefined) {
                 next(new error.error(404, "Device not found"));

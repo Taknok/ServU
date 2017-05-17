@@ -4,7 +4,6 @@ const error = require('../error');
 const users = require('../database/users');
 const express = require('express');
 
-
 function createToken(username) {
     let payload = {
         username: username
@@ -12,27 +11,29 @@ function createToken(username) {
     return jwt.sign(payload, config.secret, {expiresIn: "7 days"}); //604800000 correspond à 7 jours en ms
 }
 
-function checkToken(req, res, next) {
-    // check header or url parameters or post parameters for token
-    let token = req.headers['x-access-token'];
-    // decode token
-    if (token !== undefined) {
-        // verifies secret and checks exp
-        //utilisé le salt comme clé secrete et utiliser décode avant verify afin de recuperer le salt dans la base de donnée.
+function decodeToken(token) {
+    return new Promise((resolve, reject) => {
         jwt.verify(token, config.secret, function (err, decoded) {
-            if (!err) {
-                // if everything is good, save to request for use in other routes
-                req.decodedUsername = decoded.username;
-                next();
+            if (err) {
+                reject(err.name);
+            } else {
+                resolve(decoded.username);
             }
-            else if (err.name === 'TokenExpiredError') {
-                next(new error.error(401, 'TokenExpiredError', err.expiredAt));
-            }
-            else {
-                next(new error.error(401, 'JsonWebTokenError', err.message));
-            }
-        });
+        })
+    });
+}
 
+function checkTokenMiddleware(req, res, next) {
+    let token = req.headers['x-access-token'];
+    if (token !== undefined) {
+        decodeToken(token)
+            .then(username => {
+                req.decodedUsername = username;
+                next();
+            })
+            .catch(err => {
+                next(new error.error(401, 'Unauthorized', err))
+            })
     } else {
         next(new error.error(401, "Unauthorized", "No token provided"))
     }
@@ -63,6 +64,7 @@ router.post('/login', function (req, res, next) {
 });
 
 module.exports = {
-    checkToken,
+    decodeToken,
+    checkTokenMiddleware,
     router
 };

@@ -7,6 +7,7 @@ const phoneRoute = require("./routes/phones/devices");
 const loginRoute = require("./routes/authentication").router;
 const error = require("./error");
 const jwt = require('jsonwebtoken');
+const socket = require("./socket");
 
 let app = express();
 const port = 3000;
@@ -47,6 +48,7 @@ app.use(function (err, req, res, next) {
     res.status(errorSent.status).json(errorSent);
 });
 
+
 //Initialization
 db.connectMongo()
     .then(() => {
@@ -54,6 +56,8 @@ db.connectMongo()
         app.listen(port, serv_addr, 511, () => {
             console.log("Server listening on port " + serv_addr + ":" + port);
         });
+        //Initialize Socket
+        socket.startSocketIO();
     })
     .catch(err => {
         throw err
