@@ -147,7 +147,17 @@ input[type="range"]:after {
 
 .fontCounter {
     font-family: "Counter-Strike";
+    padding-top: 0;
+    margin-top: 0;
 }
+
+hr.reduce {
+    padding-top: 5px;
+    margin-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
 
 .text-white {
     color: white;

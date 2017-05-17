@@ -333,58 +333,56 @@
                 <h2 class="fontAmethyst text-white">Event Skeletons</h2>
                 <hr class="small">
             </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-primary" ng-click="updateListEvent()" ng-init="updateListEvent()"><i class="fa fa-refresh"></i> Update List</button>
+                    <button type="button" class="btn btn-dark"><i class="fa fa-plus"></i> Add</button>
+                </div>
+                <hr class="small">
+            </div>
         </div>
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="alertPlaceEventSkeleton"></div>
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <div class="list-group" ng-repeat="eventSkeleton in eventSkeletons">
-                            <button type="button" class="list-group-item">
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <a class="btn btn-primary pull-right"><i class="fa fa-times"></i></a>
-                                        <h2 class="list-group-item-heading fontCounter" style="color: #5D9CEC">{{eventSkeleton.label}}</h2>
-                                        <p class="list-group-item-text">{{eventSkeleton.description}}</p>
-                                        <hr>
+                        <div ng-repeat="eventSkeleton in eventSkeletons">
+                            <div class="panel panel-primary">
+                                <div class="row gutter-10">
+                                    <div class="panel-heading">
+                                        <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 gutter-10">
+                                            <h1 class="fontCounter text-bittersweet">{{eventSkeleton.label}}</h1>
+                                        </div>
+                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 gutter-10">
+                                            <div class="btn-group pull-right" role="group" aria-label="...">
+                                                <a role="button" class="btn btn-primary" ng-click="deleteEventSkeleton(eventSkeleton)"><i class="fa fa-times"></i></a>
+                                            </div>
+                                        </div>
                                     </div>
-
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <h3 class="list-group-item-text text-aqua fontCounter">IF</h3>
-                                        <p>{{eventSkeleton.if.probe}} {{eventSkeleton.if.comarator}} {{eventSkeleton.if.value}} </p>
-                                        <hr>
+                                    <div class="panel-body" >
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 gutter-10">
+                                            <p class="list-group-item-text">{{eventSkeleton.description}}</p>
+                                            <hr class="reduce">
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 gutter-10">
+                                            <h4 class="list-group-item-text text-aqua fontCounter">IF</h4>
+                                            <div ng-repeat="ifCondition in eventSkeleton.if">
+                                                <p>{{ifCondition.probe}} {{ifCondition.comparator}} {{ifCondition.value}} {{ifCondition.logicOperator}}</p>
+                                            </div>
+                                            <hr class="reduce">
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 gutter-10">
+                                            <h4 class="list-group-item-text text-grapefruit fontCounter">THEN</h4>
+                                            <div ng-repeat="thenAction in eventSkeleton.action">
+                                                <p>{{thenAction.type}} {{thenAction.parameter}}</p>
+                                            </div>
+                                            <hr class="reduce">
+                                        </div>
                                     </div>
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                        <h3 class="list-group-item-text text-grapefruit fontCounter">THEN</h3>
-                                        <p>{{eventSkeleton.action.type}} {{eventSkeleton.action.parameter}}</p>
-                                        <hr>
-                                    </div>
-                                    <div class="clearfix"></div>
                                 </div>
-                            </button>
+                                <div class="clearfix"></div>
+                            </div>
                         </div>
-                        <!--
-                        <table class="table table-hover col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <thead>
-                                <tr>
-                                    <th class="info">Name</th>
-                                    <th>Description</th>
-                                    <th>IF</th>
-                                    <th>THEN</th>
-                                    <th>Delete</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="info">Event 1</td>
-                                    <td>Blablalalaaaadzfafgagagageagddceac</td>
-                                    <td>Battery Level < 10%</td>
-                                    <td>Call Maman</td>
-                                    <td><button class="btn btn-primary"><span aria-hidden="true">&times;</span></button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        -->
                     </div>
                 </div>
             </div>
