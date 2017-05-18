@@ -192,7 +192,7 @@
 
 <!-- Devices -->
 <section id="devices" class="devices bg-primary">
-    <div class="container">
+    <div class="container" ng-controller="devicesCtrl">
         <div class="row">
             <div class="col-md-12 col-md-offset-0 col-sm-12 col-sm-offset-0 col-xs-12 col-xs-offset-0 text-center">
                 <div class="panel panel-primary" style="border: none">
@@ -203,15 +203,15 @@
                                 <hr class="small">
                             </div>
                         </div>
-                        <div class="row gutter-10" ng-controller="devicesCtrl">
+                        <div class="row gutter-10">
                             <div class="col-md-2 col-sm-2 col-xs-2 gutter-10 pull-left">
                                 <div class='well well-sm well-warning' data-toggle='tooltip' data-placement='bottom' title='Number of phones' id='nbPhones'>
-                                    {{nbPhones}}
+                                    <i class="fa fa-mobile-phone"></i> {{nbPhones}}
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-2 gutter-10 pull-left">
                                 <div class='well well-sm well-warning' data-toggle='tooltip' data-placement='bottom' title='Number of tablets' id='nbTablets'>
-                                    {{nbTablets}}
+                                    <i class="fa fa-tablet"></i> {{nbTablets}}
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-4 col-xs-4 gutter-10 pull-right">
@@ -230,7 +230,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="panel-body"> <!-- Devices -->
-                        <div id="items" ng-controller="devicesCtrl">
+                        <div id="items">
                             <div class="row" ng-repeat="device in devices">
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                     <div class="panel panel-warning panel-warning-dark">
@@ -253,24 +253,30 @@
                                         </div>
                                         <div class='panel-body'>
                                             <div class='row'>
-                                                <div class='col-md-2'><i class='fa fa-info'></i></div>
-                                                <div class='col-md-6'>{{device.manufacturer}} {{device.model}}</div>
+                                                <div class='col-md-1'><i class='fa fa-mobile-phone'></i></div>
+                                                <div class='col-md-5'>{{device.manufacturer}} {{device.model}}</div>
                                                 <div class='col-md-1'><i class='glyphicon glyphicon-signal'></i></div>
-                                                <div class='col-md-1'>{{device.data.connection}}</div>
+                                                <div class='col-md-5'>{{device.probes.network.data.state}}</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-1"><i class="fa fa-barcode"></i></div>
+                                                <div class="col-md-5">{{device.serial}}</div>
+                                                <div class="col-md-1"><i class="fa fa-info-circle"></i></div>
+                                                <div class="col-md-5">{{device.version}}</div>
                                             </div>
                                             <div class='row'>
-                                                <div class='col-md-2' id='deviceCharge'><i class='ion' ng-class="{'ion-battery-charging': device.data.inCharge, 'ion-battery-full': !device.data.inCharge}"></i></div>
-                                                <div class='col-md-10'>
+                                                <div class='col-md-1' id='deviceCharge'><i class='ion' ng-class="{'ion-battery-charging': device.probes.battery.data.charging, 'ion-battery-full': !device.probes.battery.data.charging}"></i></div>
+                                                <div class='col-md-11'>
                                                     <div class='progress'>
                                                         <div class='progress-bar'
-                                                             ng-class="{'progress-bar-primary': getBarTypeClassBoolean(device.data.battery,'primary'),
-                                                             'progress-bar-success': getBarTypeClassBoolean(device.data.battery,'success'),
-                                                             'progress-bar-warning': getBarTypeClassBoolean(device.data.battery,'warning'),
-                                                             'progress-bar-danger': getBarTypeClassBoolean(device.data.battery,'danger'),
-                                                             'progress-bar-striped active': device.data.inCharge }"
-                                                             role='progressbar' aria-valuenow='{{device.data.battery}}'
-                                                             aria-valuemin='0' aria-valuemax='100' style='width: {{device.data.battery}}%'>
-                                                            <span><b>{{device.data.battery}}</b></span>
+                                                             ng-class="{'progress-bar-primary': getBarTypeClassBoolean(device.probes.battery.data.charge,'primary'),
+                                                             'progress-bar-success': getBarTypeClassBoolean(device.probes.battery.data.charge,'success'),
+                                                             'progress-bar-warning': getBarTypeClassBoolean(device.probes.battery.data.charge,'warning'),
+                                                             'progress-bar-danger': getBarTypeClassBoolean(device.probes.battery.data.charge,'danger'),
+                                                             'progress-bar-striped active': device.probes.battery.data.charging }"
+                                                             role='progressbar' aria-valuenow='{{device.probes.battery.data.charge}}'
+                                                             aria-valuemin='0' aria-valuemax='100' style='width: {{device.probes.battery.data.charge}}%'>
+                                                            <span><b>{{device.probes.battery.data.charge}}%</b></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -280,7 +286,7 @@
                                             <div class='row'>
                                                 <div class='btn-group-in-footer btn-group btn-group-justified'>
                                                     <div class='btn-group'>
-                                                        <button class='btn btn-warning' data-toggle='modal' data-target='#moreModal' ng-click="openMoreModal(device.uuid)">
+                                                        <button class='btn btn-warning' data-toggle="modal" data-target="#moreModal" ng-click="changeMoreDevice(device.uuid)">
                                                             <i class='glyphicon glyphicon-plus-sign'></i>
                                                             <span class='text-center'>  Show more  </span>
                                                             <span class='clearfix'></span>
@@ -308,6 +314,21 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" id="angular_module">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">
+                                            <div class="row">
+                                                <div class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8 col-xs-offset-2 col-xs-8 text-center">
+                                                    <div class="panel-title">Events of {{device.name}}</div>
+                                                </div>
+                                                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 pull-right">
+                                                    <button class='btn btn-xs btn-info' data-toggle='modal' data-target='#chooseEventModal' ><i class='glyphicon glyphicon-plus'></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel-body" style="color:black"><b>No events yet</b></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <!-- ./row ./devices -->
@@ -319,6 +340,46 @@
             <!-- /.col-lg-10 -->
         </div>
         <!-- /.row -->
+        <!-- More modal -->
+        <div class="text-left">
+            <div class='modal fade' id='moreModal' tabindex='-1' role='dialog' aria-labelledby='moreModalLabel'>
+                <div class='modal-dialog' role='document'>
+                    <div class='modal-content' style="color: black">
+                        <div class='modal-header'>
+                            More about <b>{{moreDevice.name}}</b>
+                            <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+                        </div>
+                        <div class='modal-body'>
+                            <div class="panel-group" id="accordion">
+                                <div class="panel panel-primary" ng-repeat="probe in moreDevice.probes">
+                                    <div class="panel-heading">
+                                        <button class="btn btn-block btn-info text-capitalize" data-parent="#accordion" data-toggle="collapse" data-target="#collapse{{probe.name}}">
+                                            {{probe.label}}
+                                        </button>
+                                    </div>
+                                    <div class="panel-body collapse text-capitalize" id="collapse{{probe.name}}">
+                                        <ul>
+                                            <li>
+                                                <b>Active :</b> {{probe.active}}
+                                            </li>
+                                            <li>
+                                                <b>Last update:</b> {{getReadableTime(probe.lastUpdate)}}
+                                            </li>
+                                            <li ng-repeat="(dataName,dataValue) in probe.data">
+                                                <b>{{dataName}} :</b> {{dataValue}}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='modal-footer' id="addModalFooter">
+                            <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- /.container -->
 </section>
@@ -477,27 +538,10 @@
     </div>
 </section>
 
-<!-- More modal
-<section ng-controller="devicesCtrl">
-    <div class='modal fade' id='moreModal' tabindex='-1' role='dialog' aria-labelledby='moreModalLabel'>
-        <div class='modal-dialog' role='document'>
-            <div class='modal-content'>
-                <div class='modal-header'>
-                    <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
-                </div>
-                <div class='modal-body' id="moreModalBody">
-                    Coucou {{moreDevice.name}}
-                </div>
-                <div class='modal-footer' id="addModalFooter">
-                    <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>-->
+
 
 <!-- Choose event modal -->
-<section>
+<section ng-controller="devicesCtrl">
     <div class='modal fade' id='chooseEventModal' tabindex='-1' role='dialog' aria-labelledby='chooseEventModalLabel'>
         <div class='modal-dialog' role='document'>
             <div class='modal-content'>
@@ -506,7 +550,7 @@
                     <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
                 </div>
                 <div class='modal-body' id="chooseEventModalBody">
-
+                    Coucou {{$scope.moreDevice.name}}
                 </div>
                 <div class='modal-footer' id="chooseEventModalFooter">
                     <button class="btn btn-warning" data-dismiss="modal">Close</button>
