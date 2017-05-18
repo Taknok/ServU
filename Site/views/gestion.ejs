@@ -377,8 +377,9 @@
                                             <div ng-if=checkIsLocalisation(eventSkeleton)>
                                                 <span class="label label-primary"><i class="fa" ng-class="getTypeProbe(eventSkeleton.if[0].probe)"></i> {{getLabelProbe(eventSkeleton.if[0].probe)}}</span>
                                                 <span class="label label-warning">{{eventSkeleton.if[0].comparator == ">" ? "Inside" : "Outside"}}</span>
+                                                <a role="button" class="btn btn-dark btn-xs" ng-click=giveMap(eventSkeleton)>Load Map</a>
                                                 <div id="map{{eventSkeleton.id}}" style="width : 100%; height:200px"></div>
-                                                {{giveMap(eventSkeleton)}}
+
                                             </div>
                                             <div ng-if=!checkIsLocalisation(eventSkeleton)>
                                                 <div ng-repeat="ifCondition in eventSkeleton.if">
