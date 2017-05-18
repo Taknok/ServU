@@ -107,7 +107,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             {name : 'Ring', icon : 'icon ion-ios-bell'},
             {name : 'Vibrate', icon : 'icon ion-radio-waves'},
             {name : 'Flash' , icon : 'glyphicon glyphicon-flash'},
-            {name : 'Brigthness', icon : 'icon ion-ios-sunny'},
+            {name : 'Brightness', icon : 'icon ion-ios-sunny'},
             {name : 'Wifi', icon : "icon ion-wifi"},
             {name : 'Bluetooth', icon : "icon ion-bluetooth"},
             {name : 'SMS', icon : "glyphicon glyphicon-envelope"}];

@@ -72,13 +72,34 @@ rootApp
                     return 'fa-bluetooth';
                     break;
                 case 'localisation.lat':
-                    return 'fa-location';
+                    return 'fa-globe';
                     break;
-                case 'localisation.long':
-                    return 'fa-location';
+                case 'localisation.lng':
+                    return 'fa-globe';
                     break;
                 case 'localisation.timestamp':
-                    return 'fa-location';
+                    return 'fa-globe';
+                    break;
+                default:
+                    return;
+                    break;
+
+            }
+        };
+
+        $scope.getTypeAction = function(typeAction) {
+            switch(typeAction) {
+                case 'ring':
+                    return 'fa-volume-up';
+                    break;
+                case 'vibrate':
+                    return 'fa-volume-off';
+                    break;
+                case 'sms':
+                    return 'fa-commenting';
+                    break;
+                case 'flashlight':
+                    return 'fa-bolt';
                     break;
                 default:
                     return;
@@ -111,13 +132,13 @@ rootApp
                     return 'Bluetooth Connected';
                     break;
                 case 'localisation.lat':
-                    return 'Lat';
+                    return 'GPS';
                     break;
-                case 'localisation.long':
-                    return 'Long';
+                case 'localisation.lng':
+                    return 'GPS';
                     break;
                 case 'localisation.timestamp':
-                    return 'Timestamp';
+                    return 'GPS';
                     break;
                 default:
                     return;
@@ -125,6 +146,112 @@ rootApp
 
             }
         };
+
+        $scope.checkIsLocalisation = function(EventSkeleton) {
+            return ((EventSkeleton.if[0].probe === 'localisation.lgn') || (EventSkeleton.if[0].probe === 'localisation.lat'));
+        };
+
+        $scope.giveMap = function(EventSkeleton) {
+            if ((EventSkeleton.if[0].probe === 'localisation.lgn') || (EventSkeleton.if[0].probe === 'localisation.lat')) {
+
+                var latMin = EventSkeleton.if[0].value;
+                var latMax = EventSkeleton.if[1].value;
+                var lngMin = EventSkeleton.if[2].value;
+                var lngMax = EventSkeleton.if[3].value;
+
+                var lat = (latMin + latMax)/2;
+                $log.log(lat);
+                var lng = (lngMin + lngMax)/2;
+                $log.log(lng);
+                var rayon = (latMax-latMin) * 110574 / 2;
+                var mapOptionsPiti = {
+                    center: {lat : lat, lng : lng},
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    disableDefaultUI: false,
+                    zoom: 14,
+                    zoomControl: true,
+                    mapTypeControl: false,
+                    scaleControl: true,
+                    streetViewControl: false,
+                    rotateControl: true
+                };
+                var mapIDPiti = "map"+EventSkeleton.id+"";
+                var mapPiti = new google.maps.Map(document.getElementById(mapIDPiti), mapOptionsPiti);
+                var radiusRangePiti = new google.maps.Circle({
+                    strokeColor: '#a3afff',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#86f3ff',
+                    fillOpacity: 0.10,
+                    clickable : false,
+                    draggable : false,
+                    map: mapPiti,
+                    center: mapPiti.center,
+                    radius: rayon
+                });
+                var markerPiti = new google.maps.Marker({
+                    position: {lat : lat, lng : lng},
+                    map: mapPiti
+                });
+                mapPiti.setCenter(markerPiti.getPosition());
+                radiusRangePiti.setCenter(markerPiti.getPosition());
+
+            }
+
+        };
+
+        $scope.getLabelAction = function(typeAction) {
+            switch(typeAction) {
+                case 'ring':
+                    return 'Ring';
+                    break;
+                case 'vibrate':
+                    return 'Vibrate';
+                    break;
+                case 'sms':
+                    return 'SMS';
+                    break;
+                case 'flashlight':
+                    return 'Flashlight';
+                    break;
+                default:
+                    return;
+                    break;
+
+            }
+        };
+
+        $scope.findParameter = function(parameter, typeAction) {
+            switch(typeAction) {
+                case 'ring':
+                    return 'for ' + parameter.time + ' sec';
+                    break;
+                case 'vibrate':
+                    return 'for ' + parameter.time + ' sec';
+                    break;
+                case 'sms':
+                    return 'to ' + parameter.dest + ' :';
+                    break;
+                case 'flashlight':
+                    return 'turn ' + parameter.state;
+                    break;
+                default:
+                    return;
+                    break;
+
+            }
+        };
+
+        $scope.giveMessage = function(parameter, typeAction) {
+            switch (typeAction) {
+                case 'sms':
+                    return parameter.msg;
+                    break;
+                default:
+                    return;
+                    break;
+            }
+        }
 
 
     });

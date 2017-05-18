@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+    <meta name="google-site-verification" content="JS4lLxllrxJ--QxMseg7otfgj_J38auIdWuUiySrrkA" />
 
     <title>ServU</title>
 
@@ -338,7 +339,7 @@
                 <hr class="small">
             </div>
         </div>
-        <div class="row gutter-10">
+        <div class="row gutter-10" >
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 gutter-10">
                 <div class="alertPlaceEventSkeleton"></div>
                 <div class="panel panel-default">
@@ -373,20 +374,33 @@
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 gutter-10">
                                             <h3 class="list-group-item-text text-aqua fontCounter">IF</h3>
-                                            <div ng-repeat="ifCondition in eventSkeleton.if">
-                                                <h4>
-                                                    <span class="label label-primary"><i class="fa" ng-class="getTypeProbe(ifCondition.probe)"></i> {{getLabelProbe(ifCondition.probe)}}</span>
-                                                    <span class="label label-warning">{{ifCondition.comparator}}</span>
-                                                    <span class="label label-primary">{{ifCondition.value}}</span>
-                                                    <span class="label label-default">{{ifCondition.logicOperator}}</span>
-                                                </h4>
+                                            <div ng-if=checkIsLocalisation(eventSkeleton)>
+                                                <span class="label label-primary"><i class="fa" ng-class="getTypeProbe(eventSkeleton.if[0].probe)"></i> {{getLabelProbe(eventSkeleton.if[0].probe)}}</span>
+                                                <span class="label label-warning">{{eventSkeleton.if[0].comparator == ">" ? "Inside" : "Outside"}}</span>
+                                                <div id="map{{eventSkeleton.id}}" style="width : 100%; height:200px"></div>
+                                                {{giveMap(eventSkeleton)}}
                                             </div>
+                                            <div ng-if=!checkIsLocalisation(eventSkeleton)>
+                                                <div ng-repeat="ifCondition in eventSkeleton.if">
+                                                    <h4><span class="label label-default">{{ifCondition.logicOperator}}</span></h4>
+                                                    <h4>
+                                                        <span class="label label-primary"><i class="fa" ng-class="getTypeProbe(ifCondition.probe)"></i> {{getLabelProbe(ifCondition.probe)}}</span>
+                                                        <span class="label label-warning">{{ifCondition.comparator}}</span>
+                                                        <span class="label label-primary">{{ifCondition.value}}</span>
+                                                    </h4>
+                                                </div>
+                                            </div>
+
                                             <hr class="reduce">
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 gutter-10">
                                             <h4 class="list-group-item-text text-grapefruit fontCounter">THEN</h4>
                                             <div ng-repeat="thenAction in eventSkeleton.action">
-                                                <p>{{thenAction.type}} {{thenAction.parameter}}</p>
+                                                <h4>
+                                                    <span class="label label-danger"><i class="fa" ng-class="getTypeAction(thenAction.type)"></i> {{getLabelAction(thenAction.type)}}</span>
+                                                    <span class="label label-primary">{{findParameter(thenAction.parameter, thenAction.type)}}</span>
+                                                </h4>
+                                                <p>{{giveMessage(thenAction.parameter, thenAction.type)}}</p>
                                             </div>
                                             <hr class="reduce">
                                         </div>
