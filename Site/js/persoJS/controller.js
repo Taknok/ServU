@@ -107,7 +107,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             {name : 'Ring', icon : 'icon ion-ios-bell'},
             {name : 'Vibrate', icon : 'icon ion-radio-waves'},
             {name : 'Flash' , icon : 'glyphicon glyphicon-flash'},
-            {name : 'Ligthness', icon : 'icon ion-ios-sunny'},
+            {name : 'Brigthness', icon : 'icon ion-ios-sunny'},
             {name : 'Wifi', icon : "icon ion-wifi"},
             {name : 'Bluetooth', icon : "icon ion-bluetooth"},
             {name : 'SMS', icon : "glyphicon glyphicon-envelope"}];
@@ -116,7 +116,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
         $ctrl.ok = function () {
             var dataIf;
             if($scope.ConditionName === "localisation"){
-                dataIf = createTableLocalisation($scope.dataCondition, 'localisation','=');
+                dataIf = createTableLocalisation($scope.dataCondition, 'localisation',$scope.dataCondition.comparator);
             }
             else{
                 dataIf = [{
@@ -179,7 +179,6 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
 
             //Creation de la carte
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-            $scope.radius = 1000;
             var radiusRange = new google.maps.Circle({
                 strokeColor: '#a3afff',
                 strokeOpacity: 0.8,
@@ -214,8 +213,9 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             });
 
             //Permet de changer le zoom de la carte en fonction du rayon
-            $scope.setRadius = function(filtre_rayon){
+            $scope.changeRadius = function(filtre_rayon){
                 var valeur_rayon = parseFloat(filtre_rayon);
+                radiusRange.setRadius(valeur_rayon);
                 if (valeur_rayon < 75)
                     map.setZoom(18);
                 else if (valeur_rayon >= 75 && valeur_rayon < 150)
@@ -226,8 +226,10 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                     map.setZoom(15);
                 else if(valeur_rayon >= 500 && valeur_rayon < 1000)
                     map.setZoom(14);
-                else if(valeur_rayon >= 1000 && valeur_rayon <= 2000)
+                else if(valeur_rayon >= 1000 && valeur_rayon <= 1500)
                     map.setZoom(13);
+                else if(valeur_rayon >= 1500)
+                    map.setZoom(12);
             };
         };
 
@@ -246,7 +248,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataCondition.enable = !dataCondition.enable">{{dataCondition.value}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataCondition.value = !dataCondition.value">{{dataCondition.value}}</button>' +
                     '</div></form>'
                 );
             }
@@ -254,7 +256,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 $scope.ConditionName = "battery.level";
                 $scope.dataCondition.value = 20;
                 $scope.dataCondition.comparator = '<';
-                $scope.changeOperator = function(operator){
+                $scope.changeOperator = function(comparator){
                     if(comparator === '>')
                         $scope.dataCondition.comparator = '<';
                     else
@@ -264,7 +266,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Battery level : </div>' +
-                    '<button class="btn btn-default" ng-click="changeOperator(dataCondition.operator)">{{dataCondition.comparator}}</button>' +
+                    '<button class="btn btn-default" ng-click="changeOperator(dataCondition.comparator)">{{dataCondition.comparator}}</button>' +
                     '<div class="form-group"><input class="form-control" id="battery_low" placeholder="%" min="1" max="100" type="number" required ng-model="dataCondition.value">' +
                     '</div></form>'
                 );
@@ -277,22 +279,29 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataCondition.enable = !dataCondition.enable">{{dataCondition.value}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataCondition.value = !dataCondition.value">{{dataCondition.value}}</button>' +
                     '</div></form>'
                 );
             }
             else if (item.name === "Localisation"){
                 $scope.ConditionName = "localisation";
-                $scope.dataCondition.comparator = "=";
+                $scope.dataCondition.comparator = "<";
+                $scope.radius = 1000;
+                $scope.changeOperator = function(comparator){
+                    if(comparator === '>')
+                        $scope.dataCondition.comparator = '<';
+                    else
+                        $scope.dataCondition.comparator = '>';
+                };
                 myEl.html(
                     '<form class="form-inline">' +
                     '<div id="map"></div>' +
                     '<button type="submit" class="btn btn-default">Select the range :</button>' +
-                    '<input class="form-control" type="range" min="1" max="3000" ng-model="radius" ng-change="setRadius(radius)" required>' +
+                    '<input class="form-control" type="range" min="1" max="3000" ng-model="radius" ng-change="changeRadius(radius)" required>' +
                     '<button type="submit" class="btn btn-default">{{radius}}</button>' +
+                    '<button class="btn btn-default" ng-click="changeOperator(dataCondition.comparator)">{{dataCondition.comparator == "<" ? "Inside" : "Outside"}}</button>' +
                     '</form>'
                 );
-
                 $scope.affichage();
             }
             $compile(myEl)($scope);
@@ -329,39 +338,42 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             }
             else if (action.name === "Flash"){
                 $scope.ActionName = "flash";
-                $scope.dataAction.enable = true;
+                $scope.dataAction.comparator = "=";
+                $scope.dataAction.value = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default">{{dataCondition.enable}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataAction.value = !dataAction.value">{{dataAction.value}}</button>' +
                     '</div></form>'
                 );
             }
             else if (action.name === "Wifi"){
                 $scope.ActionName = "wifi";
-                $scope.dataAction.enable = true;
+                $scope.dataAction.comparator = "=";
+                $scope.dataAction.value = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataCondition.enable != dataCondition.enable">{{dataAction.enable}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataAction.value = !dataAction.value">{{dataAction.value}}</button>' +
                     '</div></form>'
                 );
             }
             else if (action.name === "Bluetooth"){
                 $scope.ActionName = "bluetooth";
-                $scope.dataAction.enable = true;
+                $scope.dataAction.comparator = "=";
+                $scope.dataAction.value = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataCondition.enable != dataCondition.enable">{{dataAction.enable}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataAction.value = !dataAction.value">{{dataAction.value}}</button>' +
                     '</div></form>'
                 );
             }
-            else if (action.name === "Ligthness"){
-                $scope.ActionName = "ligthness";
+            else if (action.name === "Brigthness"){
+                $scope.ActionName = "brigthness";
                 $scope.dataAction.level = 50;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -423,27 +435,36 @@ var limitsArea = function(lat, lng, radius){
 var createTableLocalisation = function(data,probeName,probeComparator){
     var dataIf =[];
     var locationPoints = limitsArea(data.lat,data.lng,data.radius);
+    var comparator1, comparator2;
+    if(probeComparator === '>' ){
+        comparator1 = '>';
+        comparator2 = '<';
+    }
+    else{
+        comparator1 = '<';
+        comparator2 = '>';
+    }
     dataIf.push({
-        probe: probeName,
-        comparator: probeComparator,
+        probe: probeName + '.lat',
+        comparator: comparator2 ,
         value: locationPoints.latMin,
         logicOperator: ""
     });
     dataIf.push({
-        probe: probeName,
-        comparator: probeComparator,
+        probe: probeName + '.lat',
+        comparator: comparator1,
         value: locationPoints.latMax,
         logicOperator: "AND"
     });
     dataIf.push({
-        probe: probeName,
-        comparator: probeComparator,
+        probe: probeName + '.lng',
+        comparator: comparator2,
         value: locationPoints.lngMin,
         logicOperator: "AND"
     });
     dataIf.push({
-        probe: probeName,
-        comparator: probeComparator,
+        probe: probeName + '.lng',
+        comparator: comparator1,
         value: locationPoints.lngMax,
         logicOperator: "AND"
     });

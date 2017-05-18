@@ -219,10 +219,10 @@ var login = function(req, res){
                 res.redirect('/users/' + req.body.username);
                 break;
             case 400:
-                res.send("<h1>Wrong Format</h1>");
+                res.send("<h1>Missing username or password</h1>");
                 break;
             case 401:
-                res.send("<h1>Unauthorized</h1>");
+                res.send("<h1>Missing username or password</h1>");
                 break;
             default :
                 res.send("<h1>Unknow Error</h1>");
