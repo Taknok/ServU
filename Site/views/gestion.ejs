@@ -131,7 +131,7 @@
                             <div class="col-md-8 col-sm-12 col-xs-12">
                                 <div class="row">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <button type="button" class="btn btn-primary center-block" onClick="modif_info();"><i class="glyphicon glyphicon-pencil"></i> Modify your profile information</button>
+                                        <button type="button" class="btn btn-primary center-block" onClick="modif_info();"><i class="glyphicon glyphicon-pencil"></i> Modify your names</button>
                                         <br>
                                     </div>
                                     <div class="row">
@@ -165,14 +165,14 @@
                                                 <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
                                                     <input type="password" class="form-control" name="password" id="password" placeholder="Enter your new password" data-minlength="6" required>
                                                 </div>
-                                                <div class="help-block">Minimum of 6 characters</div>
+                                                <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1 help-block">Minimum of 6 characters</div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="pwd">Confirm password :</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
                                                     <input type="password" class="form-control" name="password2" id="password2" data-match="#password" data-match-error="These don't match" placeholder="Confirm password" required>
                                                 </div>
-                                                <div class="help-block with-errors"></div>
+                                                <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1 help-block with-errors"></div>
                                             </div>
                                             <div class="form-group text-center">
                                                 <button type="submit" class="btn btn-primary">Confirm</button>
@@ -339,8 +339,8 @@
                 <hr class="small">
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="row gutter-10">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 gutter-10">
                 <div class="alertPlaceEventSkeleton"></div>
                 <div class="panel panel-default">
                     <div class="panel-body">
@@ -348,11 +348,17 @@
                             <div class="panel panel-primary">
                                 <div class="panel-heading">
                                     <div class="row gutter-10">
-                                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 gutter-10">
-                                            <h1 class="fontCounter text-bittersweet">{{eventSkeleton.label}}</h1>
+                                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 gutter-10">
+                                            <h3 class="fontCounter" style="color: #FC6E51;">{{eventSkeleton.label}}</h3>
                                         </div>
-                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 gutter-10">
+                                        <div class="col-lg-4 col-md-4 col-sm-4 gutter-10 hidden-xs">
                                             <div class="btn-group pull-right" role="group" aria-label="...">
+                                                <a role="button" class="btn btn-dark" data-toggle="collapse" data-target="#{{eventSkeleton.id}}"><i class="fa fa-info"></i></a>
+                                                <a role="button" class="btn btn-warning" ng-click="deleteEventSkeleton(eventSkeleton)"><i class="fa fa-times"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 gutter-10 visible-xs-block">
+                                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                 <a role="button" class="btn btn-dark" data-toggle="collapse" data-target="#{{eventSkeleton.id}}"><i class="fa fa-info"></i></a>
                                                 <a role="button" class="btn btn-warning" ng-click="deleteEventSkeleton(eventSkeleton)"><i class="fa fa-times"></i></a>
                                             </div>
@@ -367,9 +373,14 @@
                                             <hr class="reduce">
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 gutter-10">
-                                            <h4 class="list-group-item-text text-aqua fontCounter">IF</h4>
+                                            <h3 class="list-group-item-text text-aqua fontCounter">IF</h3>
                                             <div ng-repeat="ifCondition in eventSkeleton.if">
-                                                <p>{{ifCondition.probe}} {{ifCondition.comparator}} {{ifCondition.value}} {{ifCondition.logicOperator}}</p>
+                                                <h4>
+                                                    <span class="label label-primary"><i class="fa" ng-class="getTypeProbe(ifCondition.probe)"></i> {{getLabelProbe(ifCondition.probe)}}</span>
+                                                    <span class="label label-warning">{{ifCondition.comparator}}</span>
+                                                    <span class="label label-primary">{{ifCondition.value}}</span>
+                                                    <span class="label label-default">{{ifCondition.logicOperator}}</span>
+                                                </h4>
                                             </div>
                                             <hr class="reduce">
                                         </div>
