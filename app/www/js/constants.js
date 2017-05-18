@@ -1,7 +1,7 @@
 angular.module('ServU')
 
 .constant('ServUApi', {
-   url: 'http://www.servu.ml/api'
+   url: 'https://www.servu.ml/api'
    // url: 'http://192.168.1.12:3000/api'
 })
 

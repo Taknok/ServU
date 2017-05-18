@@ -307,7 +307,7 @@ angular.module('ServU')
 	
 	$scope.$watch("network.active", function(){
 		probes.network.setActive($scope.network.active);
-		probes.wifi.setActive($scope.wifi.active);
+		probes.wifi.setActive($scope.network.active);
 	})
 	$scope.$watch("bluetooth.active", function(){
 		probes.bluetooth.setActive($scope.bluetooth.active);

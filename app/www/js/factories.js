@@ -57,9 +57,9 @@ angular.module('ServU')
 	
 	function load(){
 		ring.enable = ('true' == permanentStorage.getItem("ring.enable"));
-		vibrate.active = ('true' == permanentStorage.getItem("vibrate.enable"));
-		sms.active = ('true' == permanentStorage.getItem("sms.enable"));
-		flashlight.active = ('true' == permanentStorage.getItem("flashlight.enable"));
+		vibrate.enable = ('true' == permanentStorage.getItem("vibrate.enable"));
+		sms.enable = ('true' == permanentStorage.getItem("sms.enable"));
+		flashlight.enable = ('true' == permanentStorage.getItem("flashlight.enable"));
 	}
 	load();
 	
@@ -536,7 +536,8 @@ angular.module('ServU')
 			bluetooth,
 			localisation,
 			battery,
-			flashlight
+			flashlight,
+			wifi
 		];
 		
 		for(let i = 0; i < probesPosted.length; i++){
@@ -634,10 +635,10 @@ angular.module('ServU')
 			
 			bluetoothSerial.isEnabled(
 				function() {
-					bluetooth.value.enable = true;
+					bluetooth.value.isEnable = true;
 				},
 				function() {
-					bluetooth.value.enable = false;
+					bluetooth.value.isEnable = false;
 				}
 			);
 			
