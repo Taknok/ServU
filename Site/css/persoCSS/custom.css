@@ -24,7 +24,7 @@ input[type="range"]:after {
 
 #map {
     height: 200px;
-    width: 90%;
+    width: 100%;
 }
 
 .panel-heading h3 {
