@@ -63,7 +63,11 @@ rootApp.controller('devicesCtrl', function($rootScope, $scope, $uibModal, $http,
     };
 
     $scope.getReadableTime = function(lastUpdate) {
-        return new Date(lastUpdate);
+        var date = new Date(lastUpdate);
+        var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+        options.timeZone = "UTC";
+        options.timeZoneName = "short";
+        return  date.toLocaleDateString('en-US',options)+' at '+date.toLocaleTimeString('en-US');
     };
 
     // Add the correct class to the battery bar

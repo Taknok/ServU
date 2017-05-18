@@ -205,20 +205,20 @@
                         </div>
                         <div class="row gutter-10">
                             <div class="col-md-2 col-sm-2 col-xs-2 gutter-10 pull-left">
-                                <div class='well well-sm well-warning' data-toggle='tooltip' data-placement='bottom' title='Number of phones' id='nbPhones'>
-                                    <i class="fa fa-mobile-phone"></i> {{nbPhones}}
+                                <div class='well well-sm well-warning'>
+                                    <i class="fa fa-mobile-phone"></i> Number of phones: <b>{{nbPhones}}</b>
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-2 gutter-10 pull-left">
-                                <div class='well well-sm well-warning' data-toggle='tooltip' data-placement='bottom' title='Number of tablets' id='nbTablets'>
-                                    <i class="fa fa-tablet"></i> {{nbTablets}}
+                                <div class='well well-sm well-warning'>
+                                    <i class="fa fa-tablet"></i> Number of tablets: <b>{{nbTablets}}</b>
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-4 col-xs-4 gutter-10 pull-right">
                                 <div class="btn-group" style="margin-top: 25%; margin-bottom: 25%">
                                     <button class="btn btn-warning" data-toggle="modal" data-target='#addModal'>
-                                        <span data-toggle="tooltip" title="Add device" data-placement="top">
-                                            <i class="glyphicon glyphicon-plus"></i>
+                                        <span data-toggle="tooltip" title="Download app" data-placement="top">
+                                            <i class="glyphicon glyphicon-download-alt"></i>
                                         </span>
                                     </button>
                                     <div class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Refresh" ng-click="refreshDevices()">
@@ -505,7 +505,7 @@
             <div class='modal-content'>
                 <div class='modal-header'>
                     <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
-                    <h5 class='modal-title'>Add new device</h5>
+                    <h5 class='modal-title'>Download application</h5>
                 </div>
                 <div class='modal-body'>
                     <div class="row">
