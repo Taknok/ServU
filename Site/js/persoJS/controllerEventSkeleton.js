@@ -42,8 +42,6 @@ rootApp
                     $(".alertPlaceEventSkeleton").append(alertUnknown);
                 }
             });
-        }
+        };
 
-        $scope.username = 'Toto';
-        getListEventSkeleton();
     });
