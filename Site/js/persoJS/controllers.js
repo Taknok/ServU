@@ -3,8 +3,29 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
 
     $scope.devices = [];
     $scope.moreDevice = [];
-    $scope.nbPhones = 0;
-    $scope.nbTablets = 0;
+    $scope.allActionsAvailable = {
+        flashlight: {
+            name: "flashlight",
+            label: "Flashlight",
+            description: "Toggle flashlight"
+        },
+        ring: {
+            name: "ring",
+            label: "Ring",
+            description: "Make the devices ring"
+        },
+        vibrate: {
+            name: "vibrate",
+            label: "Vibrate",
+            description: "Make the devices vibrate"
+        },
+        sms: {
+            name: "sms",
+            label: "Text message",
+            description: "Send an sms"
+        }
+
+    };
 
     $scope.refreshDevices = function(){
         $http.get(url+'/api/users/'+username+'/devices').then(function(res){
@@ -34,7 +55,6 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
             alert('Error while trying to get user\'s devices: '+err);
             console.log('Error : ',err);
         }).then(function(){
-            $scope.countDevices();
             console.log('Loaded devices: ',$scope.devices);
             console.log('Refresh complete');
         });
@@ -43,16 +63,6 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
     // Get a device given its uuid
     $scope.getDeviceByUuid = function(uuid){
         return $filter('filter')($scope.devices,{'uuid':uuid});
-    };
-
-    // Computes the number of devices
-    $scope.countDevices = function () {
-        $scope.nbPhones = 0;
-        $scope.nbTablets = 0;
-        for(var i = $scope.devices.length - 1; i >= 0; i--){
-            if($scope.devices[i].platform === 'mobile-phone'){$scope.nbPhones++}
-            else if($scope.devices[i].platform === 'tablet'){$scope.nbTablets++}
-        }
     };
 
     // Delete a device
@@ -92,9 +102,50 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
 
     // Send an action
     $scope.changeFlashlightState = function(state) {
-        if(state === 'on'){$scope.actionToSend.params.state = 'off'}
-        else if(state === 'off'){$scope.actionToSend.params.state = 'toggle'}
-        else if(state === 'toggle'){$scope.actionToSend.params.state = 'on'}
+        if(state === 'on'){return 'off'}
+        else if(state === 'off'){return 'toggle'}
+        else if(state === 'toggle'){return 'on'}
+    };
+
+    $scope.changeActionToSendToAll = function(action) {
+        $scope.actionToSendToAll = {};
+        $scope.actionToSendToAll.params = {};
+        $scope.actionToSendToAll.label = action.label;
+        $scope.actionToSendToAll.name = action.name;
+
+        var myEl = angular.element(document.querySelector('#actionSendingToAllParams'));
+        if (action.name === 'ring' || action.name === 'vibrate') {
+            $scope.actionToSendToAll.params.time = 1;
+            myEl.html(
+                '<form name="sendActionForm" class="form-inline"><div class="form-group" style="width: 100%;">' +
+                '<div class="input-group" style="width: 100%">' +
+                '<div class="input-group-addon" style="width: 20%">Duration : </div>' +
+                '<input name="time" ng-model="actionToSendToAll.params.time" class="form-control" required min="1" max="10" type="number" style="width: 100%" required>' +
+                '<div class="input-group-addon" style="width: 20%">Seconds</div></div></form>'
+            );
+        } else if(action.name === 'sms') {
+            $scope.actionToSendToAll.params.dest = '';
+            $scope.actionToSendToAll.params.msg = '';
+            myEl.html(
+                '<form name="sendActionForm" class="form-inline"><div class="form-group" style="width: 100%">' +
+                '<div class="input-group" style="width: 100%">' +
+                '<div class="input-group-addon" style="width: 20%">Text message :</div>' +
+                '<input class="form-control" placeholder="Phone Number" type="text" ng-model="actionToSendToAll.params.dest" required>' +
+                '<textarea class="form-control" placeholder="Text message" ng-model="actionToSendToAll.params.msg" required>' +
+                '</div></form>'
+            );
+        } else if(action.name === 'flashlight') {
+            $scope.actionToSendToAll.params.state = 'on';
+            myEl.html(
+                '<form name="sendActionForm" class="form-inline"><div class="form-group" style="width: 100%">' +
+                '<div class="input-group" style="width: 100%">' +
+                '<div class="input-group-addon" style="width: 20%">State : </div>' +
+                '<button class="btn btn-default btn-block" ng-click="actionToSendToAll.params.state = changeFlashlightState(actionToSendToAll.params.state)">{{actionToSendToAll.params.state}}</button>' +
+                '</div></form>'
+            );
+        }
+        $compile(myEl)($scope);
+
     };
 
     $scope.changeActionToSend = function(deviceName,uuid,action){
@@ -105,7 +156,6 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
         $scope.actionToSend.toDevice.name = deviceName;
         $scope.actionToSend.toDevice.uuid = uuid;
         $scope.actionToSend.params = {};
-        $scope.actionToSend.validParams = false;
 
         var myEl = angular.element(document.querySelector('#actionSendingParams'));
         if (action.name === 'ring' || action.name === 'vibrate') {
@@ -117,6 +167,7 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
                 '<input name="time" ng-model="actionToSend.params.time" class="form-control" required min="1" max="10" type="number" style="width: 100%" required>' +
                 '<div class="input-group-addon" style="width: 20%">Seconds</div></div></form>'
             );
+            $scope.actionToSend.params.time = $scope.actionToSend.params.time*1000;
         } else if(action.name === 'sms') {
             $scope.actionToSend.params.dest = '';
             $scope.actionToSend.params.msg = '';
@@ -134,7 +185,7 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
                 '<form name="sendActionForm" class="form-inline"><div class="form-group" style="width: 100%">' +
                 '<div class="input-group" style="width: 100%">' +
                 '<div class="input-group-addon" style="width: 20%">State : </div>' +
-                '<button class="btn btn-default btn-block" ng-click="changeFlashlightState(actionToSend.params.state)">{{actionToSend.params.state}}</button>' +
+                '<button class="btn btn-default btn-block" ng-click="actionToSend.params.state = changeFlashlightState(actionToSend.params.state)">{{actionToSend.params.state}}</button>' +
                 '</div></form>'
             );
         }
@@ -157,7 +208,7 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
             $.notify({
                 // options
                  icon: 'glyphicon glyphicon-ok',
-                 message: 'Action '+actionName+" has been sent to your device"
+                 message: 'Action '+actionName+" has been sent to your device "+actionToSend.toDevice.name
             },{
                 // settings
                  type: 'success',
@@ -184,6 +235,47 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
                  mouse_over: 'pause'
              });
          });
+    };
+
+    $scope.sendActionToAll = function(action){
+        angular.forEach($scope.devices,function(device) {
+            $http.post(url + '/api/users/' + username + '/devices/' + device.uuid + '/actionsUser', {
+                "type": action.name,
+                "label": action.label,
+                "description": action.label + ' triggered for all devices',
+                "parameters": action.params
+            }).then(function (res) {
+                $.notify({
+                    // options
+                    icon: 'glyphicon glyphicon-ok',
+                    message: 'Action ' + action.name + " has been sent to your device " + device.name
+                }, {
+                    // settings
+                    type: 'success',
+                    placement: {
+                        from: 'bottom',
+                        align: 'left'
+                    },
+                    delay: 5000,
+                    mouse_over: 'pause'
+                });
+            }, function (err) {
+                $.notify({
+                    // options
+                    icon: 'glyphicon glyphicon-remove',
+                    message: 'An error (' + err.data + ') occurred while trying to send the action to your device ' + device.name + '. Please try again later.'
+                }, {
+                    // settings
+                    type: 'danger',
+                    placement: {
+                        from: 'bottom',
+                        align: 'left'
+                    },
+                    delay: 10000,
+                    mouse_over: 'pause'
+                });
+            });
+        });
     };
 
     $scope.updateListEvent = function getListEvent(uuid) {

@@ -186,12 +186,7 @@
                         <div class="row gutter-10">
                             <div class="col-md-2 col-sm-2 col-xs-2 gutter-10 pull-left">
                                 <div class='well well-sm well-warning'>
-                                    <i class="fa fa-mobile-phone"></i> <b>{{nbPhones}}</b> phones
-                                </div>
-                            </div>
-                            <div class="col-md-2 col-sm-2 col-xs-2 gutter-10 pull-left">
-                                <div class='well well-sm well-warning'>
-                                    <i class="fa fa-tablet"></i> <b>{{nbTablets}}</b> Tablets
+                                    <i class="fa fa-mobile-phone"></i> <b>{{devices.length}}</b> devices
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-4 col-xs-4 gutter-10 pull-right">
@@ -212,13 +207,37 @@
                     <div class="alertActionSentPlace"></div>
                     <div class="panel-body"> <!-- Devices -->
                         <div id="items">
+                            <div class="row" style="margin-bottom: 1%">
+                                <div class="col-md-12">
+                                    <div class='btn-group dropdown'>
+                                        <button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                                            <i class='fa fa-bullhorn'></i>
+                                            <span class='text-center'>  Send an action to all devices  </span>
+                                            <span class='caret'></span>
+                                            <span class='clearfix'></span>
+                                        </button>
+                                        <ul class='dropdown-menu'>
+                                            <li ng-repeat="action in allActionsAvailable">
+                                                <a data-toggle="modal" data-target="#actionToAllModal" ng-click="changeActionToSendToAll(action)">
+                                                    <div class='pull-left' style="text-transform: capitalize;">{{action.label}}</div>
+                                                    <i class="ion pull-right" ng-class="{'ion-ios-bell': action.name==='ring',
+                                                                     'ion-radio-waves': action.name==='vibrate',
+                                                                     'ion-flash': action.name==='flashlight',
+                                                                     'ion-android-chat': action.name==='sms'}"></i>
+                                                    <div class="clearfix"></div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row" ng-repeat="device in devices">
                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                     <div class="panel panel-warning panel-warning-dark">
                                         <div class='panel-heading'>
                                             <div class='row gutter-10'>
                                                 <div class='col-lg-2 col-md-2 col-sm-2 col-xs-2 gutter-10'>
-                                                    <h3 class='panel-title' id='deviceLogo'><i class='fa fa-{{device.platform}} fa-lg'></i></h3>
+                                                    <h3 class='panel-title' id='deviceLogo'><i class='fa fa-mobile-phone fa-lg'></i></h3>
                                                 </div>
                                                 <div class='col-lg-8 col-md-8 col-sm-8 col-xs-8 gutter-10'>
                                                     <div id='deviceTitle' class='panel-title text-center'>{{device.name}}</div>
@@ -243,7 +262,7 @@
                                                 <div class="col-md-1"><i class="fa fa-barcode"></i></div>
                                                 <div class="col-md-5">{{device.serial}}</div>
                                                 <div class="col-md-1"><i class="fa fa-info-circle"></i></div>
-                                                <div class="col-md-5">{{device.version}}</div>
+                                                <div class="col-md-5">{{device.platform}} {{device.version}}</div>
                                             </div>
                                             <div class='row'>
                                                 <div class='col-md-1' id='deviceCharge'><i class='ion' ng-class="{'ion-battery-charging': device.probes.battery.data.isPlugged, 'ion-battery-full': !device.probes.battery.data.isPlugged}"></i></div>
@@ -393,6 +412,27 @@
                         <div class='modal-footer' id="actionModalFooter">
                             <button type="button" class="btn btn-success" data-dismiss="modal"
                                     ng-click="sendAction(actionToSend)" ng-disabled="sendActionForm.$invalid">Send action</button>
+                            <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Action to all modal -->
+        <div class="text-left" style="color: black">
+            <div class='modal fade' id='actionToAllModal' tabindex='-1' role='dialog' aria-labelledby='actionToAllModalLabel'>
+                <div class='modal-dialog' role='document'>
+                    <div class='modal-content'>
+                        <div class='modal-header'>
+                            <h5 class="modal-title">Send <b>{{actionToSendToAll.label}}</b> action to every device</h5>
+                        </div>
+                        <div class='modal-body'>
+                            <i>Please enter the parameters of your action</i>
+                            <p id="actionSendingToAllParams"></p>
+                        </div>
+                        <div class='modal-footer' id="actionModalFooter">
+                            <button type="button" class="btn btn-success" data-dismiss="modal"
+                                    ng-click="sendActionToAll(actionToSendToAll)" ng-disabled="sendActionForm.$invalid">Send action</button>
                             <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
                         </div>
                     </div>

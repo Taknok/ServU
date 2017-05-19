@@ -5,8 +5,8 @@
 var cookies = document.cookie.split(';');
 var token = cookies[0].substr(6);
 var username = cookies[1].substr(9);
-const url = 'https://servu.ml';
-//const url = 'http://127.0.0.1:3000';
+//const url = 'https://servu.ml';
+const url = 'http://127.0.0.1:3000';
 
 var rootApp = angular.module('root', ['ui.bootstrap'])
 
