@@ -329,7 +329,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="panel-body" style="color:black"><b>No events yet</b></div>
+                                        <div class="panel-body">
+                                            <ul class="list-group" ng-repeat="event in events">
+                                                <li class="list-group-item">
+                                                    <h4 class="list-group-item-heading">event.name</h4>
+                                                    <p class="list-group-item-text">event.description</p>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
