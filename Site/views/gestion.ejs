@@ -186,12 +186,12 @@
                         <div class="row gutter-10">
                             <div class="col-md-2 col-sm-2 col-xs-2 gutter-10 pull-left">
                                 <div class='well well-sm well-warning'>
-                                    <i class="fa fa-mobile-phone"></i> Number of phones: <b>{{nbPhones}}</b>
+                                    <i class="fa fa-mobile-phone"></i> <b>{{nbPhones}}</b> phones
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-2 gutter-10 pull-left">
                                 <div class='well well-sm well-warning'>
-                                    <i class="fa fa-tablet"></i> Number of tablets: <b>{{nbTablets}}</b>
+                                    <i class="fa fa-tablet"></i> <b>{{nbTablets}}</b> Tablets
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-4 col-xs-4 gutter-10 pull-right">
@@ -209,6 +209,7 @@
                         </div>
                         <div class="clearfix"></div>
                     </div>
+                    <div class="alertActionSentPlace"></div>
                     <div class="panel-body"> <!-- Devices -->
                         <div id="items">
                             <div class="row" ng-repeat="device in devices">
@@ -245,18 +246,18 @@
                                                 <div class="col-md-5">{{device.version}}</div>
                                             </div>
                                             <div class='row'>
-                                                <div class='col-md-1' id='deviceCharge'><i class='ion' ng-class="{'ion-battery-charging': device.probes.battery.data.charging, 'ion-battery-full': !device.probes.battery.data.charging}"></i></div>
+                                                <div class='col-md-1' id='deviceCharge'><i class='ion' ng-class="{'ion-battery-charging': device.probes.battery.data.isPlugged, 'ion-battery-full': !device.probes.battery.data.isPlugged}"></i></div>
                                                 <div class='col-md-11'>
                                                     <div class='progress'>
                                                         <div class='progress-bar'
-                                                             ng-class="{'progress-bar-primary': getBarTypeClassBoolean(device.probes.battery.data.charge,'primary'),
-                                                             'progress-bar-success': getBarTypeClassBoolean(device.probes.battery.data.charge,'success'),
-                                                             'progress-bar-warning': getBarTypeClassBoolean(device.probes.battery.data.charge,'warning'),
-                                                             'progress-bar-danger': getBarTypeClassBoolean(device.probes.battery.data.charge,'danger'),
-                                                             'progress-bar-striped active': device.probes.battery.data.charging }"
-                                                             role='progressbar' aria-valuenow='{{device.probes.battery.data.charge}}'
-                                                             aria-valuemin='0' aria-valuemax='100' style='width: {{device.probes.battery.data.charge}}%'>
-                                                            <span><b>{{device.probes.battery.data.charge}}%</b></span>
+                                                             ng-class="{'progress-bar-primary': getBarTypeClassBoolean(device.probes.battery.data.level,'primary'),
+                                                             'progress-bar-success': getBarTypeClassBoolean(device.probes.battery.data.level,'success'),
+                                                             'progress-bar-warning': getBarTypeClassBoolean(device.probes.battery.data.level,'warning'),
+                                                             'progress-bar-danger': getBarTypeClassBoolean(device.probes.battery.data.level,'danger'),
+                                                             'progress-bar-striped active': device.probes.battery.data.isPlugged }"
+                                                             role='progressbar' aria-valuenow='{{device.probes.battery.data.level}}'
+                                                             aria-valuemin='0' aria-valuemax='100' style='width: {{device.probes.battery.data.level}}%'>
+                                                            <span><b>{{device.probes.battery.data.level}}%</b></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -280,11 +281,14 @@
                                                             <span class='clearfix'></span>
                                                         </button>
                                                         <ul class='dropdown-menu'>
-                                                            <li ng-repeat="(action,availability) in device.data.availableActions" ng-show="availability">
-                                                                <a>
-                                                                    <div class='pull-left' style="text-transform: capitalize;">{{action}}</div>
-
-                                                                    <span class='clearfix'></span>
+                                                            <li ng-repeat="action in device.actionsAvailable">
+                                                                <a data-toggle="modal" data-target="#actionModal" ng-click="changeActionToSend(device.name,device.uuid,action)" ng-show="action.enabled">
+                                                                    <div class='pull-left' style="text-transform: capitalize;">{{action.label}}</div>
+                                                                    <i class="ion pull-right" ng-class="{'ion-ios-bell': action.name==='ring',
+                                                                     'ion-radio-waves': action.name==='vibrate',
+                                                                     'ion-flash': action.name==='flashlight',
+                                                                     'ion-android-chat': action.name==='sms'}"></i>
+                                                                    <div class="clearfix"></div>
                                                                 </a>
                                                             </li>
                                                         </ul>
@@ -340,7 +344,7 @@
                                     <div class="panel-body collapse text-capitalize" id="collapse{{probe.name}}">
                                         <ul>
                                             <li>
-                                                <b>Active :</b> {{probe.active}}
+                                                <b>Enabled :</b> {{probe.active}}
                                             </li>
                                             <li>
                                                 <b>Last update:</b> {{getReadableTime(probe.lastUpdate)}}
@@ -351,10 +355,45 @@
                                         </ul>
                                     </div>
                                 </div>
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <button class="btn btn-block btn-info text-capitalize" data-parent="#accordion" data-toggle="collapse" data-target="#collapseAvailableActions">
+                                            Available actions
+                                        </button>
+                                    </div>
+                                    <div class="panel-body collapse text-capitalize" id="collapseAvailableActions">
+                                        <ul>
+                                            <li ng-repeat="action in moreDevice.actionsAvailable">
+                                                <b>{{action.label}}:</b> {{action.description}} <b>| Enabled :</b> {{action.enabled}}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class='modal-footer' id="addModalFooter">
                             <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Action modal -->
+        <div class="text-left" style="color: black">
+            <div class='modal fade' id='actionModal' tabindex='-1' role='dialog' aria-labelledby='actionModalLabel'>
+                <div class='modal-dialog' role='document'>
+                    <div class='modal-content'>
+                        <div class='modal-header'>
+                            <h5 class="modal-title">Send <b>{{actionToSend.label}}</b> action to your device</h5>
+                        </div>
+                        <div class='modal-body'>
+                            <i>Please enter the parameters of your action</i>
+                            <p id="actionSendingParams"></p>
+                        </div>
+                        <div class='modal-footer' id="actionModalFooter">
+                            <button type="button" class="btn btn-success" data-dismiss="modal"
+                                    ng-click="sendAction(actionToSend)" ng-disabled="sendActionForm.$invalid">Send action</button>
+                            <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
                         </div>
                     </div>
                 </div>
