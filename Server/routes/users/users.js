@@ -3,7 +3,7 @@ const users = require("../../database/users");
 const error = require("../../error");
 const deviceRouter = require("./devices");
 const eventSkeletonRouter = require("./eventSkeletons");
-const checkToken = require("../authentication").checkToken;
+const checkToken = require("../authentication").checkTokenMiddleware;
 const envoiEmail = require("../../sendEmail");
 
 let router = express.Router();
