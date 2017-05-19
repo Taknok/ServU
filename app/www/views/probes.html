@@ -1,11 +1,5 @@
 <ion-view view-title="Probes" ng-controller="ProbesCtrl" cache-view="false">
-	<ion-header-bar class="bar-stable">
-		<h1 class="title">Probes</h1>
-		<div class="buttons">
-			<button class="button button-icon ion-refresh" ng-click="refreshProbes()"></button>
-		</div>
-	</ion-header-bar>
-	<ion-content scroll-watch>
+	<ion-content scroll-watch class="subHeader">
 	<ul class="list">
 		<li class="item item-icon-left item-toggle">
 			<i class="icon ion-wifi"></i>{{"Network" | translate}}
@@ -148,6 +142,7 @@
 		accuracy : {{orientation.value.headingAccuracy}}<br/>
 		timestamp : {{orientation.value.timestamp}}<br/>
     <br/>
+	</p>
 	
 	<p>Others : <br/>
         proximity : {{proximity}}<br/>
@@ -159,6 +154,7 @@
 		screen_orientation : {{screen_orientation}}<br/>
 		flashlight.isActivated : {{flashlight.value.isActivated}}<br/>
     <br/>
+	</p>
 	
 	<p>Device : <br/>
         cordova : {{device.value.cordova}}<br/>
@@ -170,55 +166,13 @@
 		uuid : {{device.value.uuid}}<br/>
 		version : {{device.value.version}}<br/>
     <br/>
+	</p>
 	
 	<p>Globalization : <br/>
         language : {{globalization.value.language}}<br/>
 		localName : {{globalization.value.localName}}<br/>
-    <br/>
-	
-	<p>Sim Cards : <br/>
-        nbCards : {{sim.value.nbCards}}<br/>
-		subscriberId : {{sim.value.subscriberId}}<br/>
-		<ion-list>
-		  <ion-item ng-repeat="card in sim.value.cards">
-			simSlotIndex : {{card.simSlotIndex}}<br/>
-			carrierName : {{card.carrierName}}<br/>
-			countryCode : {{card.countryCode}}<br/>
-			deviceId : {{card.deviceId}}<br/>
-			displayName : {{card.displayName}}<br/>
-			isDataRoaming : {{card.isDataRoaming}}<br/>
-			isNetworkRoaming : {{card.isNetworkRoaming}}<br/>
-			simSerialNumber : {{card.simSerialNumber}}<br/>
-		  </ion-item>
-		</ion-list>
-    <br/>
-	
-	
-	
-	
-	<br/>
-	<br/>
-	<br/><br/>
-	<br/>
-	<br/><br/>
-	<br/>
-	<br/><br/>
-	<br/>
-	<br/><br/>
-	<br/>
-	<br/><br/>
-	<br/>
-	<br/><br/>
-	<br/>
-	<br/><br/>
-	<br/>
-	<br/><br/>
-	<br/>
-	<br/>
-	<br/>
-	<br/>
-	<br/>
-	</p>
+    </p>
+
 	</ion-content>
 	  
   

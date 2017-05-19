@@ -18,3 +18,7 @@ body.bar-header-slide-away {
         top: -50;
     }
 }
+
+.subHeader {
+	margin-bottom: 50px;
+}

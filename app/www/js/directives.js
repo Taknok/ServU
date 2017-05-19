@@ -369,7 +369,7 @@ angular.module("ServU").directive('scrollWatch', function($rootScope, $ionicScro
 		},
 		controller: btnSettingsController,
 		link: btnSettingsLink,
-		templateUrl: '/views/settingsButton.html'
+		templateUrl: 'views/settingsButton.html'
 	};
 })
 
