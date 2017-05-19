@@ -104,6 +104,7 @@
                                     Pseudo : <%= username %><br>
                                     First name : <%= firstname %><br>
                                     Last name : <%= lastname %><br>
+                                    Email : <%= email %><br>
                                 </p>
                             </div>
                             <div class="col-md-8 col-sm-12 col-xs-12">
@@ -626,10 +627,9 @@
 <script src="../js/persoJS/ui-bootstrap-tpls-2.5.0.min.js"></script>
 
 
-<script>document.title = '<%= username%> - ' + document.title;</script>
 <script>var username = '<%= username %>'</script>
 <script>
-    document.title = '<%= username%> - ' + document.title;
+    document.title = 'Profile - <%= username%>';
     setCookie('token','<%= token%>',7);
     setCookie('username','<%= username%>',7);
     function setCookie(cname, cvalue, exdays) {

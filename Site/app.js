@@ -35,22 +35,17 @@ app.use(session({
     .get('/', function(req, res){
         if (typeof(req.session.username) !== 'undefined') {
             res.render('index', {
-                username: req.body.username,
-                lastname: req.body.lastname,
-                firstname: req.body.firstname,
-                session: true});
+                username: req.session.username,
+                lastname: req.session.lastname,
+                firstname: req.session.firstname,
+                email : req.session.email,
+                session: true
+            });
         }
         else{
-
-            /*
-            res.render('gestion', {
-                username: req.body.username,
-                lastname: req.body.lastname,
-                firstname: req.body.firstname,
-                session: true}); */
-             res.render('index', {
-             session: false,
-             username: "test"});
+            res.render('index', {
+                session: false
+            });
         }
     })
     // Get the username
@@ -75,10 +70,12 @@ app.use(session({
                 case 200:
                     req.session.lastname = response.body.lastname;
                     req.session.firstname = response.body.firstname;
+                    req.session.email = response.body.email;
                     res.render('gestion', {
                         username: req.session.username,
                         lastname: req.session.lastname,
                         firstname: req.session.firstname,
+                        email: req.session.email,
                         token : token
                     });
                     break;
@@ -170,6 +167,7 @@ app.use(session({
                         req.session.username = req.body.username;
                         req.session.lastname = req.body.lastname;
                         req.session.firstname = req.body.firstname;
+                        req.session.email = req.body.email;
                         login(req,res);
                         break;
                     case 400:
@@ -192,6 +190,41 @@ app.use(session({
         res.redirect('/');
     })
 
+    .post('/resetPassword', function(req,res) {
+        request.post({
+            url: url + ':' + portApi + '/api/resetPassword',
+            json: true,
+            body: {
+                username: req.body.username,
+                email : req.body.email
+            }
+        }, function (err, response, body) {
+            if (err) {
+                console.error(err);
+                res.redirect('/');
+            }
+            switch (response.statusCode) {
+                case 200:
+                    res.render('index', {
+                        session: false,
+                        success : "typeof success != 'undefined' at " + req.body.email});
+                    break;
+                case 400:
+                    res.render('index', {
+                        session: false,
+                        error : "Fail to reset password ! Missing username or password"});
+                    break;
+                case 401:
+                    res.render('index', {
+                        session: false,
+                        error : "Fail to reset password ! Missing username or password"});
+                    break;
+                default :
+                    res.send("<h1>Unknow Error</h1>");
+            }
+        })
+    })
+
     .get('*', function(req, res) {
         res.send("erreur 404");
     });
@@ -211,7 +244,6 @@ var login = function(req, res){
             console.error(err);
             res.redirect('/');
         }
-        console.log(response.statusCode);
         switch (response.statusCode) {
             case 200:
                 token = body.token;
@@ -219,10 +251,14 @@ var login = function(req, res){
                 res.redirect('/users/' + req.body.username);
                 break;
             case 400:
-                res.send("<h1>Missing username or password</h1>");
+                res.render('index', {
+                    session: false,
+                    error : "Fail to login ! Missing username or password"});
                 break;
             case 401:
-                res.send("<h1>Missing username or password</h1>");
+                res.render('index', {
+                    session: false,
+                    error : "Fail to login ! Missing username or password"});
                 break;
             default :
                 res.send("<h1>Unknow Error</h1>");

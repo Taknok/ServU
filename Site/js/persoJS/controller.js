@@ -59,7 +59,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 '</div></div>' +
                 '</div><br>' +
                 '<div id="condition2"></div>' +
-                '</div><br><div class="row"><h5 class="col-xs-2 col-sm-2 col-md-2 col-lg-2 control-label">THEN</h5>' +
+                '<br><div class="row"><h5 class="col-xs-2 col-sm-2 col-md-2 col-lg-2 control-label">THEN</h5>' +
                 '<div class="dropdown col-xs-4 col-sm-3 col-md-3 col-lg-2 selectContainer">' +
                 '<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="{{$ctrl.selectedAction.icon}}"></i> {{$ctrl.selectedAction.name ? $ctrl.selectedAction.name : "Action"}}' +
                 '<span class="caret"></span></button>' +
@@ -415,7 +415,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 );
             }
 
-            else if (action.name = "SMS"){
+            else if (action.name === "SMS"){
                 $scope.ActionName = "sms";
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
