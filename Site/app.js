@@ -9,10 +9,9 @@ var express = require('express'),
 var urlencodedParser =  bodyParser.urlencoded({ extended: false });
 
 // ADRESSE ET PORT DU SERVER
-var adresse = '127.0.0.1';
-var url = 'http://' + adresse;
-var portSite = 3001;
-var portApi = 3000;
+var url = 'https://servu.ml'
+    // CECI est pour le tocard de pad
+//var url = 'http://127.0.0.1:3000'
 var token;
 
 /* On utilise les sessions */
@@ -57,7 +56,7 @@ app.use(session({
             res.redirect('/');
         }
         request.get({
-            url: url + ':' + portApi + '/api/users/' + req.params.username,
+            url: url + '/api/users/' + req.params.username,
             headers: {'x-access-token':token},
             json: true,
             body : {username: req.params.username}
@@ -111,7 +110,7 @@ app.use(session({
             dataChanged = {password : password};
         }
         request.put({
-            url: url + ':' + portApi + '/api/users/' + req.params.username,
+            url: url + '/api/users/' + req.params.username,
             headers: {'x-access-token':token},
             json: true,
             body : dataChanged}, function (err, response, body) {
@@ -149,7 +148,7 @@ app.use(session({
         console.log(req.body);
         if(req.body.username != undefined && req.body.lastname != undefined && req.body.firstname != undefined && req.body.email != undefined && req.body.password != undefined){
             request.post({
-                url: url + ':' + portApi + '/api/users',
+                url: url + '/api/users',
                 json: true,
                 body: {
                     username: req.body.username,
@@ -192,7 +191,7 @@ app.use(session({
 
     .post('/resetPassword', function(req,res) {
         request.post({
-            url: url + ':' + portApi + '/api/resetPassword',
+            url: url  + '/api/resetPassword',
             json: true,
             body: {
                 username: req.body.username,
@@ -234,7 +233,7 @@ console.log("Serveur lancé sur", adresse," le port : 3001");
 
 var login = function(req, res){
     request.post({
-        url: url + ':' + portApi + '/api/login',
+        url: url + '/api/login',
         json: true,
         body: {
             username: req.body.username,
