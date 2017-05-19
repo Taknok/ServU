@@ -325,15 +325,24 @@
                                                     <div class="panel-title">Events of {{device.name}}</div>
                                                 </div>
                                                 <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 pull-right">
-                                                    <button class='btn btn-xs btn-info' data-toggle='modal' data-target='#chooseEventModal' ><i class='glyphicon glyphicon-plus'></i></button>
+                                                    <button class='btn btn-xs btn-info' data-toggle='modal' data-target='#chooseEventModal' ng-click="changeChooseEventDevice(device.uuid)"><i class='glyphicon glyphicon-plus'></i></button>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="panel-body">
+                                        <div class="panel-body" style="color: black">
                                             <ul class="list-group" ng-repeat="event in events">
                                                 <li class="list-group-item">
-                                                    <h4 class="list-group-item-heading">event.name</h4>
-                                                    <p class="list-group-item-text">event.description</p>
+                                                    <div class="row">
+                                                        <div class="col-md-10">
+                                                            <h4 class="list-group-item-heading">{{event.name}}</h4>
+                                                            <p class="list-group-item-text">{{event.description}}</p>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <button class="btn btn-danger btn-xs pull-right" ng-click="disassociateEvent(device.uuid,event.id)">
+                                                                <i class="glyphicon glyphicon-remove"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </li>
                                             </ul>
                                         </div>
@@ -466,28 +475,31 @@
                 </div>
             </div>
         </div>
-    </div>
-    <!-- /.container -->
-</section>
-
-<!-- Choose event modal -->
-<section ng-controller="devicesCtrl">
-    <div class='modal fade' id='chooseEventModal' tabindex='-1' role='dialog' aria-labelledby='chooseEventModalLabel'>
-        <div class='modal-dialog' role='document'>
-            <div class='modal-content'>
-                <div class='modal-header' id="chooseEventModalHeader">
-                    Available events
-                    <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
-                </div>
-                <div class='modal-body' id="chooseEventModalBody">
-                    Coucou {{$scope.moreDevice.name}}
-                </div>
-                <div class='modal-footer' id="chooseEventModalFooter">
-                    <button class="btn btn-warning" data-dismiss="modal">Close</button>
+        <!-- Choose event modal -->
+        <div class="text-left" style="color: black">
+            <div class='modal fade' id='chooseEventModal' tabindex='-1' role='dialog' aria-labelledby='chooseEventModalLabel'>
+                <div class='modal-dialog' role='document'>
+                    <div class='modal-content'>
+                        <div class='modal-header' id="chooseEventModalHeader">
+                            Available events for {{chooseEventDevice.name}}
+                            <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+                        </div>
+                        <div class='modal-body' id="chooseEventModalBody">
+                            <div class="list-group">
+                                <a class="list-group-item" ng-repeat="event in chooseEventList" ng-class="{'disabled': event.disabled, 'active': event.selected}"
+                                   ng-click="changeSelectedEvent(chooseEventList.indexOf(event))"><b>{{event.label}}</b> | <i>{{event.description}}</i></a>
+                            </div>
+                        </div>
+                        <div class='modal-footer' id="chooseEventModalFooter">
+                            <button class="btn btn-success" data-dismiss="modal" ng-click="addEventToDevice(selectedEvent,chooseEventDevice.uuid)" ng-disabled="!eventSelected">Add event to device</button>
+                            <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- /.container -->
 </section>
 
 <!-- Event Skeleton -->

@@ -3,6 +3,9 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
 
     $scope.devices = [];
     $scope.moreDevice = [];
+    $scope.chooseEventList = [];
+    $scope.selectedEvent = {};
+    $scope.eventSelected = false;
     $scope.allActionsAvailable = {
         flashlight: {
             name: "flashlight",
@@ -313,6 +316,111 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
         });
     };
 
+    // Choose event for each device
+
+    $scope.changeSelectedEvent = function(index){
+        for(var i=0; i < $scope.chooseEventList.length; i++){
+            if($scope.chooseEventList[i].disabled === false) {
+                if (i === index) {
+                    $scope.chooseEventList[i].selected = true;
+                    $scope.eventSelected = true;
+                    $scope.selectedEvent = $scope.chooseEventList[i];
+                    console.log('selected event',$scope.selectedEvent);
+                } else {
+                    $scope.chooseEventList[i].selected = false;
+                }
+            }
+        }
+    };
+
+    $scope.addEventToDevice = function(event,uuid){
+        var device = $scope.getDeviceByUuid(uuid)[0];
+        var type = event.action[0].type;
+        var params = event.action[0].parameter;
+
+        delete(event.action);
+        event.action = {};
+        event.action.type = type;
+        event.action.parameters = params;
+        console.log('event: ',event);
+
+        $http.post(url+'/api/users/'+username+'/devices/'+uuid+'/events',event).then(function(res){
+            console.log('Event associated :',res.data);
+            $scope.refreshDevices();
+            $.notify({
+                // options
+                icon: 'glyphicon glyphicon-ok',
+                message: 'Your event '+event.name+' has been successfully associated to the device '+device.name
+            }, {
+                // settings
+                type: 'success',
+                placement: {
+                    from: 'bottom',
+                    align: 'left'
+                },
+                delay: 5000,
+                mouse_over: 'pause'
+            });
+        },function(err){
+            console.log('Error when associating event :', err.data);
+            $.notify({
+                // options
+                icon: 'glyphicon glyphicon-remove',
+                message: 'An error occurred while trying to associate your event to your device, please try again later ('+err.data.status+')'
+            }, {
+                // settings
+                type: 'danger',
+                placement: {
+                    from: 'bottom',
+                    align: 'left'
+                },
+                delay: 10000,
+                mouse_over: 'pause'
+            });
+        });
+    };
+
+    $scope.checkEventPossible = function checkEventPossible(eventAvailable,chooseEventDevice) {
+        $scope.selectedEvent = {};
+        $scope.eventSelected = false;
+
+        for(var i=0; i<eventAvailable.if.length; i++) {
+            var ifSpecial = eventAvailable.if[i].probe.split('.')[0];
+            if (chooseEventDevice.probes[ifSpecial] === undefined) {
+                return true;
+            }
+            else if (chooseEventDevice.probes[ifSpecial].active === false) {
+                return true;
+            }
+        }
+        for(var j=0; j<eventAvailable.action.length; j++) {
+            var actionSpecial = eventAvailable.action[j].type;
+            if (chooseEventDevice.actionsAvailable[actionSpecial] === undefined) {
+                return true;
+            }
+            else if (chooseEventDevice.actionsAvailable[actionSpecial].enabled === false) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    $scope.changeChooseEventDevice = function(uuid){
+        $scope.chooseEventDevice = $scope.getDeviceByUuid(uuid)[0];
+        $scope.chooseEventList = [];
+        var eventsAvailable = [];
+        $http.get(url+'/api/users/'+username+'/eventSkeletons').then(function(res){
+            eventsAvailable = res.data;
+            for(var t=0; t<eventsAvailable.length; t++) {
+                eventsAvailable[t].disabled = $scope.checkEventPossible(eventsAvailable[t],$scope.chooseEventDevice);
+                $scope.chooseEventList.push(eventsAvailable[t]);
+            }
+            console.log('events:',$scope.chooseEventList);
+        },function(err){
+            alert('Error while trying to get events list ('+err.data+')');
+        })
+    };
+
     $scope.updateListEvent = function getListEvent(uuid) {
         Events.getListEvent(uuid).then(function listEventSkeletonOK(events) {
             Alerts.notify('success', '<strong>GOOD</strong> Successful Recuperation of Events',2000);
@@ -335,5 +443,39 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
         });
     };
 
+    $scope.disassociateEvent = function(uuid,eventId) {
+        $http.delete(url+'/api/users/'+username+'/devices/'+uuid+'/events/'+eventId).then(function(res){
+            $scope.refreshDevices();
+            $.notify({
+                // options
+                icon: 'glyphicon glyphicon-ok',
+                message: 'Your event has been successfully deleted'
+            }, {
+                // settings
+                type: 'danger',
+                placement: {
+                    from: 'bottom',
+                    align: 'left'
+                },
+                delay: 5000,
+                mouse_over: 'pause'
+            });
+        },function(err){
+            $.notify({
+                // options
+                icon: 'glyphicon glyphicon-remove',
+                message: 'An error occurred while trying to disassociate your event from your device, please try again later ('+err.data.status+')'
+            }, {
+                // settings
+                type: 'danger',
+                placement: {
+                    from: 'bottom',
+                    align: 'left'
+                },
+                delay: 10000,
+                mouse_over: 'pause'
+            });
+        })
+    };
 
 });
