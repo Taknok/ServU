@@ -76,6 +76,28 @@ exports.logIn = function (username, password) {
         })
 };
 
+exports.resetPassword = function (username, email) {
+    filter = {};
+    filter.username = username;
+    filter.email = email;
+    return db.mongo(usersCollection.name)
+        .then(collection => collection.find(filter).toArray())
+        .then(users => {
+            return new Promise((resolve, reject) => {
+                if (users.length > 1) {
+                    reject("DB Error : Two users have the same email")
+                } else {
+                    resolve(users[0]);
+                }
+            })
+        })
+        .then(user => {
+            if (user !== undefined) {
+                    return true;
+            }
+        })
+};
+
 exports.updateUser = function (username, user2) {
     let filter = {};
     let update = {};

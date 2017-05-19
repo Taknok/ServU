@@ -16,6 +16,8 @@
     "express": "^4.15.2",
     "jsonwebtoken": "^7.4.0",
     "mongodb": "^2.2.25",
+    "nodemailer": "^4.0.1",
     "socket.io": "^2.0.1"
+
   }
 }
