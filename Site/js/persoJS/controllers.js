@@ -66,14 +66,49 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
     };
 
     // Delete a device
+    $scope.changeDeleteDevice = function(uuid) {
+        $scope.deleteDevice = $scope.getDeviceByUuid(uuid)[0];
+    };
+
     $scope.deleteByUuid = function(uuid) {
         for(var i = $scope.devices.length-1; i >= 0; i--){
-            if($scope.devices[i].uuid == uuid){
+            if($scope.devices[i].uuid === uuid){
                 $scope.devices.splice(i,1);
                 break;
             }
         };
-        alert('deleted'+uuid);
+        $http.delete(url+'/api/users/'+username+'/devices/'+uuid).then(function(res){
+            $.notify({
+                // options
+                icon: 'glyphicon glyphicon-ok',
+                message: 'Device '+uuid+' deleted successfully'
+            },{
+                // settings
+                type: 'success',
+                placement: {
+                    from: 'bottom',
+                    align: 'left'
+                },
+                delay: 5000,
+                mouse_over: 'pause'
+            });
+        },function(err){
+            $.notify({
+                // options
+                icon: 'glyphicon glyphicon-ok',
+                message: 'Error while trying to delete device '+uuid+'('+res.data+')'
+            },{
+                // settings
+                type: 'danger',
+                placement: {
+                    from: 'bottom',
+                    align: 'left'
+                },
+                delay: 10000,
+                mouse_over: 'pause'
+            });
+        });
+        console.log('Deleted : ',uuid);
     };
 
     // More about device
