@@ -9,9 +9,9 @@ var express = require('express'),
 var urlencodedParser =  bodyParser.urlencoded({ extended: false });
 
 // ADRESSE ET PORT DU SERVER
-//var url = 'https://servu.ml';
+var url = 'https://servu.ml';
     // CECI est pour le tocard de pad
-var url = 'http://127.0.0.1:3000';
+//var url = 'http://127.0.0.1:3000';
 var token;
 
 /* On utilise les sessions */
