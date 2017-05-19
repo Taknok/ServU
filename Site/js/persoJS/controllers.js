@@ -1,5 +1,5 @@
 
-rootApp.controller('devicesCtrl', function($rootScope, $scope, $uibModal, $http, $filter, $compile) {
+rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, $http, $filter, $compile, Events, Alerts) {
 
     $scope.devices = [];
     $scope.moreDevice = [];
@@ -12,6 +12,7 @@ rootApp.controller('devicesCtrl', function($rootScope, $scope, $uibModal, $http,
             angular.forEach($scope.devices,function(device){
                 device.probes = {};
                 device.actionsAvailable = {};
+                $scope.updateListEvent(device.uuid);
                 $http.get(url+'/api/users/'+username+'/devices/'+device.uuid+'/probes').then(function(res){
                     angular.forEach(res.data,function(probe){
                         device.probes[probe.name] = probe;
@@ -185,6 +186,27 @@ rootApp.controller('devicesCtrl', function($rootScope, $scope, $uibModal, $http,
          });
     };
 
-    $scope.refreshDevices();
+    $scope.updateListEvent = function getListEvent(uuid) {
+        Events.getListEvent(uuid).then(function listEventSkeletonOK(events) {
+            Alerts.notify('success', '<strong>GOOD</strong> Successful Recuperation of Events',2000);
+            $scope.events = events.data;
+            $log.log(events.data);
+        }, function listEventErr(response) {
+            var errorValue = response.status;
+            if(errorValue === 404) { // Email already used
+                Alerts.notify('danger', '<strong>ERROR</strong> Device or User not found',2000);
+            }
+            else if (errorValue === 401) { // Unauthorized
+                Alerts.notify('danger', '<strong>ERROR</strong> Unauthorized',2000);
+            }
+            else if (errorValue === 403) { // Forbidden
+                Alerts.notify('danger', '<strong>ERROR</strong> Forbidden',2000);
+            }
+            else { // Unknown Issue
+                Alerts.notify('danger', '<strong>ERROR</strong> Unknown Issue',2000);
+            }
+        });
+    };
+
 
 });

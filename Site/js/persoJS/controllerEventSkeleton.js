@@ -5,24 +5,21 @@
 rootApp
     .controller("EventSkeletonCtrl", function($scope, $http, $log, $compile, EventSkeletons, Alerts) {
 
-        $scope.updateListEvent = function getListEventSkeleton() {
+        $scope.updateListEventSkeleton = function getListEventSkeleton() {
             EventSkeletons.listEventSkeletons().then(function listEventSkeletonOK(eventSkeletons) {
-                var alertGetSuccess = Alerts.alert('success', '<strong>GOOD</strong> Successful Recuperation of EventSkeletons');
-                $(".alertPlaceEventSkeleton").append(alertGetSuccess);
+                Alerts.notify('success', '<strong>GOOD</strong> Successful Recuperation of EventSkeletons',2000);
                 $scope.eventSkeletons = eventSkeletons.data;
                 $log.log(eventSkeletons.data);
             }, function () {
             });
         };
 
-
-
         $scope.deleteEventSkeleton = function(eventSkeleton) {
             var eventSkeletonID = eventSkeleton.id;
-            EventSkeletons.deleteEvenetSkeleton(eventSkeletonID).then(function successCallback() {
+            EventSkeletons.deleteEventSkeleton(eventSkeletonID).then(function successCallback() {
                 var alertDeleteSuccess = Alerts.alert('success', '<strong>GOOD</strong> ' + eventSkeleton.label + ' deleted');
                 $(".alertPlaceEventSkeleton").append(alertDeleteSuccess);
-                $scope.updateListEvent();
+                $scope.updateListEventSkeleton();
             }, function errorCallback(response) {
                 var errorValue = response.status;
                 if(errorValue === 404) { // Email already used
