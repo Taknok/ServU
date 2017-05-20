@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // angular.module('myapp', ['ionic', 'camera.controllers', 'ngCordova'])
 
-angular.module('ServU', ['ionic', 'ngCordova', 'pascalprecht.translate'])
+angular.module('ServU', ['ionic', 'ngCordova', 'pascalprecht.translate', 'btford.socket-io'])
 
 .config(function($stateProvider, $urlRouterProvider, $translateProvider) {
 	$stateProvider

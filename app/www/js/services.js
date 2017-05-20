@@ -64,6 +64,10 @@ angular.module('ServU')
 		window.localStorage.removeItem(username);
 	};
 
+	var getToken = function(){
+		return authToken;
+	};
+	
 	loadUserCredentials();
 
 	return {
@@ -73,5 +77,6 @@ angular.module('ServU')
 		isAuthenticated: function() {
 			return isAuthenticated;
 		},
+		getToken: getToken
 	};
 })

@@ -64,14 +64,14 @@ angular.module('ServU')
 		console.log(phoneInfo.getPosted(), phoneInfo.getUuid() != 0)
 		if (phoneInfo.getUuid() != 0 && phoneInfo.getPosted()){
 			putProbes();
-			actionHandler();
+			// actionHandler();
 		}
 		console.log(">>>> 10s loop <<<<")
 	}, 10 * 1000);
 		
 })
 
-.controller('LoginCtrl', function($scope, AuthService, $ionicPopup, $state, phoneInfo, probes, actions, ServUApi, $http) {
+.controller('LoginCtrl', function($scope, $q, AuthService, $ionicPopup, $state, phoneInfo, probes, actions, ServUApi, $http, socket) {
 	$scope.user = {
 		username: '',
 		password: ''
@@ -81,7 +81,7 @@ angular.module('ServU')
 		AuthService.login($scope.user).then(function(msg) {
 			phoneInfo.setUsername($scope.user.username);
 			
-			let postPhone = function(){
+			let postPhone = $q(function(resolve, reject){
 				let tmp = probes.device.getValue();
 				
 				let data = {
@@ -98,22 +98,27 @@ angular.module('ServU')
 				$http.post(ServUApi.url + "/phones", data).then(function(){
 					phoneInfo.setPosted(true);
 					console.log("Phone posted");
+					resolve();
 				}).catch(function(e){
 					if (e.status == 400){
 						console.error("Wrong format or Owner not found :", e);
 						phoneInfo.setPosted(false);
+						reject(e.status);
 					} else if (e.status == 401){
 						console.error("Unauthorized :", e);
 						phoneInfo.setPosted(false);
+						reject(e.status);
 					} else if (e.status == 403){
 						console.error("Forbidden :", e);
 						phoneInfo.setPosted(false);
+						reject(e.status);
 					} else if (e.status == 409){
 						console.error("Another device has the same uuid :", e);
 						phoneInfo.setPosted(true);
+						resolve();
 					} 
 				});
-			};
+			});
 			
 			console.log("Phone has been posted : ", phoneInfo.getPosted())
 			
@@ -164,19 +169,43 @@ angular.module('ServU')
 				}
 			};
 			
+			var subscribeActions = function(){
+				let who = {
+					uuid: phoneInfo.getUuid(),
+					token: AuthService.getToken()
+				};
+				socket.emit("who", who);
+			};
 			
 			if (!phoneInfo.getPosted()){
-				postPhone();
-				probes.checkAvailable();
-				postProbes();
-				postActionAvailable();
+				postPhone().then(function(){
+					probes.checkAvailable();
+					postProbes();
+					postActionAvailable();
+					console.log("wxxxxxxxx", phoneInfo.getSubscribed())
+					if (!phoneInfo.getSubscribed()){
+						subscribeActions();
+						phoneInfo.setSubscribed(true);
+						
+						socket.on("action", function(action){
+							console.log(action);
+							let actionUpdated = actions.trigger(action);
+							$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsUser/" + actionUpdated.id, {"status" : actionUpdated.status});
+						});
+						
+						socket.on("connect", function(action){
+							console.log("Connected to socket");
+						});
+					}
+										
+					$state.go('main');
+				}).catch(function(e){
+					console.error("Something happen : ", e);
+				});
+			} else {
+				$state.go('main');
 			}
 			
-			
-			
-			
-			
-			$state.go('main');
 		}, function(errMsg) {
 			var alertPopup = $ionicPopup.alert({
 				title: 'Login failed!',
@@ -225,9 +254,9 @@ angular.module('ServU')
 		$state.go('login');
 	};
 	
-	postProbesOnLogin = async function(){
-		let tmp = await probes.constructVect();
-		$http.post(ServUApi.url + "/phone/" + phoneInfo.getUuid() + "/probes", tmp);
+	$scope.logout = function() {
+		AuthService.logout();
+		$state.go('login');
 	};
 	
 	probes.onStart();
@@ -256,7 +285,7 @@ angular.module('ServU')
 	});
 })
 
-.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader, actions, phoneInfo, probes) {
+.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader, actions, phoneInfo) {
 	$scope.destroySession = function() {
 		AuthService.logout();
 	};
@@ -265,30 +294,6 @@ angular.module('ServU')
 		$http.get(ServUApi.url + '/memberinfo').then(function(result) { //changer pour mettre les infos de notre user
 			$scope.memberinfo = result.data.msg;
 		});
-	};
-
-	$scope.logout = function() {
-		AuthService.logout();
-		$state.go('login');
-	};
-	
-	$scope.test = function(){
-		function successCallback(result) {
-		  console.log(result);
-		}
-
-		function errorCallback(error) {
-		  console.log(error);
-		}
-		function hasReadPermission() {
-			window.plugins.sim.hasReadPermission(successCallback, errorCallback);
-		}
-		function requestReadPermission() {
-			window.plugins.sim.requestReadPermission(successCallback, errorCallback);
-		}
-		hasReadPermission();
-		requestReadPermission();
-		console.log(">>>>>>>>>", probes.sim.getAll())
 	};
 	
 	hideHeader.init();
@@ -330,20 +335,6 @@ angular.module('ServU')
 	$scope.$watch("device.active", function(){
 		probes.device.setActive($scope.device.active);
 	})
-	
-	$scope.refreshProbes = function(){
-		$scope.network = probes.network.getValue();
-		$scope.bluetooth = probes.bluetooth.getValue();
-		// $scope.localisation = probes.localisation.getValue();
-		$scope.battery = probes.battery.getValue();
-		$scope.sim = probes.sim.getValue();
-		$scope.flashlight = probes.flashlight.getValue();
-		$scope.screenOrientation = probes.screenOrientation.getValue();
-		$scope.device = probes.device.getValue();
-		
-		
-		console.log($scope.testval)
-	}
 	
 	
 	hideHeader.init();

@@ -20,6 +20,16 @@ angular.module('ServU')
 	};
 })
 
+.factory('socket', ["socketFactory", "ServUApi", function(socketFactory, ServUApi){
+	var myIoSocket = io.connect(ServUApi.socket);
+	
+	mySocket = socketFactory({
+		ioSocket: myIoSocket
+	});
+	
+	return mySocket;
+}])
+
 .factory("actions", [ "$cordovaVibration", "$cordovaSms", "$http", "ServUApi", "phoneInfo", function($cordovaVibration, $cordovaSms, $http, ServUApi, phoneInfo){
 	var permanentStorage = window.localStorage;
 	
@@ -75,7 +85,9 @@ angular.module('ServU')
 			"enabled": action.enable,
 			"description": action.description
 		};
-		$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsAvailable/" + action.name, data);
+		$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsAvailable/" + action.name, data).then(function(){
+			console.log("PUT > " + action.name);
+		});
 	};
 	
 	var trigger = function(action){
@@ -212,8 +224,9 @@ angular.module('ServU')
 .factory("phoneInfo", [ function(){
 	var permanentStorage = window.localStorage;
 	
-	var _uuid = 0;
-	var _username = "Paul";
+	// var _uuid = 0;
+	// var _username = "Paul";
+	var subscribed = false;
 	return {
 		setUuid: function(uuid){
 			permanentStorage.setItem("uuid", uuid);
@@ -232,6 +245,12 @@ angular.module('ServU')
 		},
 		getPosted: function(){
 			return permanentStorage.getItem("phonePosted");
+		},
+		setSubscribed: function(bool){
+			subscribed = bool;
+		},
+		getSubscribed: function(){
+			return subscribed;
 		}
 	};
 }])
