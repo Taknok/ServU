@@ -73,6 +73,11 @@ exports.startSocketIO = function () {
                     .then(user => devicesDB.getDeviceByUuid(who.uuid, user))
                     .then(device => {
                         if (device !== undefined) {
+                            let previousSocket = devices.getSocketIdByUuid(device.uuid);
+                            if(previousSocket !== undefined){
+                                devices.removeDevice(previousSocket);
+                                socketLog(`Close previous socket to device ${device.uuid}`);
+                            }
                             devices.addDevice(socket.id, who.uuid);
                             socketLog(`Device '${device.uuid}' authenticated`);
                         } else {
