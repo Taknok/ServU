@@ -557,13 +557,19 @@
                                         </div>
                                         <div class="col-lg-4 col-md-4 col-sm-4 gutter-10 hidden-xs">
                                             <div class="btn-group pull-right" role="group" aria-label="...">
-                                                <a role="button" class="btn btn-dark" data-toggle="collapse" data-target="#{{eventSkeleton.id}}"><i class="fa fa-info"></i></a>
-                                                <a role="button" class="btn btn-warning" ng-click="deleteEventSkeleton(eventSkeleton)"><i class="fa fa-times"></i></a>
+                                                <a role="button" class="btn btn-dark" data-toggle="collapse"
+                                                   data-target="#{{eventSkeleton.id}}"
+                                                   ng-click="giveMap(eventSkeleton)"><i class="fa fa-info"></i></a>
+                                                <a role="button" class="btn btn-warning"
+                                                   ng-click="deleteEventSkeleton(eventSkeleton);"><i
+                                                            class="fa fa-times"></i></a>
                                             </div>
                                         </div>
                                         <div class="col-xs-12 gutter-10 visible-xs-block">
                                             <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                                <a role="button" class="btn btn-dark" data-toggle="collapse" data-target="#{{eventSkeleton.id}}"><i class="fa fa-info"></i></a>
+                                                <a role="button" class="btn btn-dark" data-toggle="collapse"
+                                                   data-target="#{{eventSkeleton.id}}"
+                                                   ng-click="giveMap(eventSkeleton)"><i class="fa fa-info"></i></a>
                                                 <a role="button" class="btn btn-warning" ng-click="deleteEventSkeleton(eventSkeleton)"><i class="fa fa-times"></i></a>
                                             </div>
                                         </div>
@@ -591,7 +597,8 @@
                                                 <h4>
                                                     <span class="label label-primary"><i class="fa fa-globe"></i> Localisation</span>
                                                     <span class="label label-warning">{{ifCondition.comparator == ">" ? "Inside" : "Outside"}}</span>
-                                                    <a role="button" class="btn btn-dark btn-xs" ng-click=giveMap(eventSkeleton)>Load Map</a>
+                                                    <a role="button" class="btn btn-dark btn-xs"
+                                                       ng-click="giveMap(eventSkeleton)">Reload Map</a>
                                                     <div id="map{{eventSkeleton.id}}" style="width : 100%; height:200px"></div>
                                                 </h4>
                                             </div>

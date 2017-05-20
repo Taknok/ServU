@@ -222,7 +222,7 @@ rootApp
                 });
                 mapPiti.setCenter(markerPiti.getPosition());
                 radiusRangePiti.setCenter(markerPiti.getPosition());
-
+                google.maps.event.trigger(mapPiti, "resize");
             }
 
         };
