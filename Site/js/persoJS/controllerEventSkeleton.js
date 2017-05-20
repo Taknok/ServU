@@ -7,7 +7,7 @@ rootApp
 
         $scope.updateListEventSkeleton = function getListEventSkeleton() {
             EventSkeletons.listEventSkeletons().then(function listEventSkeletonOK(eventSkeletons) {
-                Alerts.notify('success', '<strong>GOOD</strong> Successful Recuperation of EventSkeletons',2000);
+                //Alerts.notify('success', '<strong>GOOD</strong> Successful Recuperation of EventSkeletons',2000);
                 $scope.eventSkeletons = eventSkeletons.data;
                 $log.log(eventSkeletons.data);
             }, function () {

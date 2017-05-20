@@ -422,7 +422,7 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
 
     $scope.updateListEvent = function getListEvent(uuid) {
         Events.getListEvent(uuid).then(function listEventSkeletonOK(events) {
-            Alerts.notify('success', '<strong>GOOD</strong> Successful Recuperation of Events',2000);
+            //Alerts.notify('success', '<strong>GOOD</strong> Successful Recuperation of Events',2000);
             $scope.events = events.data;
             $log.log(events.data);
         }, function listEventErr(response) {
@@ -448,7 +448,7 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
             $.notify({
                 // options
                 icon: 'glyphicon glyphicon-ok',
-                message: 'Your event has been successfully deleted'
+                message: 'Your event has been successfully disassociated'
             }, {
                 // settings
                 type: 'success',
