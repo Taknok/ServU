@@ -85,6 +85,26 @@ paths:
           description: Missing username or password
         "401":
           description: Unauthorized
+  /resetPassword:
+    post:
+      tags:
+        - User
+        - Phone
+      description: Reset Password by sending an email
+      parameters:
+        - name: resetPassword
+          in: body
+          description: username and email of the user
+          required: true
+          schema:
+            $ref: "#/definitions/resetPassword"
+      responses:
+        "200":
+          description: Email send successfully
+        "400":
+          description: Missing username or email
+        "401":
+          description: Unauthorized
 
   /users:
     post:
@@ -1027,4 +1047,12 @@ definitions:
       username:
         type: string
       password:
+        type: string
+
+  resetPassword:
+    type: object
+    properties:
+      username:
+        type: string
+      email:
         type: string

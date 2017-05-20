@@ -5,7 +5,8 @@
 var cookies = document.cookie.split(';');
 var token = cookies[0].substr(6);
 var username = cookies[1].substr(9);
-const url = 'http://127.0.0.1:3000';
+const url = 'https://servu.ml';
+//const url = 'http://127.0.0.1:3000';
 
 var rootApp = angular.module('root', ['ui.bootstrap'])
 
@@ -30,44 +31,48 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 template: '<div class="modal-header">' +
                 '<h2 class="modal-title" id="modal-title">Event creation</h2>' +
                 '</div>' +
-                '<div class="modal-body container form-group" id="modal-body">' +
-                '<div class="row"><h5 class="col-xs-2 col-md-2 control-label">LABEL : </h5>' +
-                '<div class="col-xs-8 selectContainer">'+
+                '<div class="modal-body form-group" id="modal-body">' +
+                '<div class="row"><h5 class="col-xs-3 col-sm-3 col-md-3 col-lg-3 control-label">LABEL</h5>' +
+                '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 selectContainer">'+
                 '<form class="form-inline">' +
-                '<div class="input"><input style="width:80%;" class="form-control" placeholder="Enter a name" type="text" ng-model="label" required>' +
+                '<div class="input"><input class="form-control" placeholder="Enter a name" type="text" ng-model="label" required>' +
                 '</div></form>' +
                 '</div></div>' +
-                '<div class="row"><h5 class="col-xs-2 col-md-2 control-label">DESCRIPTION : </h5>' +
-                '<div class="col-xs-8 selectContainer">'+
+                '<div class="row"><h5 class="col-xs-3 col-sm-3 col-md-3 col-lg-3 control-label">DESCRIPTION</h5>' +
+                '<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9  selectContainer">'+
                 '<form class="form-inline">' +
-                '<div class="input"><input style="width:80%;" class="form-control" placeholder="Enter a description" type="text" ng-model="description" required>' +
+                '<div class="input"><input class="form-control" placeholder="Enter a description" type="text" ng-model="description" required>' +
                 '</div></form>' +
                 '</div></div>' +
                 '<div class="row">' +
-                '<h5 class="col-xs-2 col-md-2 control-label">IF</h5>' +
-                '<div class="dropdown col-xs-2 col-md-2 selectContainer">' +
-                '<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="{{$ctrl.selectedItem.icon}}"></i> {{$ctrl.selectedItem.name ? $ctrl.selectedItem.name : "Condition"}}' +
+                '<h5 class="col-xs-2 col-sm-2 col-md-2 col-lg-2 control-label">IF</h5>' +
+                '<div id="condition1">' +
+                '<div class="dropdown col-xs-4 col-sm-3 col-md-3 col-lg-2 selectContainer">' +
+                '<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="{{conditionArray[0].selectedItem.icon}}"></i> {{conditionArray[0].selectedItem.name ? conditionArray[0].selectedItem.name : "Condition"}}' +
                 ' <span class="caret"></span></button>' +
                 '<ul class="dropdown-menu">' +
-                '<li><a href="#"  ng-repeat="item in $ctrl.items" ng-click="$ctrl.condition_update(item)"><i class="{{item.icon}}"></i> {{item.name}}</a></li>' +
+                '<li><a href="#"  ng-repeat="item in $ctrl.items" ng-click="$ctrl.condition_update(item,0)"><i class="{{item.icon}}"></i> {{item.name}}</a></li>' +
                 '</ul>' +
                 '</div>' +
-                '<div class="col-xs-6 selectContainer">' +
-                '<div id="condition_statut"></div>'+
-                '</div></div><br>' +
-                '<div class="row"><h5 class="col-xs-2 control-label">THEN</h5>' +
-                '<div class="dropdown col-xs-2 selectContainer">' +
+                '<div class="col-xs-10 col-sm-7 col-md-7 col-lg-8 selectContainer">' +
+                '<div id="conditionStatus1"></div>'+
+                '<div class="pull-right"><button type="button" class="btn btn-positive button-outline" ng-click="$ctrl.ajoutCondition(1)" ng-show="conditionArray[0].selectedItem.name"><i class="fa fa-plus"></i> Add</button></div>' +
+                '</div></div>' +
+                '</div><br>' +
+                '<div id="condition2"></div>' +
+                '<br><div class="row"><h5 class="col-xs-2 col-sm-2 col-md-2 col-lg-2 control-label">THEN</h5>' +
+                '<div class="dropdown col-xs-4 col-sm-3 col-md-3 col-lg-2 selectContainer">' +
                 '<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="{{$ctrl.selectedAction.icon}}"></i> {{$ctrl.selectedAction.name ? $ctrl.selectedAction.name : "Action"}}' +
                 '<span class="caret"></span></button>' +
                 '<ul class="dropdown-menu">' +
                 '<li><a href="#"  ng-repeat="action in $ctrl.actions" ng-click="$ctrl.action_update(action)"><i class="{{action.icon}}"></i> {{action.name}}</a></li>' +
                 '</ul>' +
                 '</div>' +
-                '<div class="col-xs-6 selectContainer">' +
+                '<div class="col-xs-10 col-sm-7 col-md-7 col-lg-8 selectContainer">' +
                 '<div id="action_statut"></div>'+
                 '</div></div></div>' +
                 '<div class="modal-footer">' +
-                '<button class="btn btn-primary" type="button" ng-disabled="!label || !description || !$ctrl.selectedAction || !$ctrl.selectedItem " ng-click="$ctrl.ok()">Create</button>' +
+                '<button class="btn btn-primary" type="button" ng-disabled="!label || !description || !$ctrl.selectedAction || $ctrl.conditionArray[0].selectedItem " ng-click="$ctrl.ok()">Create</button>' +
                 '<button class="btn btn-warning" type="button" ng-click="$ctrl.cancel()">Cancel</button>' +
                 '</div>',
                 controller: 'ModalInstanceCtrl',
@@ -80,7 +85,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                     }
                 }
             });
-            modalInstance.result.then(function (selectedItem) {});
+            modalInstance.result.then(function(){});
         };
 
         //Fait une petite anim
@@ -95,6 +100,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             $('.selectpicker').selectpicker();
         };
         var $ctrl = this;
+        $scope.conditionArray = [{selectedItem : "", dataCondition : {}}];
         $scope.username = username;
         //Liste des conditions
         $ctrl.items = [
@@ -107,26 +113,53 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             {name : 'Ring', icon : 'icon ion-ios-bell'},
             {name : 'Vibrate', icon : 'icon ion-radio-waves'},
             {name : 'Flash' , icon : 'glyphicon glyphicon-flash'},
-            {name : 'Ligthness', icon : 'icon ion-ios-sunny'},
-            {name : 'Wifi', icon : "icon ion-wifi"},
-            {name : 'Bluetooth', icon : "icon ion-bluetooth"},
             {name : 'SMS', icon : "glyphicon glyphicon-envelope"}];
+        /*
+         {name : 'Brigthness', icon : 'icon ion-ios-sunny'},
+         {name : 'Wifi', icon : "icon ion-wifi"},
+         {name : 'Bluetooth', icon : "icon ion-bluetooth"}];
+         */
 
+        $scope.validForm =
+
+            $ctrl.ajoutCondition = function(){
+                var index = $scope.conditionArray.length;
+                var numero = index + 1;
+                var myEl = angular.element(document.querySelector('#condition' +numero));
+                myEl.html('<div class="row"><div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"></div><div class="dropdown col-xs-4 col-sm-3 col-md-3 col-lg-2 selectContainer">' +
+                    '<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="{{conditionArray[' + index + '].selectedItem.icon}}"></i> {{conditionArray[' + index + '].selectedItem.name ? conditionArray[' + index + '].selectedItem.name : "Condition"}}' +
+                    ' <span class="caret"></span></button>' +
+                    '<ul class="dropdown-menu">' +
+                    '<li><a href="#"  ng-repeat="item in $ctrl.items" ng-click="$ctrl.condition_update(item,' + index +')"><i class="{{item.icon}}"></i> {{item.name}}</a></li>' +
+                    '</ul>' +
+                    '</div>' +
+                    '<div class="col-xs-10 col-sm-7 col-md-7 col-lg-8 selectContainer">' +
+                    '<div id="conditionStatus' + numero +'"></div>'+
+                    '<div class="pull-right"><button type="button" class="btn btn-positive button-outline" ng-click="$ctrl.ajoutCondition('+ numero +')" ng-show="conditionArray[' + index + '].selectedItem.name"><i class="fa fa-plus"></i> Add</button></div>' +
+                    '</div>' +
+                    '</div><br>');
+                $scope.conditionArray.push({selectedItem : '', dataCondition : {} });
+                myEl.after(
+                    '<div id="condition' + (numero+1) +'"></div>');
+                $compile(myEl)($scope);
+            };
         //Lors du clic create du modal
         $ctrl.ok = function () {
-            var dataIf;
-            if($scope.ConditionName === "localisation"){
-                dataIf = createTableLocalisation($scope.dataCondition, 'localisation','=');
-            }
-            else{
-                dataIf = [{
-                    probe: $scope.ConditionName,
-                    comparator: $scope.dataCondition.comparator,
-                    value: $scope.dataCondition.value,
-                    logicOperator: ""
-                }];
-            }
-            var data = {
+            var dataIf = [];
+            angular.forEach($scope.conditionArray, function(value, key) {
+                if(value.ConditionName === "localisation"){
+                    dataIf = dataIf.concat(createTableLocalisation(value.dataCondition, 'localisation',value.dataCondition.comparator));
+                }
+                else{
+                    dataIf.push({
+                        probe: value.ConditionName,
+                        comparator: value.dataCondition.comparator,
+                        value: value.dataCondition.value,
+                        logicOperator: ""
+                    });
+                }
+            });
+            data = {
                 label: $scope.label,
                 description: $scope.description,
                 if: dataIf,
@@ -160,7 +193,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
         };
 
         //Gere l'affichage de la carte pour localisation
-        $scope.affichage = function(){
+        $scope.affichage = function(index){
             var marker;
 
             // Option pour la carte
@@ -179,7 +212,6 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
 
             //Creation de la carte
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-            $scope.radius = 1000;
             var radiusRange = new google.maps.Circle({
                 strokeColor: '#a3afff',
                 strokeOpacity: 0.8,
@@ -200,22 +232,23 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
 
             //Permet de creer des marker sur la map
             map.addListener('click', function(e) {
-                $scope.dataCondition.position = {lat : e.latLng.lat(), lng : e.latLng.lng()};
+                $scope.conditionArray[index].dataCondition.position = {lat : e.latLng.lat(), lng : e.latLng.lng()};
                 if(marker !== undefined){
                     marker.setMap(null);
                 }
                 marker = new google.maps.Marker({
-                    position: $scope.dataCondition.position,
+                    position: $scope.conditionArray[index].dataCondition.position,
                     map: map
                 });
                 map.setCenter(marker.getPosition());
                 radiusRange.setCenter(marker.getPosition());
-                $scope.dataCondition = {lat : marker.getPosition().lat(), lng : marker.getPosition().lng(), radius : $scope.radius }
+                $scope.conditionArray[index].dataCondition = {lat : marker.getPosition().lat(), lng : marker.getPosition().lng(), radius : $scope.radius }
             });
 
             //Permet de changer le zoom de la carte en fonction du rayon
-            $scope.setRadius = function(filtre_rayon){
+            $scope.changeRadius = function(filtre_rayon){
                 var valeur_rayon = parseFloat(filtre_rayon);
+                radiusRange.setRadius(valeur_rayon);
                 if (valeur_rayon < 75)
                     map.setZoom(18);
                 else if (valeur_rayon >= 75 && valeur_rayon < 150)
@@ -226,74 +259,82 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                     map.setZoom(15);
                 else if(valeur_rayon >= 500 && valeur_rayon < 1000)
                     map.setZoom(14);
-                else if(valeur_rayon >= 1000 && valeur_rayon <= 2000)
+                else if(valeur_rayon >= 1000 && valeur_rayon <= 1500)
                     map.setZoom(13);
+                else if(valeur_rayon >= 1500)
+                    map.setZoom(12);
             };
         };
 
         //Reagi lors du changement de condition
-        $ctrl.condition_update = function (item) {
-            $ctrl.selectedItem = item;
-            var myEl = angular.element(document.querySelector('#condition_statut'));
-            $scope.dataCondition = {};
-
+        $ctrl.condition_update = function (item, index) {
+            $scope.conditionArray[index].selectedItem = item;
+            var myEl = angular.element(document.querySelector('#conditionStatus' +(index+1)));
+            $scope.conditionArray[index].dataCondition = {};
             //MISE A JOUR DE L AFFICHAGE
             if (item.name === "Wifi") {
-                $scope.ConditionName = "wifi.isEnable";
-                $scope.dataCondition.comparator = "=";
-                $scope.dataCondition.value = false;
+                $scope.conditionArray[index].ConditionName = "wifi.isEnable";
+                $scope.conditionArray[index].dataCondition.comparator = "=";
+                $scope.conditionArray[index].dataCondition.value = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataCondition.enable = !dataCondition.enable">{{dataCondition.value}}</button>' +
+                    '<button class="btn btn-default" ng-click="conditionArray['+index+'].dataCondition.value = !conditionArray['+index+'].dataCondition.value">{{conditionArray['+index+'].dataCondition.value}}</button>' +
                     '</div></form>'
                 );
             }
             else if(item.name  === "Battery"){
-                $scope.ConditionName = "battery.level";
-                $scope.dataCondition.value = 20;
-                $scope.dataCondition.comparator = '<';
-                $scope.changeOperator = function(operator){
+                $scope.conditionArray[index].ConditionName = "battery.level";
+                $scope.conditionArray[index].dataCondition.value = 20;
+                $scope.conditionArray[index].dataCondition.comparator = '<';
+                $scope.changeOperator = function(comparator){
                     if(comparator === '>')
-                        $scope.dataCondition.comparator = '<';
+                        $scope.conditionArray[index].dataCondition.comparator = '<';
                     else
-                        $scope.dataCondition.comparator = '>';
+                        $scope.conditionArray[index].dataCondition.comparator = '>';
                 };
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Battery level : </div>' +
-                    '<button class="btn btn-default" ng-click="changeOperator(dataCondition.operator)">{{dataCondition.comparator}}</button>' +
-                    '<div class="form-group"><input class="form-control" id="battery_low" placeholder="%" min="1" max="100" type="number" required ng-model="dataCondition.value">' +
+                    '<button class="btn btn-default" ng-click="changeOperator(conditionArray['+index+'].dataCondition.comparator)">{{conditionArray['+index+'].dataCondition.comparator}}</button>' +
+                    '<div class="form-group"><input class="form-control" id="battery_low" placeholder="%" min="1" max="100" type="number" required ng-model="conditionArray['+index+'].dataCondition.value">' +
                     '</div></form>'
                 );
             }
             else if (item.name === "Bluetooth"){
-                $scope.ConditionName = "bluetooth.isConnected";
-                $scope.dataCondition.comparator = "=";
-                $scope.dataCondition.value = false;
+                $scope.conditionArray[index].ConditionName = "bluetooth.isConnected";
+                $scope.conditionArray[index].dataCondition.comparator = "=";
+                $scope.conditionArray[index].dataCondition.value = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataCondition.enable = !dataCondition.enable">{{dataCondition.value}}</button>' +
+                    '<button class="btn btn-default" ng-click="conditionArray['+index+'].dataCondition.value = !conditionArray['+index+'].dataCondition.value">{{conditionArray['+index+'].dataCondition.value}}</button>' +
                     '</div></form>'
                 );
             }
             else if (item.name === "Localisation"){
-                $scope.ConditionName = "localisation";
-                $scope.dataCondition.comparator = "=";
+                $scope.conditionArray[index].ConditionName = "localisation";
+                $scope.conditionArray[index].dataCondition.comparator = "<";
+                $scope.radius = 1000;
+                $scope.changeOperator = function(comparator){
+                    if(comparator === '>')
+                        $scope.conditionArray[index].dataCondition.comparator = '<';
+                    else
+                        $scope.conditionArray[index].dataCondition.comparator = '>';
+                };
                 myEl.html(
                     '<form class="form-inline">' +
                     '<div id="map"></div>' +
-                    '<button type="submit" class="btn btn-default">Select the range :</button>' +
-                    '<input class="form-control" type="range" min="1" max="3000" ng-model="radius" ng-change="setRadius(radius)" required>' +
-                    '<button type="submit" class="btn btn-default">{{radius}}</button>' +
+                    '<div class="input-group">' +
+                    '<div class="input-group-addon">Select the range : {{radius}}</div>' +
+                    '<button class="btn btn-default" ng-click="changeOperator(conditionArray['+index+'].dataCondition.comparator)">{{conditionArray['+index+'].dataCondition.comparator == "<" ? "Inside" : "Outside"}}</button></div>' +
+                    '<input class="form-control" type="range" min="1" max="3000" ng-model="radius" ng-change="changeRadius(radius)" required>' +
                     '</form>'
                 );
-
-                $scope.affichage();
+                $scope.affichage(index);
             }
             $compile(myEl)($scope);
         };
@@ -329,39 +370,42 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             }
             else if (action.name === "Flash"){
                 $scope.ActionName = "flash";
-                $scope.dataAction.enable = true;
+                $scope.dataAction.comparator = "=";
+                $scope.dataAction.value = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default">{{dataCondition.enable}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataAction.value = !dataAction.value">{{dataAction.value}}</button>' +
                     '</div></form>'
                 );
             }
             else if (action.name === "Wifi"){
                 $scope.ActionName = "wifi";
-                $scope.dataAction.enable = true;
+                $scope.dataAction.comparator = "=";
+                $scope.dataAction.value = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataCondition.enable != dataCondition.enable">{{dataAction.enable}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataAction.value = !dataAction.value">{{dataAction.value}}</button>' +
                     '</div></form>'
                 );
             }
             else if (action.name === "Bluetooth"){
                 $scope.ActionName = "bluetooth";
-                $scope.dataAction.enable = true;
+                $scope.dataAction.comparator = "=";
+                $scope.dataAction.value = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataCondition.enable != dataCondition.enable">{{dataAction.enable}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataAction.value = !dataAction.value">{{dataAction.value}}</button>' +
                     '</div></form>'
                 );
             }
-            else if (action.name === "Ligthness"){
-                $scope.ActionName = "ligthness";
+            else if (action.name === "Brigthness"){
+                $scope.ActionName = "brigthness";
                 $scope.dataAction.level = 50;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -372,7 +416,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 );
             }
 
-            else if (action.name = "SMS"){
+            else if (action.name === "SMS"){
                 $scope.ActionName = "sms";
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
@@ -420,30 +464,39 @@ var limitsArea = function(lat, lng, radius){
     }
 };
 
-var createTableLocalisation = function(data,probeName,probeComparator){
-    var dataIf =[];
-    var locationPoints = limitsArea(data.lat,data.lng,data.radius);
+var createTableLocalisation = function(data,probeName,probeComparator) {
+    var dataIf = [];
+    var locationPoints = limitsArea(data.lat, data.lng, data.radius);
+    var comparator1, comparator2;
+    if (probeComparator === '>') {
+        comparator1 = '>';
+        comparator2 = '<';
+    }
+    else{
+        comparator1 = '<';
+        comparator2 = '>';
+    }
     dataIf.push({
-        probe: probeName,
-        comparator: probeComparator,
+        probe: probeName + '.lat',
+        comparator: comparator2 ,
         value: locationPoints.latMin,
         logicOperator: ""
     });
     dataIf.push({
-        probe: probeName,
-        comparator: probeComparator,
+        probe: probeName + '.lat',
+        comparator: comparator1,
         value: locationPoints.latMax,
         logicOperator: "AND"
     });
     dataIf.push({
-        probe: probeName,
-        comparator: probeComparator,
+        probe: probeName + '.lng',
+        comparator: comparator2,
         value: locationPoints.lngMin,
         logicOperator: "AND"
     });
     dataIf.push({
-        probe: probeName,
-        comparator: probeComparator,
+        probe: probeName + '.lng',
+        comparator: comparator1,
         value: locationPoints.lngMax,
         logicOperator: "AND"
     });

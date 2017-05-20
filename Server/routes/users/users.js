@@ -4,6 +4,7 @@ const error = require("../../error");
 const deviceRouter = require("./devices");
 const eventSkeletonRouter = require("./eventSkeletons");
 const checkToken = require("../authentication").checkTokenMiddleware;
+const envoiEmail = require("../../sendEmail");
 
 let router = express.Router();
 module.exports = router;
@@ -30,21 +31,22 @@ router.post('/users/', function (req, res, next) {
         let user = users.validateUser(_user);
         users.getUserByUsername(user.username)
             .then(user => {
-                return new Promise((resolve, reject) => {
-                    if (user !== undefined) {
-                        reject(error.error(409, "Another User has the same username"));
-                    } else {
-                        resolve();
-                    }
-                });
-            })
-            .then(() => users.addUser(user))
-            .then(() => {
-                res.status(201).end()
-            })
-            .catch(err => {
-                next(err);
-            })
+        return new Promise((resolve, reject) => {
+            if (user !== undefined) {
+            reject(error.error(409, "Another User has the same username"));
+            } else {
+                resolve();
+            }
+    });
+    })
+    .then(() => users.addUser(user))
+    .then(() => {
+        envoiEmail.sendMailInscription(user.username, user.email);
+        res.status(201).end();
+    })
+    .catch(err => {
+            next(err);
+    })
     } catch (err) {
         next(new error.error(400, "Wrong format", err.message));
     }
@@ -139,6 +141,8 @@ router.delete('/users/:username', function (req, res, next) {
             next(err);
         })
 });
+
+
 
 router.use('/users/:username/', deviceRouter);
 router.use('/users/:username/', eventSkeletonRouter);

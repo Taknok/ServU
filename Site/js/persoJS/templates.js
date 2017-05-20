@@ -106,14 +106,13 @@ var device1 = {
     version: "10.3",
     serial: "975637819",
     data: {
-        battery: Math.floor((Math.random() * 100) + 1),
-        inCharge: true,
+        battery: {percent: Math.floor((Math.random() * 100) + 1), inCharge: true},
         connection: "4G",
         availableProbes: {
             gps: true,
             flash: true,
-            wifiConn: true,
-            bluetoothConn: true
+            wifi: true,
+            bluetooth: true
         },
         availableActions: {
             ring: false,
@@ -134,14 +133,13 @@ var device2 = {
     version: "6.0",
     serial: "3975682",
     data: {
-        battery: Math.floor((Math.random() * 100) + 1),
-        inCharge: false,
+        battery: {percent: Math.floor((Math.random() * 100) + 1), inCharge: false},
         connection: "Wifi",
         availableProbes: {
             gps: true,
             flash: true,
-            wifiConn: true,
-            bluetoothConn: true
+            wifi: true,
+            bluetooth: true
         },
         availableActions: {
             ring: true,
@@ -170,7 +168,7 @@ var device3 = {
 };
 */
 
-var devices = [device1,device2]//,device2,device3];
+//var devices = [device1,device2]//,device2,device3];
 
 var event1 = {
 

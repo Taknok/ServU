@@ -6,8 +6,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
+    <meta name="description" content="Project ServU is an application for mobile phones and also web devices. His purpose is to provide a continuous connexion between our server and your phone. With this, you can choose to collect multiple information from your phone such as your battery level, your wifi connection or your GPS position. Using this information, you create on this website, using an account, some actions you want to do when your phone is battery low for instance. For now, you can flash, vibrate or ring.">
     <meta name="author" content="">
+    <meta name="google-site-verification" content="JS4lLxllrxJ--QxMseg7otfgj_J38auIdWuUiySrrkA" />
 
     <title>ServU</title>
 
@@ -70,6 +71,7 @@
                         <label for="PasswordConnexion">Password</label>
                         <input type="password" class="form-control" name="password" id="PasswordConnexion" placeholder="Password" required>
                     </div>
+                    <button href="#" type="button" data-toggle="modal" data-target="#resetPassword" class="btn btn-group-justified btn-outline-warning">Reset your password</button>
                     <button type="submit" class="btn btn-light btn-group-justified">Sign In</button>
                 </form>
             </div>
@@ -104,7 +106,19 @@
 <!-- Header -->
 <header id="top" class="header">
     <div class="text-vertical-center">
-        <p><img src="../img/Testv2%20Logo%209.png" alt="Logo"/></p>
+        <% if(typeof error != 'undefined'){ %>
+        <div class="alert alert-danger fade in center-block" style="width : 50%;">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>ERROR : </strong><%= error %>
+        </div>
+        <% } %>
+        <% if(typeof success != 'undefined'){ %>
+        <div class="alert alert-success fade in center-block" style="width : 50%;">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Success : </strong><%= success %>
+        </div>
+        <% } %>
+        <img src="../img/Testv2%20Logo%209.png" alt="Logo" class="center-block img-responsive"/>
         <br>
         <br>
         <a href="#about" class="btn btn-light btn-lg fontAmethyst">At your service</a>
@@ -142,11 +156,12 @@
                         <div class="help-block">At least 2 characters</div>
                         <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group has-feedback">
                         <label for="inputEmail" class="control-label">Email</label>
                         <input type="email" class="form-control" name="email" id="inputEmail" placeholder="Email"
                                ng-model="email" data-error="This email address is invalid" required>
                         <div class="help-block with-errors"></div>
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                     </div>
                     <div class="form-group form-inline">
                         <label for="PasswordRegister" class="control-label">Password</label>
@@ -157,19 +172,11 @@
                                 <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                                 <div class="help-block">At least 6 characters</div>
                             </div>
-                            <!--<div class="form-group col-sm-6 has-feedback">-->
-                            <!--<input type="password" class="form-control" name="password2" id="ConfirmRegister" data-match="#PasswordRegister" data-match-error="ERREUR : Les mots de passes ne correspondent pas" placeholder="Confirm" required>-->
-                            <!--<span class="glyphicon form-control-feedback" aria-hidden="true"></span>-->
-                            <!--<div class="help-block with-errors"></div>-->
-                            <!--</div>-->
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" required>
-                                I'm not a robot
-                            </label>
+                            <div class="form-group col-sm-6 has-feedback">
+                                <input type="password" class="form-control" name="password2" id="ConfirmRegister" data-match="#PasswordRegister" data-match-error="Password don't match" placeholder="Confirm" required>
+                                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                <div class="help-block with-errors"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -180,6 +187,39 @@
         </div>
     </div>
 </div>
+
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetPassword" tabindex="-1" role="dialog" aria-labelledby="resetPasswordLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Reset password</h4>
+            </div>
+            <form action="/resetPassword" method="post" id="registerForm" data-toggle="validator" role="form">
+                <div class="modal-body">
+                    <div class="form-group has-feedback">
+                        <label for="UsernameRegister" class="control-label">Username</label>
+                        <input type="text" class="form-control" data-minlength="2" name="username" id="UsernameRegister" placeholder="Username" required>
+                        <div class="help-block">At least 2 characters</div>
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label for="inputEmail" class="control-label">Email</label>
+                        <input type="email" class="form-control" name="email" id="inputEmail" placeholder="Email"
+                               data-error="This email address is invalid" required>
+                        <div class="help-block with-errors"></div>
+                        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Reset your password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 <!-- About -->
 <section id="about" class="about">
@@ -336,8 +376,8 @@
             <div class="col-lg-10 col-lg-offset-1 text-center">
                 <h2 class="fontAmethyst text-white">Techs</h2>
                 <hr class="small">
-                <div class="row">
-                    <div class="col-xs-6 col-md-3">
+                <div class="row gutter-10">
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 gutter-10">
                         <a href="https://angularjs.org/" class="thumbnail">
                             <img src="../img/logos/logoAngularJS.png" class="img-responsive" alt="Responsive image">
                         </a>
@@ -348,7 +388,7 @@
                             <img src="../img/logos/logoTrello.png" class="img-responsive" alt="Responsive image">
                         </a>
                     </div>
-                    <div class="col-xs-6 col-md-3">
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 gutter-10">
                         <a href="https://github.com/" class="thumbnail">
                             <img src="../img/logos/logoGithub.png" class="img-responsive" alt="Responsive image">
                         </a>
@@ -356,7 +396,7 @@
                             <img src="../img/logos/logoMEAN.png" class="img-responsive" alt="Responsive image">
                         </a>
                     </div>
-                    <div class="col-xs-6 col-md-3">
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 gutter-10">
                         <a href="https://www.google.com/drive/" class="thumbnail">
                             <img src="../img/logos/logoGoogleDrive.png" class="img-responsive" alt="Responsive image">
                         </a>
@@ -364,7 +404,7 @@
                             <img src="../img/logos/logoWebStorm.png" class="img-responsive" alt="Responsive image">
                         </a>
                     </div>
-                    <div class="col-xs-6 col-md-3">
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 gutter-10">
                         <a href="https://www.w3schools.com/html/" class="thumbnail">
                             <img src="../img/logos/logoHTML.png" class="img-responsive" alt="Responsive image">
                         </a>
@@ -504,8 +544,11 @@
 <script type="text/javascript" src="../js/persoJS/authentification.js"></script>
 <!-- Custom Theme JavaScript -->
 <script>
-
-
+     window.setTimeout(function() {
+     $(".alert").fadeTo(500, 0).slideUp(500, function(){
+     $(this).remove();
+     });
+     }, 4000);
 </script>
 
 </body>

@@ -11,6 +11,29 @@ rootApp
                     '</div>';
                 window.setTimeout(function() { $(".alert").alert('close'); }, 2000);
                 return completeAlert;
+            },
+            notify: function(typeNotify, message, delay) {
+                var glyph = '';
+                if (typeNotify === 'success') {
+                    glyph = 'glyphicon-ok';
+                } else {
+                    glyph = 'glyphicon-fire';
+                }
+
+                $.notify({
+                    // options
+                    icon: 'glyphicon ' + glyph,
+                    message: message
+                },{
+                    // settings
+                    type: typeNotify,
+                    placement: {
+                        from: 'bottom',
+                        align: 'left'
+                    },
+                    delay: delay,
+                    mouse_over: 'pause'
+                });
             }
         }
     })
@@ -19,7 +42,7 @@ rootApp
 
         var reqListEventSkeleton = {
             method: 'GET',
-            url: 'http://127.0.0.1:3000/api/users/' + username + '/eventSkeletons',
+            url: url + '/api/users/' + username + '/eventSkeletons',
             json: true
         };
 
@@ -28,13 +51,33 @@ rootApp
             listEventSkeletons: function () {
                 return $http(reqListEventSkeleton);
             },
-            deleteEvenetSkeleton: function(id) {
+            deleteEventSkeleton: function(id) {
                 var reqDeleteEventSkeleton = {
                     method: 'DELETE',
-                    url: 'http://127.0.0.1:3000/api/users/' + username + '/eventSkeletons/' + id,
+                    url: url + '/api/users/' + username + '/eventSkeletons/' + id,
                     json: true
                 };
                 return $http(reqDeleteEventSkeleton);
             }
         };
+    })
+
+    .factory('Events', function($http) {
+
+        return {
+            getListEvent: function(uuid) {
+                var reqListEvent = {
+                    method: 'GET',
+                    url: url + '/api/users/' + username + '/devices/' + uuid + '/events',
+                    json: true
+                };
+                return $http(reqListEvent);
+            },
+            postNewEvent: function(uuid, eventSkeleton) {
+
+            }
+
+        };
+
+
     });
