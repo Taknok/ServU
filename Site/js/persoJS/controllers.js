@@ -158,8 +158,8 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
                 '<form name="sendActionForm" class="form-inline"><div class="form-group" style="width: 100%;">' +
                 '<div class="input-group" style="width: 100%">' +
                 '<div class="input-group-addon" style="width: 20%">Duration : </div>' +
-                '<input name="time" ng-model="actionToSendToAll.params.time" class="form-control" required min="1" max="10" type="number" style="width: 100%" required>' +
-                '<div class="input-group-addon" style="width: 20%">Seconds</div></div></form>'
+                '<input name="time" ng-model="actionToSendToAll.params.time" class="form-control" required min="1" max="10000" type="number" style="width: 100%" required>' +
+                '<div class="input-group-addon" style="width: 20%">milliseconds</div></div></form>'
             );
         } else if(action.name === 'sms') {
             $scope.actionToSendToAll.params.dest = '';
@@ -202,10 +202,9 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
                 '<form name="sendActionForm" class="form-inline"><div class="form-group" style="width: 100%;">' +
                 '<div class="input-group" style="width: 100%">' +
                 '<div class="input-group-addon" style="width: 20%">Duration : </div>' +
-                '<input name="time" ng-model="actionToSend.params.time" class="form-control" required min="1" max="10" type="number" style="width: 100%" required>' +
-                '<div class="input-group-addon" style="width: 20%">Seconds</div></div></form>'
+                '<input name="time" ng-model="actionToSend.params.time" class="form-control" required min="1" max="10000" type="number" style="width: 100%" required>' +
+                '<div class="input-group-addon" style="width: 20%">milliseconds</div></div></form>'
             );
-            $scope.actionToSend.params.time = $scope.actionToSend.params.time*1000;
         } else if(action.name === 'sms') {
             $scope.actionToSend.params.dest = '';
             $scope.actionToSend.params.msg = '';
@@ -452,7 +451,7 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
                 message: 'Your event has been successfully deleted'
             }, {
                 // settings
-                type: 'danger',
+                type: 'success',
                 placement: {
                     from: 'bottom',
                     align: 'left'
