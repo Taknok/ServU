@@ -7,6 +7,7 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
     $scope.chooseEventList = [];
     $scope.selectedEvent = {};
     $scope.eventSelected = false;
+    $scope.events = [];
     $scope.allActionsAvailable = {
         flashlight: {
             name: "flashlight",
@@ -452,7 +453,7 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
     $scope.updateListEvent = function getListEvent(uuid) {
         Events.getListEvent(uuid).then(function listEventSkeletonOK(events) {
             //Alerts.notify('success', '<strong>GOOD</strong> Successful Recuperation of Events',2000);
-            $scope.events = events.data;
+            $scope.events[uuid] = events.data;
             $log.log(events.data);
         }, function listEventErr(response) {
             var errorValue = response.status;
