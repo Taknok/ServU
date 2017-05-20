@@ -286,8 +286,17 @@ angular.module('ServU')
 })
 
 .controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader, actions, phoneInfo) {
-	$scope.destroySession = function() {
-		AuthService.logout();
+	$scope.deleteDevice = function() {
+		$http.delete(ServUApi.url + "/users/" + phoneInfo.getUsername() + "/devices/" + phoneInfo.getUuid()).then(function(){
+			phoneInfo.setUuid("");
+			phoneInfo.setUsername("");
+			phoneInfo.setPosted(false)
+			phoneInfo.setSubscribed(false);
+			AuthService.logout();
+		}).catch(function(e){
+			console.error("Device delete error", e);
+			alert("Device delete error", e);
+		});
 	};
 
 	$scope.getInfo = function() {
