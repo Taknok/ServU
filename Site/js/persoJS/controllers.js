@@ -3,6 +3,7 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
 
     $scope.devices = [];
     $scope.moreDevice = [];
+    $scope.showMoreMap = false;
     $scope.chooseEventList = [];
     $scope.selectedEvent = {};
     $scope.eventSelected = false;
@@ -58,7 +59,7 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
             alert('Error while trying to get user\'s devices: '+err);
             console.log('Error : ',err);
         }).then(function(){
-            console.log('Loaded devices: ',$scope.devices);
+            //console.log('Loaded devices: ',$scope.devices);
             console.log('Refresh complete');
         });
     };
@@ -117,6 +118,14 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
     // More about device
     $scope.changeMoreDevice = function(uuid) {
         $scope.moreDevice = $scope.getDeviceByUuid(uuid)[0];
+        if($scope.moreDevice.probes.localisation !== undefined && $scope.moreDevice.probes.localisation.active === true){
+            setTimeout(function(){
+                $scope.localisationMap($scope.moreDevice.probes.localisation.data.lat,$scope.moreDevice.probes.localisation.data.long);
+            }, 1000);
+            $scope.showMoreMap = true;
+        } else {
+            $scope.showMoreMap = false;
+        }
         console.log('moreDevice changed');
     };
 
@@ -126,6 +135,29 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
         options.timeZone = "UTC";
         options.timeZoneName = "short";
         return  date.toLocaleDateString('en-US',options)+' at '+date.toLocaleTimeString('en-US');
+    };
+
+    $scope.localisationMap = function(lat,long) {
+        // Option pour la carte
+        var userPosition = new google.maps.LatLng(lat, long);
+        var mapOptions = {
+            center: userPosition,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            disableDefaultUI: false,
+            zoom: 14,
+            zoomControl: true,
+            mapTypeControl: false,
+            scaleControl: true,
+            streetViewControl: false,
+            rotateControl: true
+        };
+
+        var map = new google.maps.Map(document.getElementById("mapMoreModal"), mapOptions);
+        var marker = new google.maps.Marker({
+            position: userPosition,
+            map: map
+        });
+        google.maps.event.trigger(map, "resize");
     };
 
     // Add the correct class to the battery bar
@@ -324,7 +356,6 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
                     $scope.chooseEventList[i].selected = true;
                     $scope.eventSelected = true;
                     $scope.selectedEvent = $scope.chooseEventList[i];
-                    console.log('selected event',$scope.selectedEvent);
                 } else {
                     $scope.chooseEventList[i].selected = false;
                 }
@@ -341,10 +372,9 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
         event.action = {};
         event.action.type = type;
         event.action.parameters = params;
-        console.log('event: ',event);
 
         $http.post(url+'/api/users/'+username+'/devices/'+uuid+'/events',event).then(function(res){
-            console.log('Event associated :',res.data);
+            //console.log('Event associated :',res.data);
             $scope.refreshDevices();
             $.notify({
                 // options
@@ -414,7 +444,6 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
                 eventsAvailable[t].disabled = $scope.checkEventPossible(eventsAvailable[t],$scope.chooseEventDevice);
                 $scope.chooseEventList.push(eventsAvailable[t]);
             }
-            console.log('events:',$scope.chooseEventList);
         },function(err){
             alert('Error while trying to get events list ('+err.data+')');
         })

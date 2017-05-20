@@ -384,6 +384,17 @@
                         </div>
                         <div class='modal-body'>
                             <div class="panel-group" id="accordion">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <button class="btn btn-block btn-info text-capitalize" data-parent="#accordion" data-toggle="collapse" data-target="#collapseLocalisation">
+                                            Location
+                                        </button>
+                                    </div>
+                                    <div class="panel-body collapse text-capitalize" id="collapseLocalisation">
+                                        <div id="mapMoreModal" style="height:200px">
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="panel panel-primary" ng-repeat="probe in moreDevice.probes">
                                     <div class="panel-heading">
                                         <button class="btn btn-block btn-info text-capitalize" data-parent="#accordion" data-toggle="collapse" data-target="#collapse{{probe.name}}">
