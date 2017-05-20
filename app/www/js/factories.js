@@ -80,14 +80,16 @@ angular.module('ServU')
 	}
 	
 	var put = function(action){
-		let data = {
-			"label": action.label,
-			"enabled": action.enable,
-			"description": action.description
-		};
-		$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsAvailable/" + action.name, data).then(function(){
-			console.log("PUT > " + action.name);
-		});
+		if (phoneInfo.getUuid() != "undefined"){
+			let data = {
+				"label": action.label,
+				"enabled": action.enable,
+				"description": action.description
+			};
+			$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsAvailable/" + action.name, data).then(function(){
+				console.log("PUT > " + action.name);
+			});
+		}
 	};
 	
 	var trigger = function(action){
