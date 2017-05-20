@@ -73,6 +73,34 @@ angular.module('ServU')
 	}
 	load();
 	
+	var purgeAllPendingActions = function(){
+		console.log("Start purge all pending actions")
+		var answerStatus = 200;
+		var url = ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionUserToDo";
+		
+		var recur = function(){
+			$http.get(url).then(function(response) {
+				if (response.status == 200){
+					var action = response.data;	
+					console.log(action);
+					if (action.status === "pending"){
+						let actionUpdated = trigger(action);
+						
+						$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsUser/" + actionUpdated.id, {"status" : actionUpdated.status}).then(function(){
+							recur();
+						});
+					}
+				} else if (response.status == 204){
+					console.log("End purge all pending actions");
+					return;
+				} else {
+					console.error("Purge all action : ",response);
+				}
+			});
+		};
+		recur();
+	}
+	
 	function checkBool(bool){
 		if(typeof(bool) != "boolean"){
 		  throw("Set not boolean");
@@ -220,6 +248,7 @@ angular.module('ServU')
 		},
 		put: put,
 		trigger: trigger,
+		purgeAllPendingActions: purgeAllPendingActions,
 	};
 }])
 

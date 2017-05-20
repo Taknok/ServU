@@ -47,24 +47,11 @@ angular.module('ServU')
 	};
 	
 	// ACTIONS
-	function actionHandler(){
-		console.log("Start actionHandler")
-		var url = ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionUserToDo";
-		$http.get(url).success(function(action) {
-			console.log(action);
-			if (action.status === "pending"){
-				let actionUpdated = actions.trigger(action);
-				
-				$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsUser/" + actionUpdated.id, {"status" : actionUpdated.status});
-			}
-		});
-	}
 	
 	$interval(function(){
 		console.log(phoneInfo.getPosted(), phoneInfo.getUuid() != 0)
 		if (phoneInfo.getUuid() != 0 && phoneInfo.getPosted()){
 			putProbes();
-			// actionHandler();
 		}
 		console.log(">>>> 10s loop <<<<")
 	}, 10 * 1000);
@@ -195,6 +182,7 @@ angular.module('ServU')
 						
 						socket.on("connect", function(action){
 							console.log("Connected to socket");
+							actions.purgeAllPendingActions();
 						});
 					}
 										
@@ -298,6 +286,8 @@ angular.module('ServU')
 			alert("Device delete error", e);
 		});
 	};
+	
+	$scope.purge = actions.purgeAllPendingActions;
 
 	$scope.getInfo = function() {
 		$http.get(ServUApi.url + '/memberinfo').then(function(result) { //changer pour mettre les infos de notre user
