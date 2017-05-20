@@ -68,44 +68,46 @@ angular.module('ServU')
 		AuthService.login($scope.user).then(function(msg) {
 			phoneInfo.setUsername($scope.user.username);
 			
-			let postPhone = $q(function(resolve, reject){
-				let tmp = probes.device.getValue();
-				
-				let data = {
-					"name": tmp.model,
-					"manufacturer": tmp.manufacturer,
-					"model": tmp.model,
-					"platform": tmp.platform,
-					"version": tmp.version,
-					"serial": tmp.serial,
-					"uuid": phoneInfo.getUuid(),
-					"owner": phoneInfo.getUsername()
-				}
-				
-				$http.post(ServUApi.url + "/phones", data).then(function(){
-					phoneInfo.setPosted(true);
-					console.log("Phone posted");
-					resolve();
-				}).catch(function(e){
-					if (e.status == 400){
-						console.error("Wrong format or Owner not found :", e);
-						phoneInfo.setPosted(false);
-						reject(e.status);
-					} else if (e.status == 401){
-						console.error("Unauthorized :", e);
-						phoneInfo.setPosted(false);
-						reject(e.status);
-					} else if (e.status == 403){
-						console.error("Forbidden :", e);
-						phoneInfo.setPosted(false);
-						reject(e.status);
-					} else if (e.status == 409){
-						console.error("Another device has the same uuid :", e);
+			let postPhone = function(){
+				return $q(function(resolve, reject){
+					let tmp = probes.device.getValue();
+					
+					let data = {
+						"name": tmp.model,
+						"manufacturer": tmp.manufacturer,
+						"model": tmp.model,
+						"platform": tmp.platform,
+						"version": tmp.version,
+						"serial": tmp.serial,
+						"uuid": phoneInfo.getUuid(),
+						"owner": phoneInfo.getUsername()
+					}
+					
+					$http.post(ServUApi.url + "/phones", data).then(function(){
 						phoneInfo.setPosted(true);
+						console.log("Phone posted");
 						resolve();
-					} 
+					}).catch(function(e){
+						if (e.status == 400){
+							console.error("Wrong format or Owner not found :", e);
+							phoneInfo.setPosted(false);
+							reject(e.status);
+						} else if (e.status == 401){
+							console.error("Unauthorized :", e);
+							phoneInfo.setPosted(false);
+							reject(e.status);
+						} else if (e.status == 403){
+							console.error("Forbidden :", e);
+							phoneInfo.setPosted(false);
+							reject(e.status);
+						} else if (e.status == 409){
+							console.error("Another device has the same uuid :", e);
+							phoneInfo.setPosted(true);
+							resolve();
+						} 
+					});
 				});
-			});
+			};
 			
 			console.log("Phone has been posted : ", phoneInfo.getPosted())
 			
@@ -166,31 +168,50 @@ angular.module('ServU')
 			
 			if (!phoneInfo.getPosted()){
 				postPhone().then(function(){
-					probes.checkAvailable();
-					postProbes();
-					postActionAvailable();
-					console.log("wxxxxxxxx", phoneInfo.getSubscribed())
-					if (!phoneInfo.getSubscribed()){
-						subscribeActions();
-						phoneInfo.setSubscribed(true);
-						
-						socket.on("action", function(action){
-							console.log(action);
-							let actionUpdated = actions.trigger(action);
-							$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsUser/" + actionUpdated.id, {"status" : actionUpdated.status});
+					probes.checkAllAvailable().then(function(){
+						actions.checkAllAvailable().then(function(){
+							console.log("aaaaaaaaa")
+							postProbes();
+							postActionAvailable();
 						});
+					
+						if (!phoneInfo.getSubscribed()){
+							subscribeActions();
+							phoneInfo.setSubscribed(true);
+							
+							socket.on("action", function(action){
+								console.log(action);
+								let actionUpdated = actions.trigger(action);
+								$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsUser/" + actionUpdated.id, {"status" : actionUpdated.status});
+							});
+							
+							socket.on("connect", function(action){
+								console.log("Connected to socket");
+								actions.purgeAllPendingActions();
+							});
+						}
 						
-						socket.on("connect", function(action){
-							console.log("Connected to socket");
-							actions.purgeAllPendingActions();
-						});
-					}
-										
-					$state.go('main');
+						$state.go('main');
+					});
 				}).catch(function(e){
 					console.error("Something happen : ", e);
 				});
 			} else {
+				if (!phoneInfo.getSubscribed()){
+					subscribeActions();
+					phoneInfo.setSubscribed(true);
+					
+					socket.on("action", function(action){
+						console.log(action);
+						let actionUpdated = actions.trigger(action);
+						$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsUser/" + actionUpdated.id, {"status" : actionUpdated.status});
+					});
+					
+					socket.on("connect", function(action){
+						console.log("Connected to socket");
+						actions.purgeAllPendingActions();
+					});
+				}
 				$state.go('main');
 			}
 			
@@ -273,17 +294,25 @@ angular.module('ServU')
 	});
 })
 
-.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader, actions, phoneInfo) {
+.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader, actions, phoneInfo, probes) {
 	$scope.deleteDevice = function() {
+		console.log("Delete device")
 		$http.delete(ServUApi.url + "/users/" + phoneInfo.getUsername() + "/devices/" + phoneInfo.getUuid()).then(function(){
 			phoneInfo.setUuid("");
 			phoneInfo.setUsername("");
 			phoneInfo.setPosted(false)
 			phoneInfo.setSubscribed(false);
 			AuthService.logout();
+			$state.go("login")
 		}).catch(function(e){
 			console.error("Device delete error", e);
 			alert("Device delete error", e);
+		});
+	};
+	
+	$scope.requestAllProbesPermissions = function(){
+		probes.checkAllAvailable().then(function(){
+			actions.checkAllAvailable();
 		});
 	};
 	
@@ -397,47 +426,8 @@ angular.module('ServU')
 })
 
 .controller('EventsCtrl', function($scope, $http, hideHeader) {
-	var url = 'https://test-e4040.firebaseio.com/items.json';
-	$scope.items = getItems();
-
-	$scope.addItem = function() {
-		var name = prompt("Que devez-vous acheter?");
-		if (name) {
-			var postData = {
-				"name": name
-			};
-			$http.post(url, postData).success(function(data) {
-				$scope.items = getItems();
-			});
-		}
-	};
-	
-	$scope.refreshItem = function getItems() {
-		var items = [];
-		$http.get(url).success(function(data) {
-			angular.forEach(data, function(value, key) {
-				var name = {name: value.name};
-				items.push(name);
-			});
-		$scope.items = items;
-		});
-		console.log(getTabIndex.getTab());
-	}
-
-	function getItems() {
-		var items = [];
-		$http.get(url).success(function(data) {
-			angular.forEach(data, function(value, key) {
-				var name = {name: value.name};
-				items.push(name);
-			});
-		});
-
-		return items;
-	}
 
 	hideHeader.init();
-	
 })
 
 ;

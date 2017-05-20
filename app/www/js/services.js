@@ -61,7 +61,6 @@ angular.module('ServU')
 
 	var logout = function() {
 		destroyUserCredentials();
-		window.localStorage.removeItem(username);
 	};
 
 	var getToken = function(){

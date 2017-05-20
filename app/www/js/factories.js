@@ -30,7 +30,7 @@ angular.module('ServU')
 	return mySocket;
 }])
 
-.factory("actions", [ "$cordovaVibration", "$cordovaSms", "$http", "ServUApi", "phoneInfo", function($cordovaVibration, $cordovaSms, $http, ServUApi, phoneInfo){
+.factory("actions", [ "$cordovaVibration", "$cordovaSms", "$http", "ServUApi", "phoneInfo", "$ionicPlatform", "$q", function($cordovaVibration, $cordovaSms, $http, ServUApi, phoneInfo, $ionicPlatform, $q){
 	var permanentStorage = window.localStorage;
 	
 	// ######### DECLARATION #########
@@ -39,8 +39,10 @@ angular.module('ServU')
 	ring.name = "ring";
 	ring.label = "Ring";
 	ring.enable = false;
-	ring.authorized = true; // true pour le moment
+	ring.authorized = true; // true car pas de permi
 	ring.description = "Allow to ring durinc X sec";
+	ring.permissions = [
+	];
 	
 	var vibrate = {};
 	vibrate.name = "vibrate";
@@ -48,20 +50,32 @@ angular.module('ServU')
 	vibrate.enable = false;
 	vibrate.authorized = true;
 	vibrate.description = "Allow to ring durinc X sec";
+	vibrate.permissions = [];
+	
 	
 	var sms = {};
 	sms.name = "sms";
 	sms.label = "Sms";
 	sms.enable = false;
-	sms.authorized = true;
+	sms.authorized = false;
 	sms.description = "Allow to send sms to custom destionation with custom text";
+	$ionicPlatform.ready(function(){ 
+	sms.permissions = [
+		cordova.plugins.diagnostic.permission.SEND_SMS
+	];
+	});
 	
 	var flashlight = {};
 	flashlight.name = "flashlight";
 	flashlight.label = "Flashlight";
 	flashlight.enable = false;
-	flashlight.authorized = true;
+	flashlight.authorized = false;
 	flashlight.description = "Use the led on the phone to emit light";
+	$ionicPlatform.ready(function(){ 
+	flashlight.permissions = [
+		cordova.plugins.diagnostic.permission.CAMERA
+	];
+	});
 	
 	// USEFULL FUNCTIONS
 	
@@ -99,7 +113,64 @@ angular.module('ServU')
 			});
 		};
 		recur();
-	}
+	};
+	
+	var checkActionAvailable = function(action){
+		
+		return $q(function(resolve, reject){
+			console.log(action);
+			if (action == null){
+				reject();
+				return;
+			}
+			
+			if (action.permissions.length == 0){ //si on a pas de permission a respecter
+				action.authorized = true;
+				resolve();
+			} else {
+				ionic.Platform.ready(function(){ 
+					cordova.plugins.diagnostic.requestRuntimePermissions(function(statuses){
+						var vectBool = [];
+						for (var permission in statuses){
+							switch(statuses[permission]){
+								case cordova.plugins.diagnostic.permissionStatus.GRANTED:
+									vectBool.push(true);
+									break;
+								case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
+									vectBool.push(false);
+									console.log("Permission to use " + permission + " has not been requested yet");
+									break;
+								case cordova.plugins.diagnostic.permissionStatus.DENIED:
+									vectBool.push(false);
+									console.log("Permission denied to use " + permission);
+									break;
+								case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
+									vectBool.push(false);
+									console.log("Permission permanently denied to use " + permission);
+									break;
+								default:
+									vectBool.push(false);
+									console.error("Error default status unrecognized: " + statuses[permission]);
+									break;
+							}
+						}
+						
+						if (vectBool.every(elem => elem == true)){
+							action.authorized = true;
+							resolve();
+						} else {
+							action.authorized = false;
+							resolve();
+						}
+					}, function(error){
+						console.error("The following error occurred: " + error);
+						reject();
+					}, action.permissions);
+						
+				}, false);
+			}
+		});
+	};
 	
 	function checkBool(bool){
 		if(typeof(bool) != "boolean"){
@@ -249,6 +320,21 @@ angular.module('ServU')
 		put: put,
 		trigger: trigger,
 		purgeAllPendingActions: purgeAllPendingActions,
+		checkAllAvailable: function(){
+			var allActions = this.getAll();
+			
+			return $q(function(resolve, reject){
+				var i = 0;
+				var recur = function(i){
+					checkActionAvailable(allActions[i]).then(function(){
+						recur(++i);
+					}).catch(function(){
+						resolve();
+					});
+				};
+				recur(i);
+			});
+		}
 	};
 }])
 
@@ -286,7 +372,7 @@ angular.module('ServU')
 	};
 }])
 
-.factory("probes", [ "$cordovaDeviceMotion", "$cordovaDeviceOrientation", "phoneInfo", "$http",  function($cordovaDeviceMotion, $cordovaDeviceOrientation, phoneInfo, $http){
+.factory("probes", [ "$cordovaDeviceMotion", "$cordovaDeviceOrientation", "phoneInfo", "$http", "$ionicPlatform", "$q",  function($cordovaDeviceMotion, $cordovaDeviceOrientation, phoneInfo, $http, $ionicPlatform, $q){
 	var onStartDone = false;
 	var permanentStorage = window.localStorage;
 	
@@ -299,6 +385,7 @@ angular.module('ServU')
 	network.posted = false; // load() recup la mem
 	network.available = true;
 	network.value = {};
+	network.permissions = [];
 	
 	// Bluetooth
 	var bluetooth = {};
@@ -306,8 +393,9 @@ angular.module('ServU')
 	bluetooth.label = "Bluetooth";
 	bluetooth.active = false;
 	bluetooth.posted = false;
-	bluetooth.available = true;
+	bluetooth.available = true; //true when no permissions
 	bluetooth.value = {};
+	bluetooth.permissions = [];
 	
 	// Localisation
 	var localisation = {};
@@ -315,8 +403,14 @@ angular.module('ServU')
 	localisation.label = "GPS";
 	localisation.active = false;
 	localisation.posted = false;
-	localisation.available = true;
+	localisation.available = false; //false when permissions
 	localisation.value = {};
+	$ionicPlatform.ready(function(){ 
+	localisation.permissions = [
+		cordova.plugins.diagnostic.permission.ACCESS_FINE_LOCATION,
+		cordova.plugins.diagnostic.permission.ACCESS_COARSE_LOCATION,
+	];
+	});
 	
 	// Battery
 	var battery = {};
@@ -326,6 +420,7 @@ angular.module('ServU')
 	battery.posted = false;
 	battery.available = true;
 	battery.value = {};
+	battery.permissions = [];
 	
 	// FlashLight
 	var flashlight = {};
@@ -333,8 +428,13 @@ angular.module('ServU')
 	flashlight.label = "Flashlight";
 	flashlight.active = false;
 	flashlight.posted = false;
-	flashlight.available = true;
+	flashlight.available = false;
 	flashlight.value = {};
+	$ionicPlatform.ready(function(){ 
+	flashlight.permissions = [
+		cordova.plugins.diagnostic.permission.CAMERA,
+	];
+	});
 	
 	// Device
 	var device = {};
@@ -344,6 +444,7 @@ angular.module('ServU')
 	device.posted = false;
 	device.available = true;
 	device.value = {};
+	device.permissions = [];
 	
 	// SIM
 	var sim = {};
@@ -351,8 +452,13 @@ angular.module('ServU')
 	sim.label = "Sim Cards";
 	sim.active = false;
 	sim.posted = false;
-	sim.available = true;
+	sim.available = false;
 	sim.value = {};
+	$ionicPlatform.ready(function(){ 
+	sim.permissions = [
+		cordova.plugins.diagnostic.permission.READ_PHONE_STATE,
+	];
+	});
 	
 	// Screen Orientation
 	var screenOrientation = {};
@@ -362,6 +468,7 @@ angular.module('ServU')
 	screenOrientation.posted = false;
 	screenOrientation.available = true;
 	screenOrientation.value = {};
+	screenOrientation.permissions = [];
 	
 	// WIFI
 	var wifi = {};
@@ -371,6 +478,7 @@ angular.module('ServU')
 	wifi.posted = false;
 	wifi.available = true;
 	wifi.value = {};
+	wifi.permissions = [];
 	
 	
 	
@@ -576,36 +684,10 @@ angular.module('ServU')
 		}
 	}
 	
-	
-	
-	
-	
-	function postAllProbes(url){
-		let probes = [
-			network,
-			bluetooth,
-			localisation,
-			battery,
-			flashlight,
-			wifi
-		];
-		
-		for(let i = 0; i < probesPosted.length; i++){
-			if (probesPosted[i] === false){
-				let data = {
-					"name": probesPosted[i].name
-				};
-				$http.post(url, data);
-			}
-		}
-	}
-	
 
 	var onStart = function(){
 		console.log("onStart Probes begin");
 		if (!onStartDone){
-			
-			// postAllProbes();
 			
 			getDevice();
 			console.log(phoneInfo.getUuid());
@@ -624,25 +706,60 @@ angular.module('ServU')
 		}
 	}
 	
-	var checkAvailable = function(){
-		// bluetooth
-		cordova.plugins.diagnostic.hasBluetoothSupport(function(supported){
-			setAvailable("bluetooth", (true == supported));
-		}, function(error){
-			console.error("The following error occurred: "+error);
-		});
-		// localisation
-		cordova.plugins.diagnostic.isGpsLocationAvailable(function(available){
-			setAvailable("localisation", (true == available));
-		}, function(error){
-			console.error("The following error occurred: "+error);
-		});
+	
+	var checkProbeAvailable = function(probe){
 		
-		window.plugins.flashlight.available(function(isAvailable) {
-			if (isAvailable) {
-				setAvailable("flashlight", true);
+		return $q(function(resolve, reject){
+			console.log(probe);
+			if (probe == null){
+				reject();
+				return;
+			}
+			
+			if (probe.permissions.length == 0){ //si on a pas de permission a respecter
+				setAvailable(probe.name, true);
+				resolve();
 			} else {
-				setAvailable("flashlight", false);
+				ionic.Platform.ready(function(){ 
+					cordova.plugins.diagnostic.requestRuntimePermissions(function(statuses){
+						var vectBool = [];
+						for (var permission in statuses){
+							switch(statuses[permission]){
+								case cordova.plugins.diagnostic.permissionStatus.GRANTED:
+									vectBool.push(true);
+									break;
+								case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
+									vectBool.push(false);
+									console.log("Permission to use " + permission + " has not been requested yet");
+									break;
+								case cordova.plugins.diagnostic.permissionStatus.DENIED:
+									vectBool.push(false);
+									console.log("Permission denied to use " + permission);
+									break;
+								case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
+									vectBool.push(false);
+									console.log("Permission permanently denied to use " + permission);
+									break;
+								default:
+									vectBool.push(false);
+									console.error("Error default status unrecognized: " + statuses[permission]);
+									break;
+							}
+						}
+						
+						if (vectBool.every(elem => elem == true)){
+							setAvailable(probe.name, true);
+							resolve();
+						} else {
+							setAvailable(probe.name, false);
+							resolve();
+						}
+					}, function(error){
+						console.error("The following error occurred: " + error);
+						reject();
+					}, probe.permissions);
+						
+				}, false);
 			}
 		});
 	};
@@ -707,18 +824,20 @@ angular.module('ServU')
 	
 	
 	var getLocalisation = function(){
-		var onSuccess = function(position) {
-			localisation.value = position;
-		};
+		if (localisation.available == true){
+			var onSuccess = function(position) {
+				localisation.value = position;
+			};
 
-		function onError(error) {
-			console.log('localisation : code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
-		};
-		
-		var optionsLocalisation = {enableHighAccuracy : true};
-		navigator.geolocation.getCurrentPosition(onSuccess, onError, optionsLocalisation);
-		
-		return localisation.value;
+			function onError(error) {
+				console.log('localisation : code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
+			};
+			
+			var optionsLocalisation = {enableHighAccuracy : true};
+			navigator.geolocation.getCurrentPosition(onSuccess, onError, optionsLocalisation);
+			
+			return localisation.value;
+		}
 	};
 	
 	
@@ -759,36 +878,38 @@ angular.module('ServU')
 	
 	
 	var getSim = function(){
-		ionic.Platform.ready(function(){ 
-		
-			function successCallback(result) {
-				sim.value.nbCards = result.cards.length;
-				sim.value.cards = result.cards;
-				sim.value.subscriberId = result.subscriberId;
-			}
-			function errorCallback(error) {
-				console.log(error);
-			}
-				
-			window.plugins.sim.hasReadPermission(function successFunc(value){
-				if (value){
-					window.plugins.sim.getSimInfo(successCallback, errorCallback);
-				} else {
-					window.plugins.sim.requestReadPermission(
-						function(){
-							setAvailable("sim", true);
-							window.plugins.sim.getSimInfo(successCallback, errorCallback)
-						},
-						function(){
-							setAvailable("sim", false);
-						}
-					);
-				}
-			}, errorCallback);
+		if (sim.available == true){
+			ionic.Platform.ready(function(){
 			
-		}, false);
+				function successCallback(result) {
+					sim.value.nbCards = result.cards.length;
+					sim.value.cards = result.cards;
+					sim.value.subscriberId = result.subscriberId;
+				}
+				function errorCallback(error) {
+					console.log(error);
+				}
+					
+				window.plugins.sim.hasReadPermission(function successFunc(value){
+					if (value){
+						window.plugins.sim.getSimInfo(successCallback, errorCallback);
+					} else {
+						window.plugins.sim.requestReadPermission(
+							function(){
+								setAvailable("sim", true);
+								window.plugins.sim.getSimInfo(successCallback, errorCallback)
+							},
+							function(){
+								setAvailable("sim", false);
+							}
+						);
+					}
+				}, errorCallback);
+				
+			}, false);
 
-		return sim.value;
+			return sim.value;
+		}
 	};
 	
 	
@@ -798,12 +919,14 @@ angular.module('ServU')
 
 
 	var getWifi = function() {
-		cordova.plugins.diagnostic.isWifiEnabled(function(enabled){
-			wifi.value.isEnable = ( true == enabled );
-			
-		}, function(error){
-			console.error("Wifi : The following error occurred: "+error);
-		});
+		ionic.Platform.ready(function(){ 
+			cordova.plugins.diagnostic.isWifiEnabled(function(enabled){
+				wifi.value.isEnable = ( true == enabled );
+				
+			}, function(error){
+				console.error("Wifi : The following error occurred: "+error);
+			});
+		}, false);
 		
 		return wifi.value;
 	};
@@ -926,7 +1049,6 @@ angular.module('ServU')
 	return {
 		onStart: onStart,
 		setActive : setActive,
-		checkAvailable: checkAvailable,
 		network : {
 			getValue: getNetwork,
 			getName: function(){return network.name;},
@@ -937,6 +1059,7 @@ angular.module('ServU')
 			getAvailable: function(){return network.available;},
 			setPosted: function(bool){setPosted("network", bool)},
 			getPosted: function(){return network.posted;},
+			getPermissions: function(){return network.permissions;},
 			getAll: function(){
 				var tmp = {};
 				tmp.name = this.getName();
@@ -945,6 +1068,7 @@ angular.module('ServU')
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
 				tmp.posted = this.getPosted();
+				tmp.permissions = this.getPermissions();
 				
 				return tmp;
 			}
@@ -959,6 +1083,7 @@ angular.module('ServU')
 			getAvailable: function(){return bluetooth.available;},
 			setPosted: function(bool){setPosted("bluetooth", bool)},
 			getPosted: function(){return bluetooth.posted;},
+			getPermissions: function(){return bluetooth.permissions;},
 			getAll: function(){
 				var tmp = {};
 				tmp.name = this.getName();
@@ -967,6 +1092,7 @@ angular.module('ServU')
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
 				tmp.posted = this.getPosted();
+				tmp.permissions = this.getPermissions();
 				
 				return tmp;
 			}
@@ -981,6 +1107,7 @@ angular.module('ServU')
 			getAvailable: function(){return localisation.available;},
 			setPosted: function(bool){setPosted("flashlight", bool)},
 			getPosted: function(){return flashlight.posted;},
+			getPermissions: function(){return localisation.permissions;},
 			getAll: function(){
 				var tmp = {};
 				tmp.name = this.getName();
@@ -989,6 +1116,7 @@ angular.module('ServU')
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
 				tmp.posted = this.getPosted();
+				tmp.permissions = this.getPermissions();
 				
 				return tmp;
 			}
@@ -1003,6 +1131,7 @@ angular.module('ServU')
 			getAvailable: function(){return battery.available;},
 			setPosted: function(bool){setPosted("battery", bool)},
 			getPosted: function(){return battery.posted;},
+			getPermissions: function(){return battery.permissions;},
 			getAll: function(){
 				var tmp = {};
 				tmp.name = this.getName();
@@ -1011,6 +1140,7 @@ angular.module('ServU')
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
 				tmp.posted = this.getPosted();
+				tmp.permissions = this.getPermissions();
 				
 				return tmp;
 			}
@@ -1025,6 +1155,7 @@ angular.module('ServU')
 			getAvailable: function(){return flashlight.available;},
 			setPosted: function(bool){setPosted("flashlight", bool)},
 			getPosted: function(){return flashlight.posted;},
+			getPermissions: function(){return flashlight.permissions;},
 			getAll: function(){
 				var tmp = {};
 				tmp.name = this.getName();
@@ -1033,6 +1164,7 @@ angular.module('ServU')
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
 				tmp.posted = this.getPosted();
+				tmp.permissions = this.getPermissions();
 				
 				return tmp;
 			}
@@ -1047,6 +1179,7 @@ angular.module('ServU')
 			getAvailable: function(){return device.available;},
 			setPosted: function(bool){setPosted("device", bool)},
 			getPosted: function(){return device.posted;},
+			getPermissions: function(){return device.permissions;},
 			getAll: function(){
 				var tmp = {};
 				tmp.name = this.getName();
@@ -1055,6 +1188,7 @@ angular.module('ServU')
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
 				tmp.posted = this.getPosted();
+				tmp.permissions = this.getPermissions();
 				
 				return tmp;
 			}
@@ -1069,6 +1203,7 @@ angular.module('ServU')
 			getAvailable: function(){return sim.available;},
 			setPosted: function(bool){setPosted("sim", bool)},
 			getPosted: function(){return sim.posted;},
+			getPermissions: function(){return sim.permissions;},
 			getAll: function(){
 				var tmp = {};
 				tmp.name = this.getName();
@@ -1077,6 +1212,7 @@ angular.module('ServU')
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
 				tmp.posted = this.getPosted();
+				tmp.permissions = this.getPermissions();
 				
 				return tmp;
 			}
@@ -1091,6 +1227,7 @@ angular.module('ServU')
 			getAvailable: function(){return screenOrientation.available;},
 			setPosted: function(bool){setPosted("screenOrientation", bool)},
 			getPosted: function(){return screenOrientation.posted;},
+			getPermissions: function(){return screenOrientation.permissions;},
 			getAll: function(){
 				var tmp = {};
 				tmp.name = this.getName();
@@ -1099,6 +1236,7 @@ angular.module('ServU')
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
 				tmp.posted = this.getPosted();
+				tmp.permissions = this.getPermissions();
 				
 				return tmp;
 			}
@@ -1113,6 +1251,7 @@ angular.module('ServU')
 			getAvailable: function(){return wifi.available;},
 			setPosted: function(bool){setPosted("wifi", bool)},
 			getPosted: function(){return wifi.posted;},
+			getPermissions: function(){return wifi.permissions;},
 			getAll: function(){
 				var tmp = {};
 				tmp.name = this.getName();
@@ -1121,6 +1260,7 @@ angular.module('ServU')
 				tmp.active = this.getActive();
 				tmp.available = this.getAvailable();
 				tmp.posted = this.getPosted();
+				tmp.permissions = this.getPermissions();
 				
 				return tmp;
 			}
@@ -1164,6 +1304,21 @@ angular.module('ServU')
 				// this.globalization.getAll(),
 			]
 		},
+		checkAllAvailable: function(){
+			var allProbes = this.getAll();
+			
+			return $q(function(resolve, reject){
+				var i = 0;
+				var recur = function(i){
+					checkProbeAvailable(allProbes[i]).then(function(){
+						recur(++i);
+					}).catch(function(){
+						resolve();
+					});
+				};
+				recur(i);
+			});
+		}
 	};
 
 }])

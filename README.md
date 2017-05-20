@@ -5,7 +5,8 @@
 #### Prérequis
 - Activer le mode developpeur : [link](http://www.frandroid.com/android/developpement/184906_comment-acceder-au-mode-developpeur-sur-android)
 - Activer adb et le mettre dans le path : [link](http://lifehacker.com/the-easiest-way-to-install-androids-adb-and-fastboot-to-1586992378)
-- Faire un `npm install` dans le dossier `app/`
+- Faire un `cordova platform add android` dans le dossier `app/`
+- Puis `cordova prepare`
 ### Build l'app
 Il existe plusieurs methodes, il faut choisir selon le materiel a disposition et selon ce que vous voulez faire.
 
