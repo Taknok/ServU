@@ -49,48 +49,53 @@ app.use(session({
     })
     // Get the username
     .get('/users/:username', function (req, res) {
-        if (req.params.username == '') {
+        if (typeof(req.session.username) === 'undefined') {
             res.redirect('/');
         }
-        if (req.session.username != req.params.username) {
+        else if (req.params.username === '') {
             res.redirect('/');
         }
-        request.get({
-            url: url + '/api/users/' + req.params.username,
-            headers: {'x-access-token':token},
-            json: true,
-            body : {username: req.params.username}
-        }, function (err, response, body) {
-            if (err) {
-                console.error(err);
-                res.redirect('/');
-            }
-            switch(response.statusCode){
-                case 200:
-                    req.session.lastname = response.body.lastname;
-                    req.session.firstname = response.body.firstname;
-                    req.session.email = response.body.email;
-                    res.render('gestion', {
-                        username: req.session.username,
-                        lastname: req.session.lastname,
-                        firstname: req.session.firstname,
-                        email: req.session.email,
-                        token : token
-                    });
-                    break;
-                case 401:
+        else if (req.session.username !== req.params.username) {
+            res.redirect('/');
+        }
+        else {
+            request.get({
+                url: url + '/api/users/' + req.params.username,
+                headers: {'x-access-token': token},
+                json: true,
+                body: {username: req.params.username}
+            }, function (err, response, body) {
+                if (err) {
+                    console.error(err);
                     res.redirect('/');
-                    break;
-                case 403:
-                    res.send("<h1>Forbidden</h1>");
-                    break;
-                case 404:
-                    res.send("<h1>User Not Found</h1>");
-                    break;
-                default :
-                    res.send("<h1>Unknow Error</h1>");
-            }
-        })
+                }
+                switch (response.statusCode) {
+                    case 200:
+                        req.session.lastname = response.body.lastname;
+                        req.session.firstname = response.body.firstname;
+                        req.session.email = response.body.email;
+                        res.render('gestion', {
+                            username: req.session.username,
+                            lastname: req.session.lastname,
+                            firstname: req.session.firstname,
+                            email: req.session.email,
+                            token: token
+                        });
+                        break;
+                    case 401:
+                        res.redirect('/');
+                        break;
+                    case 403:
+                        res.send("<h1>Forbidden</h1>");
+                        break;
+                    case 404:
+                        res.send("<h1>User Not Found</h1>");
+                        break;
+                    default :
+                        res.send("<h1>Unknow Error</h1>");
+                }
+            })
+        }
     })
 
     .put('/users/:username',urlencodedParser, function(req, res) {
