@@ -383,7 +383,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Time : </div>' +
                     '<input class="form-control" id="battery_low" placeholder="Time to ring" min="1" max="10000" type="number" required ng-model="dataAction.time">' +
-                    ' <div class="input-group-addon">Seconds</div></div></form>'
+                    ' <div class="input-group-addon">Milliseconds</div></div></form>'
                 );
             }
             else if (action.name === "Vibrate"){
@@ -394,7 +394,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Time : </div>' +
                     '<input class="form-control" id="Vibrate" placeholder="Time to ring" min="1" max="10000" type="number" required ng-model="dataAction.time">' +
-                    ' <div class="input-group-addon">Seconds</div></div></form>'
+                    ' <div class="input-group-addon">Milliseconds</div></div></form>'
                 );
             }
             else if (action.name === "Flashlight") {
