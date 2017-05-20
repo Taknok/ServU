@@ -29,7 +29,6 @@
 
     <link href="../css/persoCSS/custom.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.js"></script>
 
     <!-- qrcode library -->
     <script type="text/javascript" src="../js/qrcode.js"></script>
@@ -551,24 +550,23 @@
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 gutter-10">
                                             <h3 class="list-group-item-text text-aqua fontCounter">IF</h3>
-                                            <div ng-if=checkIsLocalisation(eventSkeleton)>
-                                                <span class="label label-primary"><i class="fa" ng-class="getTypeProbe(eventSkeleton.if[0].probe)"></i> {{getLabelProbe(eventSkeleton.if[0].probe)}}</span>
-                                                <span class="label label-warning">{{eventSkeleton.if[0].comparator == ">" ? "Inside" : "Outside"}}</span>
-                                                <a role="button" class="btn btn-dark btn-xs" ng-click=giveMap(eventSkeleton)>Load Map</a>
-                                                <div id="map{{eventSkeleton.id}}" style="width : 100%; height:200px"></div>
-
+                                            <div ng-repeat="ifCondition in eventSkeleton.if | notlocalisation">
+                                                <h4><span class="label label-default">{{ifCondition.logicOperator}}</span></h4>
+                                                <h4>
+                                                    <span class="label label-primary"><i class="fa" ng-class="getTypeProbe(ifCondition.probe)"></i> {{getLabelProbe(ifCondition.probe)}}</span>
+                                                    <span class="label label-warning">{{ifCondition.comparator}}</span>
+                                                    <span class="label label-primary">{{ifCondition.value}}</span>
+                                                </h4>
                                             </div>
-                                            <div ng-if=!checkIsLocalisation(eventSkeleton)>
-                                                <div ng-repeat="ifCondition in eventSkeleton.if">
-                                                    <h4><span class="label label-default">{{ifCondition.logicOperator}}</span></h4>
-                                                    <h4>
-                                                        <span class="label label-primary"><i class="fa" ng-class="getTypeProbe(ifCondition.probe)"></i> {{getLabelProbe(ifCondition.probe)}}</span>
-                                                        <span class="label label-warning">{{ifCondition.comparator}}</span>
-                                                        <span class="label label-primary">{{ifCondition.value}}</span>
-                                                    </h4>
-                                                </div>
+                                            <div ng-repeat="ifCondition in eventSkeleton.if | localisation">
+                                                <h4><span class="label label-default">{{ifCondition.logicOperator}}</span></h4>
+                                                <h4>
+                                                    <span class="label label-primary"><i class="fa fa-globe"></i> Localisation</span>
+                                                    <span class="label label-warning">{{ifCondition.comparator == ">" ? "Inside" : "Outside"}}</span>
+                                                    <a role="button" class="btn btn-dark btn-xs" ng-click=giveMap(eventSkeleton)>Load Map</a>
+                                                    <div id="map{{eventSkeleton.id}}" style="width : 100%; height:200px"></div>
+                                                </h4>
                                             </div>
-
                                             <hr class="reduce">
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 gutter-10">
@@ -689,6 +687,8 @@
 
 <!-- jQuery -->
 <script src="../js/jquery.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.js"></script>
 
 <!-- Bootstrap Core JavaScript -->
 

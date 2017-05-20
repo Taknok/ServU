@@ -93,7 +93,10 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
         $ctrl.toggleAnimation = function () {
             $ctrl.animationsEnabled = !$ctrl.animationsEnabled;
         };
+
     }])
+
+
 
     //Controller du modal
     .controller('ModalInstanceCtrl', function ($scope, $compile,$uibModalInstance, $log, $http) {
@@ -121,29 +124,28 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
          {name : 'Bluetooth', icon : "icon ion-bluetooth"}];
          */
 
-        $scope.validForm =
 
-            $ctrl.ajoutCondition = function(){
-                var index = $scope.conditionArray.length;
-                var numero = index + 1;
-                var myEl = angular.element(document.querySelector('#condition' +numero));
-                myEl.html('<div class="row"><div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"></div><div class="dropdown col-xs-4 col-sm-3 col-md-3 col-lg-2 selectContainer">' +
-                    '<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="{{conditionArray[' + index + '].selectedItem.icon}}"></i> {{conditionArray[' + index + '].selectedItem.name ? conditionArray[' + index + '].selectedItem.name : "Condition"}}' +
-                    ' <span class="caret"></span></button>' +
-                    '<ul class="dropdown-menu">' +
-                    '<li><a href="#"  ng-repeat="item in $ctrl.items" ng-click="$ctrl.condition_update(item,' + index +')"><i class="{{item.icon}}"></i> {{item.name}}</a></li>' +
-                    '</ul>' +
-                    '</div>' +
-                    '<div class="col-xs-10 col-sm-7 col-md-7 col-lg-8 selectContainer">' +
-                    '<div id="conditionStatus' + numero +'"></div>'+
-                    '<div class="pull-right"><button type="button" class="btn btn-positive button-outline" ng-click="$ctrl.ajoutCondition('+ numero +')" ng-show="conditionArray[' + index + '].selectedItem.name"><i class="fa fa-plus"></i> Add</button></div>' +
-                    '</div>' +
-                    '</div><br>');
-                $scope.conditionArray.push({selectedItem : '', dataCondition : {} });
-                myEl.after(
-                    '<div id="condition' + (numero+1) +'"></div>');
-                $compile(myEl)($scope);
-            };
+        $ctrl.ajoutCondition = function(){
+            var index = $scope.conditionArray.length;
+            var numero = index + 1;
+            var myEl = angular.element(document.querySelector('#condition' +numero));
+            myEl.html('<div class="row"><div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"></div><div class="dropdown col-xs-4 col-sm-3 col-md-3 col-lg-2 selectContainer">' +
+                '<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="{{conditionArray[' + index + '].selectedItem.icon}}"></i> {{conditionArray[' + index + '].selectedItem.name ? conditionArray[' + index + '].selectedItem.name : "Condition"}}' +
+                ' <span class="caret"></span></button>' +
+                '<ul class="dropdown-menu">' +
+                '<li><a href="#"  ng-repeat="item in $ctrl.items" ng-click="$ctrl.condition_update(item,' + index +')"><i class="{{item.icon}}"></i> {{item.name}}</a></li>' +
+                '</ul>' +
+                '</div>' +
+                '<div class="col-xs-10 col-sm-7 col-md-7 col-lg-8 selectContainer">' +
+                '<div id="conditionStatus' + numero +'"></div>'+
+                '<div class="pull-right"><button type="button" class="btn btn-positive button-outline" ng-click="$ctrl.ajoutCondition('+ numero +')" ng-show="conditionArray[' + index + '].selectedItem.name"><i class="fa fa-plus"></i> Add</button></div>' +
+                '</div>' +
+                '</div><br>');
+            $scope.conditionArray.push({selectedItem : '', dataCondition : {} });
+            myEl.after(
+                '<div id="condition' + (numero+1) +'"></div>');
+            $compile(myEl)($scope);
+        };
         //Lors du clic create du modal
         $ctrl.ok = function () {
             var dataIf = [];
@@ -170,7 +172,6 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 }]
             };
 
-            //Envoie de la requete pour creer un evenement
             $http.post(url + "/api/users/" + $scope.username + '/eventSkeletons', data).then(function () {
                 $log.log("Evenement bien envoyé au serveur");
             }).catch(function (e) {
@@ -184,6 +185,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                     console.error("User or device not found :", e);
                 }
             });
+
             //Ferme le modal
             $uibModalInstance.close();
         };
@@ -338,6 +340,21 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 $scope.affichage(index);
             }
             $compile(myEl)($scope);
+
+            var isLocalisationActive = false;
+            angular.forEach($scope.conditionArray, function(value,key){
+                $log.log($scope.conditionArray[key].selectedItem.name);
+                if($scope.conditionArray[key].selectedItem.name == "Localisation" && !isLocalisationActive){
+                    $ctrl.items.splice(3,1);
+                    $log.log($ctrl.items);
+                    isLocalisationActive = true;
+                }
+            });
+            $log.log("a la fin ca vaut ", isLocalisationActive);
+            if(!isLocalisationActive && typeof $ctrl.items[3] == 'undefined'){
+                $ctrl.items.push({name : 'Localisation', icon : "icon glyphicon glyphicon-map-marker"});
+                $log.log("a laa fin :", $ctrl.items);
+            }
         };
 
         //Reagi lors du changement d'action
