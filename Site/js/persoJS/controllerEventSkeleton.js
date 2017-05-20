@@ -3,11 +3,36 @@
  */
 
 rootApp
+    .filter('localisation', function () {
+        return function (items) {
+            var filtered = [];
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                if (/localisation/i.test(item.probe.substring(0, 12))) {
+                    filtered.push(item);
+                    return filtered
+                }
+            }
+            return filtered;
+        };
+    })
+    .filter('notlocalisation', function () {
+        return function (items) {
+            var filtered = [];
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                if (!/localisation/i.test(item.probe.substring(0, 12))) {
+                    filtered.push(item);
+                }
+            }
+            return filtered;
+        };
+    })
     .controller("EventSkeletonCtrl", function($scope, $http, $log, $compile, EventSkeletons, Alerts) {
 
         $scope.updateListEventSkeleton = function getListEventSkeleton() {
             EventSkeletons.listEventSkeletons().then(function listEventSkeletonOK(eventSkeletons) {
-                Alerts.notify('success', '<strong>GOOD</strong> Successful Recuperation of EventSkeletons',2000);
+                //Alerts.notify('success', '<strong>GOOD</strong> Successful Recuperation of EventSkeletons',2000);
                 $scope.eventSkeletons = eventSkeletons.data;
                 $log.log(eventSkeletons.data);
             }, function () {
@@ -144,22 +169,27 @@ rootApp
             }
         };
 
-        $scope.checkIsLocalisation = function(EventSkeleton) {
-            return ((EventSkeleton.if[0].probe === 'localisation.lgn') || (EventSkeleton.if[0].probe === 'localisation.lat'));
+        $scope.filtreLocalisation = function(ifCondition){
+            var filtre = (ifCondition.probe !== 'localisation.lat' && ifCondition.probe !== 'localisation.lng');
+            return filtre;
         };
 
-        $scope.giveMap = function(EventSkeleton) {
-            if ((EventSkeleton.if[0].probe === 'localisation.lgn') || (EventSkeleton.if[0].probe === 'localisation.lat')) {
 
-                var latMin = EventSkeleton.if[0].value;
-                var latMax = EventSkeleton.if[1].value;
-                var lngMin = EventSkeleton.if[2].value;
-                var lngMax = EventSkeleton.if[3].value;
+        $scope.giveMap = function(EventSkeleton) {
+            if (true || (EventSkeleton.probe === 'localisation.lgn') || (EventSkeleton.probe === 'localisation.lat')) {
+                var index = 0;
+                angular.forEach(EventSkeleton.if, function(value,key){
+                    if(value.probe === 'localisation.lat'){
+                        index = key -1;
+                    }
+                });
+                var latMin = EventSkeleton.if[index].value;
+                var latMax = EventSkeleton.if[index + 1].value;
+                var lngMin = EventSkeleton.if[index + 2].value;
+                var lngMax = EventSkeleton.if[index +3].value;
 
                 var lat = (latMin + latMax)/2;
-                $log.log(lat);
                 var lng = (lngMin + lngMax)/2;
-                $log.log(lng);
                 var rayon = (latMax-latMin) * 110574 / 2;
                 var mapOptionsPiti = {
                     center: {lat : lat, lng : lng},
@@ -192,7 +222,7 @@ rootApp
                 });
                 mapPiti.setCenter(markerPiti.getPosition());
                 radiusRangePiti.setCenter(markerPiti.getPosition());
-
+                google.maps.event.trigger(mapPiti, "resize");
             }
 
         };

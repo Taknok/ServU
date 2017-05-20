@@ -10,8 +10,8 @@ var urlencodedParser =  bodyParser.urlencoded({ extended: false });
 
 // ADRESSE ET PORT DU SERVER
 var url = 'https://servu.ml';
-    // CECI est pour le tocard de pad
 //var url = 'http://127.0.0.1:3000';
+
 var token;
 
 /* On utilise les sessions */
@@ -49,103 +49,155 @@ app.use(session({
     })
     // Get the username
     .get('/users/:username', function (req, res) {
-        if (req.params.username == '') {
+        if (typeof(req.session.username) === 'undefined') {
             res.redirect('/');
         }
-        if (req.session.username != req.params.username) {
+        else if (req.params.username === '') {
             res.redirect('/');
         }
-        request.get({
-            url: url + '/api/users/' + req.params.username,
-            headers: {'x-access-token':token},
-            json: true,
-            body : {username: req.params.username}
-        }, function (err, response, body) {
-            if (err) {
-                console.error(err);
-                res.redirect('/');
-            }
-            switch(response.statusCode){
-                case 200:
-                    req.session.lastname = response.body.lastname;
-                    req.session.firstname = response.body.firstname;
-                    req.session.email = response.body.email;
-                    res.render('gestion', {
-                        username: req.session.username,
-                        lastname: req.session.lastname,
-                        firstname: req.session.firstname,
-                        email: req.session.email,
-                        token : token
-                    });
-                    break;
-                case 401:
+        else if (req.session.username !== req.params.username) {
+            res.redirect('/');
+        }
+        else {
+            request.get({
+                url: url + '/api/users/' + req.params.username,
+                headers: {'x-access-token': token},
+                json: true,
+                body: {username: req.params.username}
+            }, function (err, response, body) {
+                if (err) {
+                    console.error(err);
                     res.redirect('/');
-                    break;
-                case 403:
-                    res.send("<h1>Forbidden</h1>");
-                    break;
-                case 404:
-                    res.send("<h1>User Not Found</h1>");
-                    break;
-                default :
-                    res.send("<h1>Unknow Error</h1>");
-            }
-        })
+                }
+                switch (response.statusCode) {
+                    case 200:
+                        req.session.lastname = response.body.lastname;
+                        req.session.firstname = response.body.firstname;
+                        req.session.email = response.body.email;
+                        res.render('gestion', {
+                            username: req.session.username,
+                            lastname: req.session.lastname,
+                            firstname: req.session.firstname,
+                            email: req.session.email,
+                            token: token
+                        });
+                        break;
+                    case 401:
+                        res.redirect('/');
+                        break;
+                    case 403:
+                        res.send("<h1>Forbidden</h1>");
+                        break;
+                    case 404:
+                        res.send("<h1>User Not Found</h1>");
+                        break;
+                    default :
+                        res.send("<h1>Unknow Error</h1>");
+                }
+            })
+        }
     })
 
     .put('/users/:username',urlencodedParser, function(req, res) {
-        var dataChanged,
-            lastname = req.session.lastname,
-            firstname = req.session.firstname;
-        // Premiere partie du formulaire
-        if (req.body.lastname != undefined && req.body.lastname != undefined && req.body.firstname != ''
-            && req.body.firstname != ''){
-            lastname = req.body.lastname;
-            firstname = req.body.firstname;
-            dataChanged = {lastname : lastname,firstname : firstname};
-        }
+        var dataChanged={};
         //Deuxieme partie du formulaire
-        if (req.body.password != undefined && req.body.password2 != undefined && req.body.password2 == req.body.password){
-            password = req.body.password;
-            dataChanged = {password : password};
+        if (req.body.password !== undefined && req.body.password2 !== undefined && req.body.password2 === req.body.password
+            && req.body.oldPassword != undefined){
+            request.post({
+                url: url + '/api/login',
+                json: true,
+                body: {
+                    username: req.session.username,
+                    password: req.body.oldPassword
+                }}, function (err, response, body) {
+                if (err) {
+                    console.error(err);
+                    res.redirect('/');
+                }
+                switch (response.statusCode) {
+                    case 200:
+                        request.put({
+                            url: url + '/api/users/' + req.params.username,
+                            headers: {'x-access-token':token},
+                            json: true,
+                            body : {password : req.body.password}}, function (err, response, body) {
+                            if (err) {
+                                console.error(err);
+                                res.redirect('/');
+                            }
+                            switch (response.statusCode) {
+                                case 204:
+                                    res.render('gestion', {
+                                        username: req.session.username,
+                                        lastname: req.session.lastname,
+                                        firstname: req.session.firstname,
+                                        email: req.session.email,
+                                        token : token,
+                                        success : "Password changed"
+                                    });
+                                    break;
+                                default :
+                                    res.send("<h1>Unknow Error</h1>");
+                            }});
+                        break;
+                    default :
+                        res.render('gestion', {
+                            username: req.session.username,
+                            lastname: req.session.lastname,
+                            firstname: req.session.firstname,
+                            email: req.session.email,
+                            token : token,
+                            error : "Wrong password"
+                        });
+                        break;
+                }
+            })
         }
-        request.put({
-            url: url + '/api/users/' + req.params.username,
-            headers: {'x-access-token':token},
-            json: true,
-            body : dataChanged}, function (err, response, body) {
-            if (err) {
-                console.error(err);
-                res.redirect('/');
+        else{
+            // Premiere partie du formulaire
+            if (req.body.lastname != undefined && req.body.lastname != ''){
+                dataChanged.lastname = req.body.lastname;
             }
-            switch (response.statusCode) {
-                case 204:
-                    req.session.lastname = lastname;
-                    req.session.firstname = firstname;
-                    break;
-                case 400:
-                    res.send("<h1>Wrong Format</h1>");
-                    break;
-                case 401:
-                    res.send("<h1>Unauthorized</h1>");
-                    break;
-                case 403:
-                    res.send("<h1>Forbidden</h1>");
-                    break;
-                case 404:
-                    res.send("<h1>User not found</h1>");
-                    break;
-                case 409:
-                    res.send("<h1>Another user has the same username</h1>");
-                    break;
-                default :
-                    res.send("<h1>Unknow Error</h1>");
+            if(req.body.firstname != undefined && req.body.firstname != '' ){
+                dataChanged.firstname = req.body.firstname;
             }
-        });
-        res.redirect('/users/' + req.session.username);
+            request.put({
+                url: url + '/api/users/' + req.params.username,
+                headers: {'x-access-token':token},
+                json: true,
+                body : dataChanged}, function (err, response, body) {
+                if (err) {
+                    console.error(err);
+                    res.redirect('/');
+                }
+                switch (response.statusCode) {
+                    case 204:
+                        req.session.lastname = lastname;
+                        req.session.firstname = firstname;
+                        break;
+                    case 400:
+                        res.send("<h1>Wrong Format</h1>");
+                        break;
+                    case 401:
+                        res.send("<h1>Unauthorized</h1>");
+                        break;
+                    case 403:
+                        res.send("<h1>Forbidden</h1>");
+                        break;
+                    case 404:
+                        res.send("<h1>User not found</h1>");
+                        break;
+                    case 409:
+                        res.send("<h1>Another user has the same username</h1>");
+                        break;
+                    default :
+                        res.send("<h1>Unknow Error</h1>");
+                }
+            });
+            res.redirect('/users/' + req.session.username);
+        }
     })
     .post('/signUp', function(req, res) {
-        console.log(req.body);
         if(req.body.username != undefined && req.body.lastname != undefined && req.body.firstname != undefined && req.body.email != undefined && req.body.password != undefined){
             request.post({
                 url: url + '/api/users',
@@ -206,17 +258,17 @@ app.use(session({
                 case 200:
                     res.render('index', {
                         session: false,
-                        success : "typeof success != 'undefined' at " + req.body.email});
+                        success : "Email sent at " + req.body.email});
                     break;
                 case 400:
                     res.render('index', {
                         session: false,
-                        error : "Fail to reset password ! Missing username or password"});
+                        error : "Fail to reset password ! Missing username or email"});
                     break;
                 case 401:
                     res.render('index', {
                         session: false,
-                        error : "Fail to reset password ! Missing username or password"});
+                        error : "Fail to reset password ! Missing username or email"});
                     break;
                 default :
                     res.send("<h1>Unknow Error</h1>");
