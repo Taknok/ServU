@@ -164,6 +164,7 @@ angular.module('ServU')
 					token: AuthService.getToken()
 				};
 				socket.emit("who", who);
+				console.log("Connected to socket");
 			};
 			
 			if (!phoneInfo.getPosted()){
@@ -174,44 +175,45 @@ angular.module('ServU')
 							postProbes();
 							postActionAvailable();
 						});
-					
-						if (!phoneInfo.getSubscribed()){
-							subscribeActions();
-							phoneInfo.setSubscribed(true);
-							
-							socket.on("action", function(action){
-								console.log(action);
-								let actionUpdated = actions.trigger(action);
-								$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsUser/" + actionUpdated.id, {"status" : actionUpdated.status});
-							});
-							
-							socket.on("connect", function(action){
-								console.log("Connected to socket");
-								actions.purgeAllPendingActions();
-							});
-						}
 						
 						$state.go('main');
 					});
+					if (!phoneInfo.getSubscribed()){
+						subscribeActions();
+						phoneInfo.setSubscribed(true);
+						
+						socket.on("action", function(action){
+							console.log(action);
+							let actionUpdated = actions.trigger(action);
+							$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsUser/" + actionUpdated.id, {"status" : actionUpdated.status});
+						});
+						
+						socket.on("connect", function(action){
+							subscribeActions();
+							
+							console.log("Connected to socket");
+							actions.purgeAllPendingActions();
+						});
+					}
 				}).catch(function(e){
 					console.error("Something happen : ", e);
 				});
 			} else {
-				if (!phoneInfo.getSubscribed()){
+				subscribeActions();
+				phoneInfo.setSubscribed(true);
+				
+				socket.on("action", function(action){
+					console.log(action);
+					let actionUpdated = actions.trigger(action);
+					$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsUser/" + actionUpdated.id, {"status" : actionUpdated.status});
+				});
+				
+				socket.on("connect", function(action){
 					subscribeActions();
-					phoneInfo.setSubscribed(true);
 					
-					socket.on("action", function(action){
-						console.log(action);
-						let actionUpdated = actions.trigger(action);
-						$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsUser/" + actionUpdated.id, {"status" : actionUpdated.status});
-					});
-					
-					socket.on("connect", function(action){
-						console.log("Connected to socket");
-						actions.purgeAllPendingActions();
-					});
-				}
+					console.log("Connected to socket");
+					actions.purgeAllPendingActions();
+				});
 				$state.go('main');
 			}
 			
