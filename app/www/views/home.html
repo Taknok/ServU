@@ -1,20 +1,11 @@
 <ion-view ng-controller="HomeCtrl" cache-view="false">
 <ion-content class="padding">
-	<div class="card">
-		<div class="item item-text-wrap">
-			{{memberinfo}}
-		</div>
-	</div>
 	<button class="button button-full button-assertive" ng-click="destroySession()">
-		Destroy token
+		{{"Delete Device" | translate}}
 	</button>
-	<button class="button button-full button-balanced" ng-click="getInfo()">
-		Get Memberinfo
-	</button><button class="button button-full button-balanced" ng-click="requestAllProbesPermissions()">
-		Request All Probes Permissions
+	<button class="button button-full button-balanced" ng-click="requestAllProbesPermissions()">
+		{{"Request All Permissions" | translate}}
 	</button>
-	<button class="button button-full button-balanced" ng-click="test()">
-		Test
-	</button>
+
 </ion-content>
 </ion-view>

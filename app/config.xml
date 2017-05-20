@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.pg.ServU" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.pg.ServU" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>ServU</name>
   <description>
-        Application to automatize actions
+        Application to automatize actions&#xD;
     </description>
   <author email="pg.developper.fr@gmail.com" href="http://example.com/">
       Pg
@@ -18,10 +18,21 @@
   <preference name="BackupWebStorage" value="none"/>
   <preference name="SplashScreen" value="screen"/>
   <preference name="orientation" value="portrait"/>
+  <preference name="cordova-custom-config-autorestore" value="false"/>
+  <preference name="cordova-custom-config-stoponerror" value="true"/>
+  <preference name="cordova-custom-config-hook" value="after_prepare"/>
   <feature name="StatusBar">
     <param name="ios-package" onload="true" value="CDVStatusBar"/>
   </feature>
+  <plugin name="cordova-custom-config" spec="*"/>
+  <plugin name="cordova-sms-plugin" spec="~0.1.11"/>
+  <plugin name="cordova.plugins.diagnostic" spec="~3.6.2"/>
+  <plugin name="cordova-plugin-background-mode" spec="~0.7.2"/>
+  <plugin name="cordova-custom-config" spec="~3.1.2"/>
   <platform name="android">
+    <config-file parent="/*" target="AndroidManifest.xml">
+      <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    </config-file>
     <icon density="ldpi" src="resources\android\icon\drawable-ldpi-icon.png"/>
     <icon density="mdpi" src="resources\android\icon\drawable-mdpi-icon.png"/>
     <icon density="hdpi" src="resources\android\icon\drawable-hdpi-icon.png"/>
@@ -39,7 +50,6 @@
   <allow-navigation href="http://192.168.137.1:8100"/>
   <allow-navigation href="http://192.168.1.10:8100"/>
   <allow-navigation href="http://192.168.20.33:8100"/>
-  <plugin name="cordova-sms-plugin" spec="~0.1.11"/>
-  <plugin name="cordova.plugins.diagnostic" spec="~3.6.2"/>
-  <plugin name="cordova-plugin-background-mode" spec="~0.7.2"/>
+  <allow-navigation href="http://192.168.22.226:8100"/>
+  <allow-navigation href="http://192.168.137.36:8100"/>
 </widget>
