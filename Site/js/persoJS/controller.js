@@ -3,8 +3,16 @@
  */
 
 var cookies = document.cookie.split(';');
-var token = cookies[0].substr(6);
-var username = cookies[1].substr(9);
+var token;
+var username;
+for(var i = 0; i <cookies.length; i++) {
+    if(cookies[i].substr(0,5) === 'token'){
+        token = cookies[i].substr(6);
+    }
+    if(cookies[i].substr(0,7) === 'username'){
+        username = cookies[i].substr(9);
+    }
+}
 
 const url = 'https://servu.ml';
 //const url = 'http://127.0.0.1:3000';

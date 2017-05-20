@@ -171,7 +171,6 @@ rootApp
 
         $scope.filtreLocalisation = function(ifCondition){
             var filtre = (ifCondition.probe !== 'localisation.lat' && ifCondition.probe !== 'localisation.lng');
-            $log.log(ifCondition.probe, filtre);
             return filtre;
         };
 
@@ -184,16 +183,13 @@ rootApp
                         index = key -1;
                     }
                 });
-                $log.log(EventSkeleton,index);
                 var latMin = EventSkeleton.if[index].value;
                 var latMax = EventSkeleton.if[index + 1].value;
                 var lngMin = EventSkeleton.if[index + 2].value;
                 var lngMax = EventSkeleton.if[index +3].value;
 
                 var lat = (latMin + latMax)/2;
-                $log.log(lat);
                 var lng = (lngMin + lngMax)/2;
-                $log.log(lng);
                 var rayon = (latMax-latMin) * 110574 / 2;
                 var mapOptionsPiti = {
                     center: {lat : lat, lng : lng},

@@ -74,6 +74,18 @@
 
 
         <div class="row">
+            <% if(typeof error != 'undefined'){ %>
+            <div class="alert alert-danger fade in center-block" style="width : 50%;">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Error : </strong><%= error %>
+            </div>
+            <% } %>
+            <% if(typeof success != 'undefined'){ %>
+            <div class="alert alert-success fade in center-block" style="width : 50%;">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Success : </strong><%= success %>
+            </div>
+            <% } %>
             <div class="col-md-12 col-xs-12 text-center">
                 <h2 class="fontAmethyst"><%= username %></h2>
                 <hr class="small">
@@ -139,12 +151,17 @@
                                     <div class="row collapse" id="modifyPassword">
                                         <form action="/users/<%= username%>?_method=PUT" method="post" class="form-horizontal" id="modif_mdp" data-toggle="validator">
                                             <div class="form-group">
+                                                <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="text">Current password :</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
+                                                    <input type="password" class="form-control" name="oldPassword" id="oldPassword" placeholder="Enter your current password" data-minlength="6" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="text">New password :</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1">
                                                     <input type="password" class="form-control" name="password" id="password" placeholder="Enter your new password" data-minlength="6" required>
                                                     <div class="help-block">Minimum of 6 characters</div>
                                                 </div>
-
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label col-md-4 col-sm-4 col-xs-10 col-md-offset-0 col-sm-offset-0 col-xs-offset-1" for="pwd">Confirm password :</label>
@@ -733,6 +750,11 @@
         var expires = "expires="+ d.toUTCString();
         document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     }
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove();
+        });
+    }, 4000);
 </script>
 
 </body>
