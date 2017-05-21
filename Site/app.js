@@ -50,7 +50,7 @@ app.use(session({
     // Get the username
     .get('/users/:username', function (req, res) {
         if (typeof(req.session.username) === 'undefined') {
-            res.redirect('/');
+            res.redirect('/ ');
         }
         else if (req.params.username === '') {
             res.redirect('/');
