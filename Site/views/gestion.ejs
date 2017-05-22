@@ -37,6 +37,23 @@
 
 </head>
 
+<script>
+    document.title = 'Profile - <%= username%>';
+    setCookie('token','<%= token%>',7);
+    setCookie('username','<%= username%>',7);
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+ d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove();
+        });
+    }, 4000);
+</script>
+
 <body ng-app="root" ng-controller="gestion">
 
 <!-- Navigation 2-->
@@ -642,19 +659,24 @@
                         <div class="col-md-6">
                             <div id="code"></div>
                             <script type="text/javascript">
-                                new QRCode(document.getElementById("code"), "http://www.servu.ml");
+                                new QRCode(document.getElementById("code"), "market://details?id=com.pg.ServU");
                             </script>
                         </div>
                         <div class="col-md-6">
-                            <p>Flash this code with your device to download the app for ANDROID</p>
+                            <p>Flash this code with your device to go to the download page for ANDROID</p>
                             <p class="text-muted"><i>Sorry iOS users, the app is not available for iOS devices yet</i></p>
                         </div>
                     </div>
                 </div>
                 <div class='modal-footer' id="addModalFooter">
                     <div class="row">
-                        <div class="col-md-3 pull-left">
-                            <img src="../img/soon-play.PNG" class="store">
+                        <div class="col-md-4 pull-left">
+                            <a id="computer-button" href="https://play.google.com/store/apps/details?id=com.pg.ServU" style="display: none">
+                                <img src="../img/play-store.png" class="store">
+                            </a>
+                            <a id="android-button" href="market://details?id=com.pg.ServU" style="display: none">
+                                <img src="../img/play-store.png" class="store">
+                            </a>
                         </div>
                         <div class="col-md-3 pull-left">
                             <img src="../img/soon-app.PNG" class="store">
@@ -662,6 +684,19 @@
                     </div>
                     <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
                     <div class="clearfix"></div>
+                    <script>
+                        function goBack() {
+                            window.history.back()
+                        }
+                        var ua = navigator.userAgent.toLowerCase();
+                        var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+                        if(isAndroid) {
+                            document.getElementById('android-button').style.display = 'inline';
+                        } else {
+                            // is a computer
+                            document.getElementById('computer-button').style.display = 'inline';
+                        }
+                    </script>
                 </div>
             </div>
         </div>
@@ -698,19 +733,17 @@
                 <p>1 Dr Albert Schweitzer Av.
                     <br>Talence, France 33400</p>
                 <ul class="list-unstyled">
-                    <li><i class="fa fa-phone fa-fw"></i> (123) 456-7890</li>
-                    <li><i class="fa fa-envelope-o fa-fw"></i> <a href="mailto:ServU@gmail.com">ServU@gmail.com</a></li>
+                    <li><i class="fa fa-envelope-o fa-fw"></i> <a
+                                href="mailto:ml.servu@gmail.com">ml.servu@gmail.com</a></li>
                 </ul>
                 <br>
                 <ul class="list-inline">
                     <li>
-                        <a href="https://www.facebook.com/"><i class="fa fa-facebook fa-fw fa-3x"></i></a>
-                    </li>
-                    <li>
-                        <a href="https://twitter.com/"><i class="fa fa-twitter fa-fw fa-3x"></i></a>
+                        <a href="https://www.facebook.com/servUTeam8"><i class="fa fa-facebook fa-fw fa-3x"></i></a>
                     </li>
                 </ul>
                 <hr class="small">
+                <a href="https://servu.ml/politic.html">Privacy policy</a>
                 <p class="text-muted">Copyright &copy; ServU Team 8 2017</p>
             </div>
         </div>
@@ -733,10 +766,7 @@
 
 <script src="../js/persoJS/controller.js"></script>
 <script src="../js/bootstrap.min.js"></script>
-<script src="../js/persoJS/devicesController.js"></script>
-<script src="../js/persoJS/templates.js"></script>
 <script src="../js/bootstrap-notify.js"></script>
-
 <script src="../js/persoJS/controllers.js"></script>
 
 <script src="../js/persoJS/controllerEventSkeleton.js"></script>
@@ -758,22 +788,6 @@
 
 
 <script>var username = '<%= username %>'</script>
-<script>
-    document.title = 'Profile - <%= username%>';
-    setCookie('token','<%= token%>',7);
-    setCookie('username','<%= username%>',7);
-    function setCookie(cname, cvalue, exdays) {
-        var d = new Date();
-        d.setTime(d.getTime() + (exdays*24*60*60*1000));
-        var expires = "expires="+ d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
-    window.setTimeout(function() {
-        $(".alert").fadeTo(500, 0).slideUp(500, function(){
-            $(this).remove();
-        });
-    }, 4000);
-</script>
 
 </body>
 

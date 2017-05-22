@@ -119,7 +119,8 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             {name : 'Wifi', icon : "icon ion-wifi"},
             {name : 'Battery', icon : "icon ion-battery-full"},
             {name : 'Bluetooth', icon : "icon ion-bluetooth"},
-            {name : 'Localisation', icon : "icon glyphicon glyphicon-map-marker"}];
+            {name: 'Flashlight', icon: 'glyphicon glyphicon-flash'},
+            {name: 'Localisation', icon: "icon glyphicon glyphicon-map-marker"}];
         //Liste des actions
         $ctrl.actions = [
             {name : 'Ring', icon : 'icon ion-ios-bell'},
@@ -239,6 +240,8 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 position: Enseirb_position,
                 map: map
             });
+            $scope.conditionArray[index].dataCondition.position = Enseirb_position;
+
             //Permet d'avoir sa position
             var survId = navigator.geolocation.getCurrentPosition(function (pos) {
                 map.setCenter({lat : pos.coords.latitude, lng : pos.coords.longitude});
@@ -285,16 +288,26 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             $scope.conditionArray[index].selectedItem = item;
             var myEl = angular.element(document.querySelector('#conditionStatus' +(index+1)));
             $scope.conditionArray[index].dataCondition = {};
+
             //MISE A JOUR DE L AFFICHAGE
             if (item.name === "Wifi") {
                 $scope.conditionArray[index].ConditionName = "wifi.isEnable";
                 $scope.conditionArray[index].dataCondition.comparator = "=";
-                $scope.conditionArray[index].dataCondition.value = false;
+                $scope.conditionArray[index].dataCondition.value = true;
+                $scope.changeFunction = function (name) {
+                    if (name === "wifi.isEnable")
+                        $scope.conditionArray[index].ConditionName = 'wifi.isConnected';
+                    else
+                        $scope.conditionArray[index].ConditionName = 'wifi.isEnable';
+                };
+                $scope.changeCondition = function () {
+                    $scope.conditionArray[index].dataCondition.value = !$scope.conditionArray[index].dataCondition.value;
+                };
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
-                    '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="conditionArray['+index+'].dataCondition.value = !conditionArray['+index+'].dataCondition.value">{{conditionArray['+index+'].dataCondition.value}}</button>' +
+                    '<button class="btn group-addon" ng-click="changeFunction(conditionArray[' + index + '].ConditionName)">{{conditionArray[' + index + '].ConditionName=="wifi.isEnable" ? "Enable" : "Connected"}}</button>' +
+                    '<button class="btn btn-default" ng-click="changeCondition()">{{conditionArray[' + index + '].dataCondition.value}}</button>' +
                     '</div></form>'
                 );
             }
@@ -302,30 +315,70 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 $scope.conditionArray[index].ConditionName = "battery.level";
                 $scope.conditionArray[index].dataCondition.value = 20;
                 $scope.conditionArray[index].dataCondition.comparator = '<';
+                $scope.batteryStatus = true;
+                $scope.batteryPluged = false;
                 $scope.changeOperator = function(comparator){
                     if(comparator === '>')
                         $scope.conditionArray[index].dataCondition.comparator = '<';
                     else
                         $scope.conditionArray[index].dataCondition.comparator = '>';
                 };
+                $scope.changeFunctionBat = function (name) {
+                    if (name === "battery.level") {
+                        $scope.batteryStatus = false;
+                        $scope.conditionArray[index].ConditionName = 'battery.isPlugged';
+                        $scope.conditionArray[index].dataCondition.comparator = '=';
+                        $scope.conditionArray[index].dataCondition.value = true;
+                        $scope.batteryPluged = true;
+                    }
+                    else {
+                        $scope.batteryPluged = false;
+                        $scope.conditionArray[index].ConditionName = 'battery.level';
+                        $scope.conditionArray[index].dataCondition.comparator = '>';
+                        $scope.conditionArray[index].dataCondition.value = 20;
+                        $scope.batteryStatus = true;
+                    }
+                };
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
-                    '<div class="input-group-addon">Battery level : </div>' +
-                    '<button class="btn btn-default" ng-click="changeOperator(conditionArray['+index+'].dataCondition.comparator)">{{conditionArray['+index+'].dataCondition.comparator}}</button>' +
+                    '<button class="btn group-addon" ng-click="changeFunctionBat(conditionArray[' + index + '].ConditionName)">{{conditionArray[' + index + '].ConditionName=="battery.level" ? "Level" : "Plugged"}}</button>' +
+                    '<div ng-if="batteryStatus" class="input-group"><button class="btn btn-default" ng-click="changeOperator(conditionArray[' + index + '].dataCondition.comparator)">{{conditionArray[' + index + '].dataCondition.comparator}}</button>' +
                     '<div class="form-group"><input class="form-control" id="battery_low" placeholder="%" min="1" max="100" type="number" required ng-model="conditionArray['+index+'].dataCondition.value">' +
-                    '</div></form>'
+                    '</div></div>' +
+                    '<div ng-if="batteryPluged" class="input-group">' +
+                    '<button class="btn btn-default" ng-click="conditionArray[' + index + '].dataCondition.value = !conditionArray[' + index + '].dataCondition.value">{{conditionArray[' + index + '].dataCondition.value}}</button>' +
+                    '</div>' +
+                    '</div></div></form>'
                 );
             }
             else if (item.name === "Bluetooth"){
-                $scope.conditionArray[index].ConditionName = "bluetooth.isConnected";
+                $scope.conditionArray[index].ConditionName = "bluetooth.isEnable";
+                $scope.conditionArray[index].dataCondition.comparator = "=";
+                $scope.conditionArray[index].dataCondition.value = false;
+                $scope.changeFunctionBlue = function (name) {
+                    if (name === "bluetooth.isEnable")
+                        $scope.conditionArray[index].ConditionName = 'bluetooth.isConnected';
+                    else
+                        $scope.conditionArray[index].ConditionName = 'bluetooth.isEnable';
+                };
+                myEl.html(
+                    '<form class="form-inline"><div class="form-group">' +
+                    '<div class="input-group">' +
+                    '<button class="btn group-addon" ng-click="changeFunctionBlue(conditionArray[' + index + '].ConditionName)">{{conditionArray[' + index + '].ConditionName=="bluetooth.isEnable" ? "Enable" : "Connected"}}</button>' +
+                    '<button class="btn btn-default" ng-click="conditionArray[' + index + '].dataCondition.value = !conditionArray[' + index + '].dataCondition.value">{{conditionArray[' + index + '].dataCondition.value}}</button>' +
+                    '</div></form>'
+                );
+            }
+            else if (item.name === "Flashlight") {
+                $scope.conditionArray[index].ConditionName = "flashlight.isActivated";
                 $scope.conditionArray[index].dataCondition.comparator = "=";
                 $scope.conditionArray[index].dataCondition.value = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
-                    '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="conditionArray['+index+'].dataCondition.value = !conditionArray['+index+'].dataCondition.value">{{conditionArray['+index+'].dataCondition.value}}</button>' +
+                    '<div class="input-group-addon">Activated : </div>' +
+                    '<button class="btn btn-default" ng-click="conditionArray[' + index + '].dataCondition.value = !conditionArray[' + index + '].dataCondition.value">{{conditionArray[' + index + '].dataCondition.value}}</button>' +
                     '</div></form>'
                 );
             }
@@ -356,13 +409,13 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             angular.forEach($scope.conditionArray, function(value,key){
                 $log.log($scope.conditionArray[key].selectedItem.name);
                 if($scope.conditionArray[key].selectedItem.name == "Localisation" && !isLocalisationActive){
-                    $ctrl.items.splice(3,1);
+                    $ctrl.items.splice(4, 1);
                     $log.log($ctrl.items);
                     isLocalisationActive = true;
                 }
             });
             $log.log("a la fin ca vaut ", isLocalisationActive);
-            if(!isLocalisationActive && typeof $ctrl.items[3] == 'undefined'){
+            if (!isLocalisationActive && typeof $ctrl.items[4] == 'undefined') {
                 $ctrl.items.push({name : 'Localisation', icon : "icon glyphicon glyphicon-map-marker"});
                 $log.log("a laa fin :", $ctrl.items);
             }
@@ -399,13 +452,12 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             }
             else if (action.name === "Flashlight") {
                 $scope.ActionName = "flashlight";
-                $scope.dataAction.comparator = "=";
-                $scope.dataAction.value = false;
+                $scope.dataAction.state = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataAction.value = !dataAction.value">{{dataAction.value}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataAction.state = !dataAction.state">{{dataAction.state}}</button>' +
                     '</div></form>'
                 );
             }
@@ -518,13 +570,13 @@ var createTableLocalisation = function(data,probeName,probeComparator) {
         logicOperator: "AND"
     });
     dataIf.push({
-        probe: probeName + '.lng',
+        probe: probeName + '.long',
         comparator: comparator2,
         value: locationPoints.lngMin,
         logicOperator: "AND"
     });
     dataIf.push({
-        probe: probeName + '.lng',
+        probe: probeName + '.long',
         comparator: comparator1,
         value: locationPoints.lngMax,
         logicOperator: "AND"
