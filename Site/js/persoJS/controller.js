@@ -240,6 +240,8 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 position: Enseirb_position,
                 map: map
             });
+            $scope.conditionArray[index].dataCondition.position = Enseirb_position;
+
             //Permet d'avoir sa position
             var survId = navigator.geolocation.getCurrentPosition(function (pos) {
                 map.setCenter({lat : pos.coords.latitude, lng : pos.coords.longitude});
@@ -450,13 +452,12 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             }
             else if (action.name === "Flashlight") {
                 $scope.ActionName = "flashlight";
-                $scope.dataAction.comparator = "=";
-                $scope.dataAction.value = false;
+                $scope.dataAction.state = false;
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataAction.value = !dataAction.value">{{dataAction.value}}</button>' +
+                    '<button class="btn btn-default" ng-click="dataAction.state = !dataAction.state">{{dataAction.state}}</button>' +
                     '</div></form>'
                 );
             }
@@ -569,13 +570,13 @@ var createTableLocalisation = function(data,probeName,probeComparator) {
         logicOperator: "AND"
     });
     dataIf.push({
-        probe: probeName + '.lng',
+        probe: probeName + '.long',
         comparator: comparator2,
         value: locationPoints.lngMin,
         logicOperator: "AND"
     });
     dataIf.push({
-        probe: probeName + '.lng',
+        probe: probeName + '.long',
         comparator: comparator1,
         value: locationPoints.lngMax,
         logicOperator: "AND"
