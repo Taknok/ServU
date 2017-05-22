@@ -22,9 +22,9 @@ exports.sendMailInscription = function(username, email) {
                 from: '"ServU" <ml.servu@gmail.com>',
                 to: email,
                 subject: "Welcome to ServU",
-                text: "Welcome " + username + "\nWe are realy pleased by your subscription. Use ServU to configure different event on your smartphone. Please download our mobile application to add a device." +
+                text: "Welcome " + username + "\nWe are really pleased by your subscription. Use ServU to configure different events on your smartphone. Please download our mobile application to add a device." +
                 "\n\n Enjoy ServU",
-                html: '<b>' + "Welcome " + username +'<br><br>'+"We are realy pleased by your subscription. Use ServU to configure different event on your smartphone. Please download our mobile application to add a device."
+                html: '<b>' + "Welcome " + username +'<br><br>'+"We are really pleased by your subscription. Use ServU to configure different events on your smartphone. Please download our mobile application to add a device."
                 +'<br><br>'+"Enjoy ServU"+ '</b>'
             };
 
