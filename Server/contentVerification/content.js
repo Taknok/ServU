@@ -112,5 +112,12 @@ exports.probes = {
                 type: "boolean"
             }
         }
+    },
+    wifi: {
+        data: {
+            isEnable:{
+                type: "boolean"
+            }
+        }
     }
 };
