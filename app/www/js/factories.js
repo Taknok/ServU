@@ -58,7 +58,7 @@ angular.module('ServU')
 	sms.label = "Sms";
 	sms.enable = false;
 	sms.authorized = false;
-	sms.description = "Allow to send sms to custom destionation with custom text";
+	sms.description = "Allow to send text message to custom destination with custom text";
 	$ionicPlatform.ready(function(){ 
 	sms.permissions = [
 		cordova.plugins.diagnostic.permission.SEND_SMS
@@ -361,7 +361,7 @@ angular.module('ServU')
 			permanentStorage.setItem("phonePosted", bool);
 		},
 		getPosted: function(){
-			return permanentStorage.getItem("phonePosted");
+			return (permanentStorage.getItem("phonePosted") == "true");
 		},
 		setSubscribed: function(bool){
 			subscribed = bool;
@@ -519,6 +519,16 @@ angular.module('ServU')
 		
 		// orientation.posted = ('true' == permanentStorage.getItem("orientation.posted"));
 		// globalization.posted = ('true' == permanentStorage.getItem("globalization.posted"));
+		
+		network.available = ('true' == permanentStorage.getItem("network.available"));
+		bluetooth.available = ('true' == permanentStorage.getItem("bluetooth.available"));
+		localisation.available = ('true' == permanentStorage.getItem("localisation.available"));
+		battery.available = ('true' == permanentStorage.getItem("battery.available"));
+		flashlight.available = ('true' == permanentStorage.getItem("flashlight.available"));
+		device.available = ('true' == permanentStorage.getItem("device.available"));
+		sim.available = ('true' == permanentStorage.getItem("sim.available"));
+		screenOrientation.available = ('true' == permanentStorage.getItem("screenOrientation.available"));
+		wifi.available = ('true' == permanentStorage.getItem("wifi.available"));
 	}
 	load();
 	
@@ -646,30 +656,39 @@ angular.module('ServU')
 		switch(probe){
 			case "network":
 				network.available = bool;
+				permanentStorage.setItem("network.available", network.available);
 				break;
 			case "bluetooth":
 				bluetooth.available = bool;
+				permanentStorage.setItem("bluetooth.available", bluetooth.available);
 				break;
 			case "localisation":
 				localisation.available = bool;
+				permanentStorage.setItem("localisation.available", localisation.available);
 				break;
 			case "battery":
 				battery.available = bool;
+				permanentStorage.setItem("battery.available", battery.available);
 				break;
 			case "flashlight":
 				flashlight.available = bool;
+				permanentStorage.setItem("flashlight.available", flashlight.available);
 				break;
 			case "device":
 				device.available = bool;
+				permanentStorage.setItem("device.available", device.available);
 				break;
 			case "sim":
 				sim.available = bool;
+				permanentStorage.setItem("sim.available", sim.available);
 				break;
 			case "screenOrientation":
 				screenOrientation.available = bool;
+				permanentStorage.setItem("screenOrientation.available", screenOrientation.available);
 				break;
 			case "wifi":
 				wifi.available = bool;
+				permanentStorage.setItem("wifi.available", wifi.available);
 				break;
 				
 			// case "orientation":
@@ -746,7 +765,8 @@ angular.module('ServU')
 									break;
 							}
 						}
-						
+						console.log("zz", vectBool);
+						console.log("ee", probe);
 						if (vectBool.every(elem => elem == true)){
 							setAvailable(probe.name, true);
 							resolve();
@@ -824,19 +844,27 @@ angular.module('ServU')
 	
 	
 	var getLocalisation = function(){
-		if (localisation.available == true){
+		if (localisation.available){
+			
 			var onSuccess = function(position) {
-				localisation.value = position;
+				localisation.value = {};
+
+				localisation.value.lat = position.coords.latitude;
+				localisation.value.long = position.coords.longitude;
+				localisation.value.timestamp = position.timestamp;
 			};
 
 			function onError(error) {
-				console.log('localisation : code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
+				console.error('localisation : code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
 			};
 			
 			var optionsLocalisation = {enableHighAccuracy : true};
 			navigator.geolocation.getCurrentPosition(onSuccess, onError, optionsLocalisation);
-			
+
 			return localisation.value;
+		} else {
+
+			return {};
 		}
 	};
 	
@@ -1117,7 +1145,7 @@ angular.module('ServU')
 				tmp.available = this.getAvailable();
 				tmp.posted = this.getPosted();
 				tmp.permissions = this.getPermissions();
-				
+
 				return tmp;
 			}
 		},
@@ -1289,7 +1317,7 @@ angular.module('ServU')
 				
 		
 		getAll: function(){
-			return [
+			var vectAll = [
 				this.network.getAll(),
 				this.bluetooth.getAll(),
 				this.localisation.getAll(),
@@ -1302,7 +1330,10 @@ angular.module('ServU')
 				
 				// this.orientation.getAll(),
 				// this.globalization.getAll(),
-			]
+			];
+			// vectAll.push(this.localisation.getAll());
+
+			return vectAll;
 		},
 		checkAllAvailable: function(){
 			var allProbes = this.getAll();

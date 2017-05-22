@@ -39,7 +39,7 @@ angular.module('ServU')
 						"data" : {}
 					};
 				}
-				
+
 				$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/probes/" + vectProbes[i].name, data);
 			}
 		}
@@ -68,7 +68,7 @@ angular.module('ServU')
 		AuthService.login($scope.user).then(function(msg) {
 			phoneInfo.setUsername($scope.user.username);
 			
-			let postPhone = function(){
+			var postPhone = function(){
 				return $q(function(resolve, reject){
 					let tmp = probes.device.getValue();
 					
@@ -109,11 +109,11 @@ angular.module('ServU')
 				});
 			};
 			
-			console.log("Phone has been posted : ", phoneInfo.getPosted())
+			
 			
 			// PROBES POST
 			
-			let postProbes = function(){
+			var postProbes = function(){
 				let vectProbes = probes.getAll();
 				
 				for (let i = 0; i < vectProbes.length; i++){
@@ -167,11 +167,11 @@ angular.module('ServU')
 				console.log("Connected to socket");
 			};
 			
+			console.log("Phone has been posted : ", phoneInfo.getPosted())
 			if (!phoneInfo.getPosted()){
 				postPhone().then(function(){
 					probes.checkAllAvailable().then(function(){
 						actions.checkAllAvailable().then(function(){
-							console.log("aaaaaaaaa")
 							postProbes();
 							postActionAvailable();
 						});
@@ -182,6 +182,7 @@ angular.module('ServU')
 						subscribeActions();
 						phoneInfo.setSubscribed(true);
 						
+						socket.removeAllListeners("action");
 						socket.on("action", function(action){
 							console.log(action);
 							let actionUpdated = actions.trigger(action);
@@ -202,6 +203,7 @@ angular.module('ServU')
 				subscribeActions();
 				phoneInfo.setSubscribed(true);
 				
+				socket.removeAllListeners("action");
 				socket.on("action", function(action){
 					console.log(action);
 					let actionUpdated = actions.trigger(action);
@@ -296,19 +298,24 @@ angular.module('ServU')
 	});
 })
 
-.controller('HomeCtrl', function($scope, $state, $http, $ionicPopup, ServUApi, AuthService, hideHeader, actions, phoneInfo, probes) {
+.controller('HomeCtrl', function($scope, $state, $http, ServUApi, AuthService, hideHeader, actions, phoneInfo, probes, socket) {
 	$scope.deleteDevice = function() {
 		console.log("Delete device")
 		$http.delete(ServUApi.url + "/users/" + phoneInfo.getUsername() + "/devices/" + phoneInfo.getUuid()).then(function(){
-			phoneInfo.setUuid("");
 			phoneInfo.setUsername("");
-			phoneInfo.setPosted(false)
+			phoneInfo.setPosted(false);
 			phoneInfo.setSubscribed(false);
 			AuthService.logout();
 			$state.go("login")
 		}).catch(function(e){
 			console.error("Device delete error", e);
 			alert("Device delete error", e);
+			phoneInfo.setUsername("");
+			phoneInfo.setPosted(false);
+			console.log(phoneInfo.getPosted())
+			phoneInfo.setSubscribed(false);
+			AuthService.logout();
+			$state.go("login")
 		});
 	};
 	
@@ -316,6 +323,13 @@ angular.module('ServU')
 		probes.checkAllAvailable().then(function(){
 			actions.checkAllAvailable();
 		});
+		
+		let who = {
+			uuid: phoneInfo.getUuid(),
+			token: AuthService.getToken()
+		};
+		socket.emit("who", who);
+		console.log("Connected to socket");
 	};
 	
 	$scope.purge = actions.purgeAllPendingActions;
@@ -326,13 +340,20 @@ angular.module('ServU')
 		});
 	};
 	
+	socket.removeAllListeners("action");
+	socket.on("action", function(action){
+		console.log(action);
+		let actionUpdated = actions.trigger(action);
+		$http.put(ServUApi.url + "/phones/" + phoneInfo.getUuid() + "/actionsUser/" + actionUpdated.id, {"status" : actionUpdated.status});
+	});
+	
 	hideHeader.init();
 })
 
 .controller('ProbesCtrl', function($scope, $http, hideHeader, ServUApi, phoneInfo, probes) {
 	$scope.network = probes.network.getAll();
 	$scope.bluetooth = probes.bluetooth.getAll();
-	// $scope.localisation = probes.localisation.getAll();
+	$scope.localisation = probes.localisation.getAll();
 	$scope.battery = probes.battery.getAll();
 	$scope.sim = probes.sim.getAll();
 	$scope.flashlight = probes.flashlight.getAll();
@@ -347,9 +368,9 @@ angular.module('ServU')
 	$scope.$watch("bluetooth.active", function(){
 		probes.bluetooth.setActive($scope.bluetooth.active);
 	})
-	// $scope.$watch("localisation.active", function(){
-		// probes.localisation.setActive($scope.localisation.active);
-	// })
+	$scope.$watch("localisation.active", function(){
+		probes.localisation.setActive($scope.localisation.active);
+	})
 	$scope.$watch("battery.active", function(){
 		probes.battery.setActive($scope.battery.active);
 	})
