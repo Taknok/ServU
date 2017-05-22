@@ -642,19 +642,24 @@
                         <div class="col-md-6">
                             <div id="code"></div>
                             <script type="text/javascript">
-                                new QRCode(document.getElementById("code"), "http://www.servu.ml");
+                                new QRCode(document.getElementById("code"), "market://details?id=com.pg.ServU");
                             </script>
                         </div>
                         <div class="col-md-6">
-                            <p>Flash this code with your device to download the app for ANDROID</p>
+                            <p>Flash this code with your device to go to the download page for ANDROID</p>
                             <p class="text-muted"><i>Sorry iOS users, the app is not available for iOS devices yet</i></p>
                         </div>
                     </div>
                 </div>
                 <div class='modal-footer' id="addModalFooter">
                     <div class="row">
-                        <div class="col-md-3 pull-left">
-                            <img src="../img/soon-play.PNG" class="store">
+                        <div class="col-md-4 pull-left">
+                            <a id="computer-button" href="https://play.google.com/store/apps/details?id=com.pg.ServU" style="display: none">
+                                <img src="../img/play-store.png" class="store">
+                            </a>
+                            <a id="android-button" href="market://details?id=com.pg.ServU" style="display: none">
+                                <img src="../img/play-store.png" class="store">
+                            </a>
                         </div>
                         <div class="col-md-3 pull-left">
                             <img src="../img/soon-app.PNG" class="store">
@@ -662,6 +667,19 @@
                     </div>
                     <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
                     <div class="clearfix"></div>
+                    <script>
+                        function goBack() {
+                            window.history.back()
+                        }
+                        var ua = navigator.userAgent.toLowerCase();
+                        var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+                        if(isAndroid) {
+                            document.getElementById('android-button').style.display = 'inline';
+                        } else {
+                            // is a computer
+                            document.getElementById('computer-button').style.display = 'inline';
+                        }
+                    </script>
                 </div>
             </div>
         </div>
@@ -707,6 +725,7 @@
                     </li>
                 </ul>
                 <hr class="small">
+                <a href="https://servu.ml/politic.html">Privacy policy</a>
                 <p class="text-muted">Copyright &copy; ServU Team 8 2017</p>
             </div>
         </div>
