@@ -37,6 +37,23 @@
 
 </head>
 
+<script>
+    document.title = 'Profile - <%= username%>';
+    setCookie('token','<%= token%>',7);
+    setCookie('username','<%= username%>',7);
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+ d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove();
+        });
+    }, 4000);
+</script>
+
 <body ng-app="root" ng-controller="gestion">
 
 <!-- Navigation 2-->
@@ -748,10 +765,7 @@
 
 <script src="../js/persoJS/controller.js"></script>
 <script src="../js/bootstrap.min.js"></script>
-<script src="../js/persoJS/devicesController.js"></script>
-<script src="../js/persoJS/templates.js"></script>
 <script src="../js/bootstrap-notify.js"></script>
-
 <script src="../js/persoJS/controllers.js"></script>
 
 <script src="../js/persoJS/controllerEventSkeleton.js"></script>
@@ -773,22 +787,6 @@
 
 
 <script>var username = '<%= username %>'</script>
-<script>
-    document.title = 'Profile - <%= username%>';
-    setCookie('token','<%= token%>',7);
-    setCookie('username','<%= username%>',7);
-    function setCookie(cname, cvalue, exdays) {
-        var d = new Date();
-        d.setTime(d.getTime() + (exdays*24*60*60*1000));
-        var expires = "expires="+ d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
-    window.setTimeout(function() {
-        $(".alert").fadeTo(500, 0).slideUp(500, function(){
-            $(this).remove();
-        });
-    }, 4000);
-</script>
 
 </body>
 

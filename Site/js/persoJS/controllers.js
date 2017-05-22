@@ -44,16 +44,16 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
                         device.probes[probe.name] = probe;
                     });
                 },function(err){
-                    alert('Error while trying to get device\'s probes: ',err);
-                    console.log('Error : ',err);
+                    alert('Error while trying to get device\'s probes: ',err.data);
+                    console.log('Error : ',err.data);
                 });
                 $http.get(url+'/api/users/'+username+'/devices/'+device.uuid+'/actionsAvailable').then(function(res){
                     angular.forEach(res.data,function(action){
                         device.actionsAvailable[action.name] = action;
                     });
                 },function(err){
-                    alert('Error while trying to get device\'s available actions: ',err);
-                    console.log('Error : ',err);
+                    alert('Error while trying to get device\'s available actions: ',err.data);
+                    console.log('Error : ',err.data);
                 })
             });
         },function(err){
@@ -101,7 +101,7 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
             $.notify({
                 // options
                 icon: 'glyphicon glyphicon-ok',
-                message: 'Error while trying to delete device '+uuid+'('+res.data+')'
+                message: 'Error while trying to delete device '+uuid+'('+err.data+')'
             },{
                 // settings
                 type: 'danger',
