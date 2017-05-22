@@ -340,7 +340,7 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
-                    '<button class="btn group-addon" ng-click="changeFunctionBat(conditionArray[' + index + '].ConditionName)">{{conditionArray[' + index + '].ConditionName=="battery.level" ? "Level" : "Pluged"}}</button>' +
+                    '<button class="btn group-addon" ng-click="changeFunctionBat(conditionArray[' + index + '].ConditionName)">{{conditionArray[' + index + '].ConditionName=="battery.level" ? "Level" : "Plugged"}}</button>' +
                     '<div ng-if="batteryStatus" class="input-group"><button class="btn btn-default" ng-click="changeOperator(conditionArray[' + index + '].dataCondition.comparator)">{{conditionArray[' + index + '].dataCondition.comparator}}</button>' +
                     '<div class="form-group"><input class="form-control" id="battery_low" placeholder="%" min="1" max="100" type="number" required ng-model="conditionArray['+index+'].dataCondition.value">' +
                     '</div></div>' +
