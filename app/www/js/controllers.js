@@ -1,6 +1,6 @@
 angular.module('ServU')
 
-.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, probes, actions, $http, ServUApi, phoneInfo, $interval) {
+.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, probes, actions, $http, ServUApi, phoneInfo, $interval, socket) {
 	$scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
 		AuthService.logout();
 		$state.go('login');
@@ -46,6 +46,8 @@ angular.module('ServU')
 		console.log(vectProbes.length, " probes updated");
 	};
 	
+
+		
 	// ACTIONS
 	
 	$interval(function(){
@@ -55,7 +57,15 @@ angular.module('ServU')
 		}
 		console.log(">>>> 10s loop <<<<")
 	}, 10 * 1000);
+	
+	$interval(function(){
+		console.log(phoneInfo.getPosted(), phoneInfo.getUuid() != 0)
+		if (phoneInfo.getUuid() != 0 && phoneInfo.getPosted()){
+			socket.emit("keeAlive", "keepAlive");
+			console.log("keep")
+		}
 		
+	}, 30 * 1000);	
 })
 
 .controller('LoginCtrl', function($scope, $q, AuthService, $ionicPopup, $state, phoneInfo, probes, actions, ServUApi, $http, socket) {
