@@ -2,9 +2,9 @@
 <widget id="com.pg.ServU" version="0.0.102" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>ServU</name>
   <description>
-        Application to automatize actions&#xD;
+        Application to automatize actions
     </description>
-  <author email="pg.developper.fr@gmail.com" href="http://example.com/">
+    <author email="pg.developper.fr@gmail.com" href="http://example.com/">
       Pg
     </author>
   <content src="index.html"/>
