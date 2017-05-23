@@ -76,6 +76,21 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
     };
 
     $scope.deleteByUuid = function(uuid) {
+        $.notify({
+            // options
+            icon: 'glyphicon glyphicon-remove',
+            message: 'This is a demo, you are not allowed to delete this device'
+        },{
+            // settings
+            type: 'danger',
+            placement: {
+                from: 'bottom',
+                align: 'left'
+            },
+            delay: 10000,
+            mouse_over: 'pause'
+        });
+        /*
         for(var i = $scope.devices.length-1; i >= 0; i--){
             if($scope.devices[i].uuid === uuid){
                 $scope.devices.splice(i,1);
@@ -113,7 +128,7 @@ rootApp.controller('devicesCtrl', function($rootScope, $log, $scope, $uibModal, 
                 mouse_over: 'pause'
             });
         });
-        console.log('Deleted : ',uuid);
+        console.log('Deleted : ',uuid);*/
     };
 
     // More about device
