@@ -452,12 +452,20 @@ var rootApp = angular.module('root', ['ui.bootstrap'])
             }
             else if (action.name === "Flashlight") {
                 $scope.ActionName = "flashlight";
-                $scope.dataAction.state = false;
+                $scope.dataAction.state = 'on';
+                $scope.changeState = function () {
+                    if ($scope.dataAction.state === 'on')
+                        $scope.dataAction.state = 'off';
+                    else if ($scope.dataAction.state === 'off')
+                        $scope.dataAction.state = 'toggle';
+                    else if ($scope.dataAction.state === 'toggle')
+                        $scope.dataAction.state = 'on';
+                };
                 myEl.html(
                     '<form class="form-inline"><div class="form-group">' +
                     '<div class="input-group">' +
                     '<div class="input-group-addon">Status : </div>' +
-                    '<button class="btn btn-default" ng-click="dataAction.state = !dataAction.state">{{dataAction.state}}</button>' +
+                    '<button class="btn btn-default" ng-click="changeState(dataAction.state)">{{dataAction.state}}</button>' +
                     '</div></form>'
                 );
             }
