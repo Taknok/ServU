@@ -63,6 +63,20 @@ const whoProperties = [
 
 exports.startSocketIO = function () {
     io = socketIO(socketPort);
+	
+	var appSock = require('express')();
+	var serverSock = require('http').Server(appSock);
+	io = socketIO(serverSock);
+
+	serverSock.listen(socketPort, "0.0.0.0");
+	serverSock.setTimeout = 10000000000;
+
+	io.on('connection', function (socket) {
+		socket.emit('news', { hello: 'world' });
+		socket.on('my other event', function (data) {
+			console.log(data);
+		});
+	});
 
     io.on('connection', socket => {
         //Handle authentication of devices
