@@ -62,7 +62,6 @@ const whoProperties = [
 ];
 
 exports.startSocketIO = function () {
-    io = socketIO(socketPort);
 	
 	var appSock = require('express')();
 	var serverSock = require('http').Server(appSock);
